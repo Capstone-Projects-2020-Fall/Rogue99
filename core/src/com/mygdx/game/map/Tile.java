@@ -6,16 +6,18 @@ public class Tile {
 
     private int posX;
     private int posY;
-    private int type;
+    private String type;
+    private String texture;
     private boolean populated;
 
     //TODO We will come back for this later
     //Entity entity;
 
-    public Tile(int posX, int posY, int type, boolean populated){
+    public Tile(int posX, int posY, String type, boolean populated){
         this.posX = posX;
         this.posY = posY;
         this.type = type;
+        //this.texture = texture;
         this.populated = populated;
     }
 
@@ -27,7 +29,9 @@ public class Tile {
         this.posY = posY;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
+        //TODO texture change
+
         this.type = type;
     }
 
@@ -43,7 +47,7 @@ public class Tile {
         return posY;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
