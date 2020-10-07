@@ -1,5 +1,7 @@
 package com.mygdx.game.map;
 
+import com.badlogic.gdx.graphics.Texture;
+
 import javax.swing.text.html.parser.Entity;
 
 public class Tile {
@@ -7,7 +9,6 @@ public class Tile {
     private int posX;
     private int posY;
     private String type;
-    private String texture;
     private boolean populated;
 
     //TODO We will come back for this later
@@ -17,7 +18,6 @@ public class Tile {
         this.posX = posX;
         this.posY = posY;
         this.type = type;
-        //this.texture = texture;
         this.populated = populated;
     }
 
@@ -30,8 +30,6 @@ public class Tile {
     }
 
     public void setType(String type) {
-        //TODO texture change
-
         this.type = type;
     }
 

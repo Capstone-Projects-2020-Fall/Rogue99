@@ -8,13 +8,14 @@ public class Level {
     private Tile[][] map;
     private int width = 50;
     private int height = 50;
-    private int deathLimit = 3;
+    private double probability = 0.47;
+    private int deathLimit = 4;
     private int birthLimit = 4;
+    private int iterations = 5;
 
 
-    public Level(int depth, Tile[][] map){
+    public Level(int depth){
         this.depth = depth;
-        this.map = map;
     }
 
     public void setDepth(int depth) {
@@ -33,16 +34,15 @@ public class Level {
         return depth;
     }
 
-
     //initializes grid to be all wall tiles
     public void initialize(){
         map = new Tile[width][height];
         for(int i = 0; i < width; i++){
             for(int k = 0; k < height; k++){
-                if(Math.random() < 0.5) {
-                    map[i][k] = new Tile(i, k, "wall", true);
+                if(Math.random() < probability) {
+                    map[i][k] = new Tile(i, k, "floor", true);
                 } else{
-                    map[i][k] = new Tile(i, k, "floor", false);
+                    map[i][k] = new Tile(i, k, "wall", false);
                 }
             }
         }
@@ -51,12 +51,18 @@ public class Level {
     public void generate(){
         initialize();
 
-        for(int i = 0; i < 5; i++){
+        //run initialized map through cellular automata algorithm
+        for(int i = 0; i < iterations; i++){
             iterate();
         }
+
+        //TODO place entrance
+        //TODO place exit
+        //TODO link rooms and clean up generation
+        //TODO add environment
     }
 
-    public int countWallNeighbors(Tile tile){
+    public int countAliveNeighbors(Tile tile){
         int count = 0;
         for(int x = -1; x < 2; x++){
             for(int y = -1; y < 2; y++){
@@ -64,7 +70,7 @@ public class Level {
                 if(x+tile.getPosX() < 0 || y+tile.getPosY() < 0 ||
                         x+tile.getPosX() == width || y+tile.getPosY() == height) continue;
 
-                if(map[x+tile.getPosX()][y+tile.getPosY()].getType().equals("wall")){
+                if(map[x+tile.getPosX()][y+tile.getPosY()].getType().equals("floor")){
                     count++;
                 }
             }
@@ -75,15 +81,15 @@ public class Level {
     public void iterate(){
         for(int i = 0; i < width; i++){
             for(int k = 0; k < height; k++){
-                int count = countWallNeighbors(map[i][k]);
+                int count = countAliveNeighbors(map[i][k]);
 
-                if(map[i][k].getType().equals("wall")){
+                if(map[i][k].getType().equals("floor")){
                     if(count < deathLimit){
-                        map[i][k].setType("floor");
-                    }
-                } else{
-                    if(count > birthLimit){
                         map[i][k].setType("wall");
+                    }
+                } else if(map[i][k].getType().equals("wall")){
+                    if(count > birthLimit){
+                        map[i][k].setType("floor");
                     }
                 }
             }
