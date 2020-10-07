@@ -6,8 +6,8 @@ import com.mygdx.game.item.Item;
 
 public class InventoryGui extends Window {
 
-    private static final int INVENTORY_ROWS = 5;
-    private static final int INVENTORY_SIZE = 20;
+    private static final int INVENTORY_ROWS = 6;
+    private static final int INVENTORY_SIZE = 24;
 
 
     public InventoryGui(Skin skin) {
