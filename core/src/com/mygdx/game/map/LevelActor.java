@@ -13,4 +13,7 @@ public class LevelActor extends Actor {
         this.tile = tile;
     }
 
+    public Tile getTile() {
+        return tile;
+    }
 }

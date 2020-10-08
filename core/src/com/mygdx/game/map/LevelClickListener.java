@@ -13,6 +13,7 @@ public class LevelClickListener extends ClickListener{
 
     @Override
     public void clicked(InputEvent event, float x, float y) {
-        System.out.println(actor + " has been clicked.");
+        System.out.println("A tile has been clicked. [" + actor.getTile().getPosX() + "][" + actor.getTile().getPosY() + "]");
     }
+
 }
