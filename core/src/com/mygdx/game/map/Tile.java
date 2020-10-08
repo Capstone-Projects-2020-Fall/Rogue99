@@ -10,6 +10,7 @@ public class Tile {
     private int posY;
     private String type;
     private boolean populated;
+    private boolean floodFilled = false;
 
     //TODO We will come back for this later
     //Entity entity;
@@ -47,6 +48,14 @@ public class Tile {
 
     public String getType() {
         return type;
+    }
+
+    public void flood(){
+        floodFilled = true;
+    }
+
+    public boolean flooded(){
+        return floodFilled;
     }
 
     public boolean isPopulated() {

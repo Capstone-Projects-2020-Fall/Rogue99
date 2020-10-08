@@ -31,7 +31,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
-		viewport = new ExtendViewport(1800, 1800, camera);
+		viewport = new ExtendViewport(2160, 2160, camera);
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -90,6 +90,12 @@ public class Rogue99 extends ApplicationAdapter {
 					drawTile("floor", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("wall")){
 					drawTile("crackedwall", k.getPosX()*36, k.getPosY()*36);
+				} else if(k.getType().equals("grass")){
+					if(Math.random() < 0.5){
+						drawTile("shortgrass1", k.getPosX()*36, k.getPosY()*36);
+					} else{
+						drawTile("longgrass", k.getPosX()*36, k.getPosY()*36);
+					}
 				}
 			}
 		}
