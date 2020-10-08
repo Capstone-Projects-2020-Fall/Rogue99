@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.mygdx.game.map.Level;
-import com.mygdx.game.map.Tile;
+import com.mygdx.game.map.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.HashMap;
 
@@ -25,6 +25,7 @@ public class Rogue99 extends ApplicationAdapter {
 	final HashMap<String, Sprite> sprites = new HashMap<>();
 
 	Level level;
+	Stage stage;
 
 	@Override
 	public void create () {
@@ -39,7 +40,9 @@ public class Rogue99 extends ApplicationAdapter {
 		//initialize first level
 		level = new Level(1);
 		level.generate();
-
+		stage = new LevelStage(level);
+		Gdx.input.setInputProcessor(stage);
+		stage.getViewport().setCamera(camera);
 	}
 
 	@Override
@@ -49,6 +52,7 @@ public class Rogue99 extends ApplicationAdapter {
 		batch.begin();
 
 		drawMap(level);
+		stage.act();
 
 		batch.end();
 	}
