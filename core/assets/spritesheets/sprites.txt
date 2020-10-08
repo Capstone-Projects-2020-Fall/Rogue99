@@ -668,7 +668,7 @@ tile094
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile095
+shortgrass1
   rotate: false
   xy: 1, 274
   size: 37, 37
@@ -689,7 +689,7 @@ tile097
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile098
+longgrass
   rotate: false
   xy: 118, 274
   size: 37, 37
