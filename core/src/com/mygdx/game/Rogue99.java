@@ -30,6 +30,9 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		img = new Texture("badlogic.jpg");
+		skin = new Skin(Gdx.files.internal("uiskin.json"));
+		inventoryGui = new InventoryGui(skin);
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(2160, 2160, camera);
 
@@ -56,7 +59,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 		batch.end();
 	}
-	
+
+
 	@Override
 	public void dispose () {
 		batch.dispose();
