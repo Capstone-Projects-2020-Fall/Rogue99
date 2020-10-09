@@ -76,6 +76,9 @@ public class Level {
         //generate grass
         generateGrass();
 
+        //generateStairs
+        moveStairs();
+
         //generate rectangular rooms
 //        for(int i = 0; i < numRooms; i++){
 //            generateRooms();
@@ -255,5 +258,86 @@ public class Level {
                 }
             }
         }
+    }
+    //if distance between stair is too small, find a new spot for them
+    public void moveStairs(){
+        while(generateStairs() < 30)
+            generateStairs();
+    }
+    // place up and down stairs on map
+    private int generateStairs(){
+        int x_down = (int)(Math.random()*60);
+        int x_up = (int)(Math.random()*60);
+        int y_up = (int)(Math.random()*60);
+        int y_down = (int)(Math.random()*60);
+        //if random tile is floor, travels randomly until neighboring wall is found and places stair_down next to wall
+        while(map[x_down][y_down].getType().equals("floor")) {
+            for (int x1 = -1; x1 < 2; x1++) {
+                for (int y1 = -1; y1 < 2; y1++){
+                    if(x1+x_down < 0 || y1+y_down < 0 ||
+                            x1+x_down == width || y1+y_down == height) continue;
+                    if(map[x1+x_down][y1+y_down].getType().equals("wall"))
+                        map[x_down][y_down].setType("stair_down");
+                    else {
+                        x_down += (int) (Math.random() * 2) - 1;
+                        y_down += (int) (Math.random() * 2) - 1;
+                    }
+                }
+            }
+        }
+        // if random tile is wall, travels randomly until neighboring floor is found and places stair_down on floor
+        while(map[x_down][y_down].getType().equals("wall")){
+            for (int x1 = -1; x1 < 2; x1++) {
+                for (int y1 = -1; y1 < 2; y1++) {
+                    if (x1 + x_down < 0 || y1 + y_down < 0 ||
+                            x1 + x_down == width || y1 + y_down == height) continue;
+                    if(map[x1+x_down][y1+y_down].getType().equals("floor")) {
+                        x_down += x1;
+                        y_down += y1;
+                        map[x_down][y_down].setType("stair_down");
+                    } else {
+                        x_down += (int) (Math.random() * 2) - 1;
+                        y_down += (int) (Math.random() * 2) - 1;
+                    }
+                }
+            }
+        }
+        // if random tile is floor, travels randomly until neighboring wall is found and places stair_up next to wall
+        while(map[x_up][y_up].getType().equals("floor")) {
+            for (int x2 = -1; x2 < 2; x2++) {
+                for (int y2 = -1; y2 < 2; y2++){
+                    if(x2+x_up < 0 || y2+y_up < 0 ||
+                            x2+x_up == width || y2+y_up == height) continue;
+                    if(map[x2+x_up][y2+y_up].getType().equals("wall"))
+                        map[x_up][y_up].setType("stair_up");
+                    else {
+                        x_up += (int) (Math.random() * 2) - 1;
+                        y_up += (int) (Math.random() * 2) - 1;
+                    }
+                }
+            }
+        }
+        //if random tile is wall, travels randomly until neighboring floor is found and places stair_down on floor
+        while(map[x_up][y_up].getType().equals("wall")){
+            for (int x2 = -1; x2 < 2; x2++) {
+                for (int y2 = -1; y2 < 2; y2++) {
+                    if (x2 + x_up < 0 || y2 + y_up < 0 ||
+                            x2 + x_up == width || y2 + y_up == height) continue;
+                    if(map[x2+x_up][y2+y_up].getType().equals("floor")) {
+                        x_up += x2;
+                        y_up += y2;
+                        map[x_up][y_up].setType("stair_up");
+                    } else {
+                        x_up += (int) (Math.random() * 2) - 1;
+                        y_up += (int) (Math.random() * 2) - 1;
+                    }
+                }
+            }
+        }
+        //calculates and returns the distance between the two stairs
+        double ab = Math.abs(y_up - y_down);
+        double ac = Math.abs(x_up - x_down);
+        int distance = (int)(Math.hypot(ab, ac));
+        return distance;
     }
 }
