@@ -77,7 +77,7 @@ public class Level {
         generateGrass();
 
         //generateStairs
-        moveStairs();
+        //iterateStairs();
 
         //generate rectangular rooms
 //        for(int i = 0; i < numRooms; i++){
@@ -260,9 +260,19 @@ public class Level {
         }
     }
     //if distance between stair is too small, find a new spot for them
-    public void moveStairs(){
-        while(generateStairs() < 30)
+    public void iterateStairs(){
+        while(generateStairs() < 30){
+            removeStairs();
             generateStairs();
+        }
+    }
+    private void removeStairs(){
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < height; j++){
+                if(map[i][j].getType().equals("stair_down") || map[i][j].getType().equals("stair_up"))
+                    map[i][j].setType("floor");
+            }
+        }
     }
     // place up and down stairs on map
     private int generateStairs(){
@@ -278,9 +288,11 @@ public class Level {
                             x1+x_down == width || y1+y_down == height) continue;
                     if(map[x1+x_down][y1+y_down].getType().equals("wall"))
                         map[x_down][y_down].setType("stair_down");
+                        //if no neighboring walls, travel to a random neighboring tile
                     else {
                         x_down += (int) (Math.random() * 2) - 1;
                         y_down += (int) (Math.random() * 2) - 1;
+
                     }
                 }
             }
@@ -296,8 +308,8 @@ public class Level {
                         y_down += y1;
                         map[x_down][y_down].setType("stair_down");
                     } else {
-                        x_down += (int) (Math.random() * 2) - 1;
-                        y_down += (int) (Math.random() * 2) - 1;
+                        chooseRandomNeighbor(map[x_down][y_down]);
+
                     }
                 }
             }
@@ -311,8 +323,7 @@ public class Level {
                     if(map[x2+x_up][y2+y_up].getType().equals("wall"))
                         map[x_up][y_up].setType("stair_up");
                     else {
-                        x_up += (int) (Math.random() * 2) - 1;
-                        y_up += (int) (Math.random() * 2) - 1;
+                        chooseRandomNeighbor(map[x_up][y_up]);
                     }
                 }
             }
@@ -328,8 +339,7 @@ public class Level {
                         y_up += y2;
                         map[x_up][y_up].setType("stair_up");
                     } else {
-                        x_up += (int) (Math.random() * 2) - 1;
-                        y_up += (int) (Math.random() * 2) - 1;
+                        chooseRandomNeighbor(map[x_up][y_up]);
                     }
                 }
             }
@@ -339,5 +349,17 @@ public class Level {
         double ac = Math.abs(x_up - x_down);
         int distance = (int)(Math.hypot(ab, ac));
         return distance;
+    }
+    // chooses a random neighbor of a tile and moves to it
+    private void chooseRandomNeighbor(Tile tile) {
+        for(int x = -1; x < 2; x++) {
+            for (int y = -1; y < 2; y++) {
+                //check if neighbor is off the map
+                if (x + tile.getPosX() < 0 || y + tile.getPosY() < 0 ||
+                        x + tile.getPosX() == width || y + tile.getPosY() == height) continue;
+
+            }
+        }
+
     }
 }
