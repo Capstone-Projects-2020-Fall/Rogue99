@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.mygdx.game.gui.InventoryGui;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -19,6 +21,14 @@ public class Rogue99 extends ApplicationAdapter {
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	ExtendViewport viewport;
+
+	Texture img;
+
+	//Skin for inventory gui
+	Skin skin;
+
+	//InventoryGui Actor
+	InventoryGui inventoryGui;
 
 	//texture atlas for sprite sheet
 	TextureAtlas textureAtlas;
