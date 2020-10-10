@@ -260,94 +260,30 @@ public class Level {
         }
     }
     // place up and down stairs on map
-    private void generateStairs(){
-        int x_down = (int)(Math.random()*60);
-        int y_down = (int)(Math.random()*60);
-        int x_up = (int)(Math.random()*60);
-        int y_up = (int)(Math.random()*60);
-        while(!checkDistance(x_down, y_down, x_up, y_up)){
-            x_up = (int)(Math.random()*60);
-            y_up = (int)(Math.random()*60);
+    private void generateStairs() {
+        int x_down = 1;
+        int y_down = 58;
+        int x_up = 58;
+        int y_up = 1;
+        // picks a random tile that isn't a wall and has at least 1 wall neighbor
+        while (map[x_down][y_down].getType().equals("wall") || countAliveNeighbors(map[x_down][y_down], "wall") < 1) {
+            x_down = (int) (Math.random() * 30);
+            y_down = 30 + (int) (Math.random() * 30);
         }
-        //if random tile is floor, travels randomly until neighboring wall is found and places stair_down next to wall
-        if(map[x_down][y_down].getType().equals("floor")) {
-            for (int x1 = -1; x1 < 2; x1++) {
-                for (int y1 = -1; y1 < 2; y1++){
-                    if(x1+x_down < 0 || y1+y_down < 0 ||
-                            x1+x_down == width || y1+y_down == height) continue;
-                    if(map[x1+x_down][y1+y_down].getType().equals("wall"))
-                        map[x_down][y_down].setType("stair_down");
-                    //if no neighboring walls, travel to a random neighboring tile
-                    else {
-                        chooseRandomNeighbor(map[x_down][y_down]);
-                    }
-                }
-            }
-        }
-        // if random tile is wall, travels randomly until neighboring floor is found and places stair_down on floor
-        if(map[x_down][y_down].getType().equals("wall")){
-            for (int x1 = -1; x1 < 2; x1++) {
-                for (int y1 = -1; y1 < 2; y1++) {
-                    if (x1 + x_down < 0 || y1 + y_down < 0 ||
-                            x1 + x_down == width || y1 + y_down == height) continue;
-                    if(map[x1+x_down][y1+y_down].getType().equals("floor")) {
-                        x_down += x1;
-                        y_down += y1;
-                        map[x_down][y_down].setType("stair_down");
-                    } else {
-                        chooseRandomNeighbor(map[x_down][y_down]);
-                    }
-                }
-            }
-        }
-        // if random tile is floor, travels randomly until neighboring wall is found and places stair_up next to wall
-        if(map[x_up][y_up].getType().equals("floor")) {
-            for (int x2 = -1; x2 < 2; x2++) {
-                for (int y2 = -1; y2 < 2; y2++){
-                    if(x2+x_up < 0 || y2+y_up < 0 ||
-                            x2+x_up == width || y2+y_up == height) continue;
-                    if(map[x2+x_up][y2+y_up].getType().equals("wall"))
-                        map[x_up][y_up].setType("stair_up");
-                    else {
-                        chooseRandomNeighbor(map[x_up][y_up]);
-                    }
-                }
-            }
-        }
-        //if random tile is wall, travels randomly until neighboring floor is found and places stair_down on floor
-        if(map[x_up][y_up].getType().equals("wall")){
-            for (int x2 = -1; x2 < 2; x2++) {
-                for (int y2 = -1; y2 < 2; y2++) {
-                    if (x2 + x_up < 0 || y2 + y_up < 0 ||
-                            x2 + x_up == width || y2 + y_up == height) continue;
-                    if(map[x2+x_up][y2+y_up].getType().equals("floor")) {
-                        x_up += x2;
-                        y_up += y2;
-                        map[x_up][y_up].setType("stair_up");
-                    } else {
-                        chooseRandomNeighbor(map[x_up][y_up]);
-                    }
-                }
-            }
-        }
-    }
-    // chooses a random neighbor of a tile and moves to it
-    private void chooseRandomNeighbor(Tile tile) {
-        for(int x = -1; x < 2; x++) {
-            for (int y = 1; y > -2; y--) {
-                //check if neighbor is off the map
-                if (x + tile.getPosX() < 0 || y + tile.getPosY() < 0 ||
-                        x + tile.getPosX() == width || y + tile.getPosY() == height) continue;
-                tile.setPosX(x + tile.getPosX());
-                tile.setPosY(y + tile.getPosY());
-            }
-        }
+        map[x_down][y_down].setType("stair_down");
 
+        // picks a random tile that isn't a wall and is far enough away from the other stairs and has at least 1 wall neighbor
+        while (!checkDistance(x_down, y_down, x_up, y_up) || map[x_up][y_up].getType().equals("wall") || countAliveNeighbors(map[x_up][y_up], "wall") < 1) {
+            x_up = 30 + (int) (Math.random() * 30);
+            y_up = (int) (Math.random() * 30);
+        }
+        map[x_up][y_up].setType("stair_up");
     }
-    private boolean checkDistance(int x1, int y1, int x2, int y2){
+    // returns false if distance between points is less than 60
+    private boolean checkDistance(double x1, double y1, double x2, double y2){
         double ac = Math.abs(y2 - y1);
         double cb = Math.abs(x2 - x1);
-        if(Math.hypot(ac, cb) < 30) return false;
-        return true;
+        if (!(Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1)) < 60)) return true;
+        return false;
     }
 }
