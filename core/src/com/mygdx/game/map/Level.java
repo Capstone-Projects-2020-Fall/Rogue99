@@ -262,20 +262,20 @@ public class Level {
     // place up and down stairs on map
     private void generateStairs() {
         int x_down = 1;
-        int y_down = 58;
-        int x_up = 58;
+        int y_down = 30;
+        int x_up = 30;
         int y_up = 1;
         // picks a random tile that isn't a wall and has at least 1 wall neighbor
         while (map[x_down][y_down].getType().equals("wall") || countAliveNeighbors(map[x_down][y_down], "wall") < 1) {
             x_down = (int) (Math.random() * 30);
-            y_down = 30 + (int) (Math.random() * 30);
+            y_down = (int) (Math.random() * 60);
         }
         map[x_down][y_down].setType("stair_down");
-
         // picks a random tile that isn't a wall and is far enough away from the other stairs and has at least 1 wall neighbor
-        while (!checkDistance(x_down, y_down, x_up, y_up) || map[x_up][y_up].getType().equals("wall") || countAliveNeighbors(map[x_up][y_up], "wall") < 1) {
+        while (!checkDistance(x_down, y_down, x_up, y_up) || map[x_up][y_up].getType().equals("wall")
+                || countAliveNeighbors(map[x_up][y_up], "wall") < 1) {
             x_up = 30 + (int) (Math.random() * 30);
-            y_up = (int) (Math.random() * 30);
+            y_up = (int) (Math.random() * 60);
         }
         map[x_up][y_up].setType("stair_up");
     }
