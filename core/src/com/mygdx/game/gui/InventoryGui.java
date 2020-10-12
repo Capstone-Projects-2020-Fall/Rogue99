@@ -16,7 +16,7 @@ public class InventoryGui extends Window {
     public InventoryGui(Skin skin) {
         super("Inventory", skin);
         this.setResizable(false);
-        this.setMovable(true);
+        this.setMovable(false);
         this.setSize(InventorySlot.SIZE*INVENTORY_ROWS + INVENTORY_WINDOW_OFFSET,InventorySlot.SIZE*INVENTORY_COLUMNS + INVENTORY_WINDOW_OFFSET);
         this.scaleBy(1);
         int row = 0;
