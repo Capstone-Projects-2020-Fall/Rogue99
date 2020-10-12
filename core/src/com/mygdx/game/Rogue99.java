@@ -54,6 +54,7 @@ public class Rogue99 extends ApplicationAdapter {
 		level = new Level(1);
 		level.generate();
 		stage = new LevelStage(level);
+		stage.addActor(inventoryGui);
 		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
 	}
@@ -66,7 +67,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 		drawMap(level);
 		stage.act();
-
+		stage.draw();
 		batch.end();
 	}
 
