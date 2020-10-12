@@ -18,6 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import java.util.HashMap;
 
 public class Rogue99 extends ApplicationAdapter {
+
+	public final int PAD = 1000;
+
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	ExtendViewport viewport;
@@ -44,7 +47,7 @@ public class Rogue99 extends ApplicationAdapter {
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 		inventoryGui = new InventoryGui(skin);
 		camera = new OrthographicCamera();
-		viewport = new ExtendViewport(2160, 2160, camera);
+		viewport = new ExtendViewport(2500, 2160, camera);
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -54,9 +57,11 @@ public class Rogue99 extends ApplicationAdapter {
 		level = new Level(1);
 		level.generate();
 		stage = new LevelStage(level);
-		stage.addActor(inventoryGui);
 		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
+		stage.setViewport(viewport);
+		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+		stage.addActor(inventoryGui);
 	}
 
 	@Override
