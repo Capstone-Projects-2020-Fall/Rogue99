@@ -1,5 +1,7 @@
 package com.mygdx.game.item;
 
-public class Item {
-
+public abstract class Item{
+    private int rarity;
+    private String sprite;
+    public abstract void use();
 }

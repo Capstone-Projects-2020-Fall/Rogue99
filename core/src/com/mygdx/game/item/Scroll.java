@@ -1,6 +1,6 @@
 package com.mygdx.game.item;
 
-public class Potion extends Item{
+public class Scroll extends Item{
 
     public void use() {
 
