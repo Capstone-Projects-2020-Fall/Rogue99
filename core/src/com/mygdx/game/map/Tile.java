@@ -1,8 +1,10 @@
 package com.mygdx.game.map;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.mygdx.game.interactable.Interactable;
 
 import javax.swing.text.html.parser.Entity;
+import java.util.Stack;
 
 public class Tile {
 
@@ -11,15 +13,25 @@ public class Tile {
     private String type;
     private boolean populated;
     private boolean floodFilled = false;
+    private Stack<Interactable> entities;
 
-    //TODO We will come back for this later
-    //Entity entity;
-
-    public Tile(int posX, int posY, String type, boolean populated){
+    public Tile(int posX, int posY, String type, boolean populated, int zone){
         this.posX = posX;
         this.posY = posY;
         this.type = type;
         this.populated = populated;
+    }
+
+    public Stack<Interactable> getEntities(){
+        return entities;
+    }
+
+    public void addEntity(Interactable entity){
+        entities.push(entity);
+    }
+
+    public Interactable removeEntity(Interactable entity){
+        return entities.pop();
     }
 
     public void setPosX(int posX) {

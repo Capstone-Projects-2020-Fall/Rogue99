@@ -96,9 +96,9 @@ public class Level {
         for(int i = 0; i < width; i++){
             for(int k = 0; k < height; k++){
                 if(Math.random() < gen.probability) {
-                    map[i][k] = new Tile(i, k, type1, type1Pop);
+                    map[i][k] = new Tile(i, k, type1, type1Pop, 0);
                 } else{
-                    map[i][k] = new Tile(i, k, type2, type2Pop);
+                    map[i][k] = new Tile(i, k, type2, type2Pop, 0);
                 }
             }
         }
@@ -138,55 +138,6 @@ public class Level {
             }
         }
         return map;
-    }
-
-    public void generateRoom(){
-        //find top left corner
-        int cornerX;
-        int cornerY;
-        do {
-            cornerX = rand.nextInt(width);
-            cornerY = rand.nextInt(height);
-            if(cornerX <= 0) cornerX++;
-            if(cornerY <= 0) cornerY++;
-        }while(!map[cornerX][cornerY].getType().equals("wall") && !canPlaceRoom(cornerX, cornerY));
-        System.out.println("cornerX" + cornerX);
-        System.out.println("cornerY" + cornerY);
-
-
-        //carve out room
-        int dX = 0;
-        int dY = 0;
-        while(map[cornerX+dX][cornerY].getType().equals("wall") && map[cornerX+dX+2][cornerY].getType().equals("floor")){
-            while(map[cornerX+dX][cornerY+dY].getType().equals("wall") && map[cornerX][cornerY+dY+2].getType().equals("floor")){
-                map[cornerX+dX][cornerY+dY].setType("grass");
-            }
-        }
-    }
-
-    //determines whether a room can be placed at the starting coordinates
-    public boolean canPlaceRoom(int cornerX, int cornerY){
-        int roomWidth = 0;
-        int roomHeight = 0;
-        int d = 1;
-
-        while(cornerX+d < width-1 && map[cornerX+d][cornerY].getType().equals("wall") &&
-                !map[cornerX+d+2][cornerY].getType().equals("floor")){
-            roomWidth++;
-            d++;
-        }
-        d = 1;
-        while(cornerY+d < height-1 && map[cornerX][cornerY+d].getType().equals("wall") &&
-                !map[cornerX][cornerY+d+2].getType().equals("floor")){
-            roomHeight++;
-            d++;
-        }
-
-        if(roomWidth >= 5 && roomHeight >= 5){
-            return true;
-        } else{
-            return false;
-        }
     }
 
     //encloses map with layer of wall tiles
