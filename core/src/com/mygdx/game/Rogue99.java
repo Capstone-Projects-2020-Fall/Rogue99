@@ -32,7 +32,6 @@ public class Rogue99 extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(2160, 2160, camera);
-
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
 		addSprites();
@@ -43,6 +42,9 @@ public class Rogue99 extends ApplicationAdapter {
 		stage = new LevelStage(level);
 		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
+
+
+
 	}
 
 	@Override
