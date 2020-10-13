@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 public class Rogue99 extends ApplicationAdapter {
 
-	public final int PAD = 1000;
+	public final int PAD = 340;
 
 	SpriteBatch batch;
 	OrthographicCamera camera;
@@ -60,7 +60,7 @@ public class Rogue99 extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
-		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+		inventoryGui.setPosition(Gdx.graphics.getWidth() - PAD, 0);
 		stage.addActor(inventoryGui);
 	}
 
