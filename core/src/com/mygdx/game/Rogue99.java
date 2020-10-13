@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.InventoryGui;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 public class Rogue99 extends ApplicationAdapter {
 
 	public final int PAD = 340;
+	public final int HEIGHT_PAD = 700;
 
 	SpriteBatch batch;
 	OrthographicCamera camera;
@@ -32,6 +34,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//InventoryGui Actor
 	InventoryGui inventoryGui;
+	//HUD Actor
+	HUDGui hudGui;
 
 	//texture atlas for sprite sheet
 	TextureAtlas textureAtlas;
@@ -46,6 +50,7 @@ public class Rogue99 extends ApplicationAdapter {
 		img = new Texture("badlogic.jpg");
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 		inventoryGui = new InventoryGui(skin);
+		hudGui = new HUDGui(skin);
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(2500, 2160, camera);
 
@@ -61,7 +66,9 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 		inventoryGui.setPosition(Gdx.graphics.getWidth() - PAD, 0);
+		hudGui.setPosition(Gdx.graphics.getWidth() - PAD, inventoryGui.getHeight() + HEIGHT_PAD);
 		stage.addActor(inventoryGui);
+		stage.addActor(hudGui);
 	}
 
 	@Override
