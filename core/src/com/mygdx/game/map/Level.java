@@ -11,6 +11,7 @@ public class Level {
     private Tile[][] map;
     private final int width = 60;
     private final int height = 60;
+    private Tile entrance;
 
     /*
     GENERATION SETTINGS
@@ -75,6 +76,9 @@ public class Level {
 
         //generate grass
         generateGrass();
+
+        //generateStairs
+        generateStairs();
 
         //generate rectangular rooms
 //        for(int i = 0; i < numRooms; i++){
@@ -255,5 +259,36 @@ public class Level {
                 }
             }
         }
+    }
+    // place up and down stairs on map
+    private void generateStairs() {
+        int x_down = (int) (Math.random() * 60);
+        int y_down;
+        if (Math.random() < 0.5) y_down = (int) (Math.random() * 15);
+        else y_down = (int) (Math.random() * 15) + 45;
+        int x_up = (int) (Math.random() * 60);
+        int y_up = (int) (Math.random() * 60);
+        // picks a random tile that isn't a wall and has at least 1 wall neighbor
+        while (map[x_down][y_down].getType().equals("wall") || countAliveNeighbors(map[x_down][y_down], "wall") < 1) {
+            x_down = (int) (Math.random() * 60);
+            if (Math.random() < 0.5) y_down = (int) (Math.random() * 15);
+            else y_down = (int) (Math.random() * 15) + 45;
+        }
+        map[x_down][y_down].setType("stair_down");
+        // picks a random tile that isn't a wall and is far enough away from the other stairs and has at least 1 wall neighbor
+        while (!checkDistance(x_down, y_down, x_up, y_up, 50) || map[x_up][y_up].getType().equals("wall")
+                || countAliveNeighbors(map[x_up][y_up], "wall") < 1) {
+            x_up = (int) (Math.random() * 60);
+            y_up = (int) (Math.random() * 60);
+        }
+        map[x_up][y_up].setType("stair_up");
+        entrance = map[x_down][y_down];
+    }
+    // returns false if distance between points is less than d
+    private boolean checkDistance(double x1, double y1, double x2, double y2, int d){
+        double ac = Math.abs(y2 - y1);
+        double cb = Math.abs(x2 - x1);
+        if (!(Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1)) < d)) return true;
+        return false;
     }
 }

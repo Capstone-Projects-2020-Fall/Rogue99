@@ -73,14 +73,14 @@ tile009
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile010
+stair_down
   rotate: false
   xy: 391, 1
   size: 37, 37
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile011
+stair_up
   rotate: false
   xy: 430, 1
   size: 37, 37
