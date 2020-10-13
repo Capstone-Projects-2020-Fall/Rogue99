@@ -275,18 +275,18 @@ public class Level {
         }
         map[x_down][y_down].setType("stair_down");
         // picks a random tile that isn't a wall and is far enough away from the other stairs and has at least 1 wall neighbor
-        while (!checkDistance(x_down, y_down, x_up, y_up) || map[x_up][y_up].getType().equals("wall")
+        while (!checkDistance(x_down, y_down, x_up, y_up, 50) || map[x_up][y_up].getType().equals("wall")
                 || countAliveNeighbors(map[x_up][y_up], "wall") < 1) {
             x_up = (int) (Math.random() * 60);
             y_up = (int) (Math.random() * 60);
         }
         map[x_up][y_up].setType("stair_up");
     }
-    // returns false if distance between points is less than 50
-    private boolean checkDistance(double x1, double y1, double x2, double y2){
+    // returns false if distance between points is less than d
+    private boolean checkDistance(double x1, double y1, double x2, double y2, int d){
         double ac = Math.abs(y2 - y1);
         double cb = Math.abs(x2 - x1);
-        if (!(Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1)) < 50)) return true;
+        if (!(Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1)) < d)) return true;
         return false;
     }
 }
