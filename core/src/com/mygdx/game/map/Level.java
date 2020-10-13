@@ -11,6 +11,7 @@ public class Level {
     private Tile[][] map;
     private final int width = 60;
     private final int height = 60;
+    private Tile entrance;
 
     /*
     GENERATION SETTINGS
@@ -281,6 +282,7 @@ public class Level {
             y_up = (int) (Math.random() * 60);
         }
         map[x_up][y_up].setType("stair_up");
+        entrance = map[x_down][y_down];
     }
     // returns false if distance between points is less than d
     private boolean checkDistance(double x1, double y1, double x2, double y2, int d){
