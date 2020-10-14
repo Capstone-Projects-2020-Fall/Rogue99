@@ -1,6 +1,7 @@
 package com.mygdx.game.map;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Level {
@@ -29,10 +30,9 @@ public class Level {
 
     private final int numRooms = 5;
 
-
     public Level(int depth){
         this.depth = depth;
-    }
+   }
 
     public Tile[][] getMap() {
         return map;
@@ -79,6 +79,7 @@ public class Level {
 
         //generateStairs
         generateStairs();
+
 
         //generate rectangular rooms
 //        for(int i = 0; i < numRooms; i++){
@@ -290,5 +291,23 @@ public class Level {
         double cb = Math.abs(x2 - x1);
         if (!(Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1)) < d)) return true;
         return false;
+    }
+    // decides difficulty and number of enemies spawned based on depth of level. Returns an array where index is difficulty and value is
+    // number of enemies with that difficulty
+    public int[] iterateEnemy() {
+        int[] arr = new int[depth+1];
+        int n = 0;
+        arr[0] = 4;
+        arr[1] = 1;
+        for (int i = 1; i <= depth - 1; i++) {
+            arr[n]--;
+            arr[n + 1]++;
+            if(arr[n+1] == 4) {
+                arr[n + 2] = 1;
+                n++;
+            }
+            if(n >= 6) arr[n-6] = 0;
+        }
+        return arr;
     }
 }
