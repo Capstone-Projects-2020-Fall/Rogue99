@@ -7,11 +7,11 @@ import com.mygdx.game.item.Item;
 
 public class InventoryGui extends Window {
 
-    private static final int INVENTORY_ROWS = 2;
-    private static final int INVENTORY_COLUMNS = 12;
+    private static final int INVENTORY_ROWS = 3;
+    private static final int INVENTORY_COLUMNS = 8;
     private static final int INVENTORY_SIZE = 24;
     private static final int INVENTORY_WINDOW_WIDTH_OFFSET = 30;
-    private static final int INVENTORY_WINDOW_HEIGHT_OFFSET = 120;
+    private static final int INVENTORY_WINDOW_HEIGHT_OFFSET = 100;
 
 
     public InventoryGui(Skin skin) {

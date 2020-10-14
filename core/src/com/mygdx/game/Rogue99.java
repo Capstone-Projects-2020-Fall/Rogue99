@@ -21,7 +21,7 @@ import java.util.HashMap;
 public class Rogue99 extends ApplicationAdapter {
 
 	public final int PAD = 340;
-	public final int HEIGHT_PAD = 700;
+	public final int HEIGHT_PAD = 500;
 
 	SpriteBatch batch;
 	OrthographicCamera camera;
