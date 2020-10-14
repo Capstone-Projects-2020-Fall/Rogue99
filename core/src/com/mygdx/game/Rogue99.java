@@ -17,6 +17,7 @@ import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Rogue99 extends ApplicationAdapter {
 
@@ -50,7 +51,10 @@ public class Rogue99 extends ApplicationAdapter {
 		img = new Texture("badlogic.jpg");
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 		inventoryGui = new InventoryGui(skin);
-		hudGui = new HUDGui(skin);
+		Map<String,Integer> bars = new HashMap<>();
+		bars.put("Health", 100);
+		bars.put("Armour", 0);
+		hudGui = new HUDGui(skin, bars);
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(2500, 2160, camera);
 
