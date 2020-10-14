@@ -25,39 +25,36 @@ public class HUDGui extends Window {
         bar = skin.getDrawable("default-slider");
         knob = skin.getDrawable("default-slider-knob");
         ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle(bar,knob);
-        final HUDProgressBars healthBar = new HUDProgressBars(skin, progressBarStyle);
-        healthBar.setValue(100);
+
+        HUDProgressBar healthBar = CreateStatBar("Health", 100,skin,progressBarStyle);
+        HUDProgressBar armourBar = CreateStatBar("Armour", 0,skin,progressBarStyle);
+
         healthBar.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
-                healthBar.setValue(healthBar.getValue() - 10);
-                return true;
+                return false;
             }
         });
-        final HUDProgressBars armourBar = new HUDProgressBars(skin, progressBarStyle);
-        armourBar.setValue(0);
+
         armourBar.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
-                armourBar.setValue(100);
-                return true;
+                return false;
             }
         });
-        TextArea healthText = new TextArea("Health",skin);
-        healthText.scaleBy(.2f);
-        healthText.setAlignment(Align.right);
-        healthText.setDisabled(true);
-        TextArea armourText = new TextArea("Armour",skin);
-        armourText.scaleBy(.2f);
-        armourText.setAlignment(Align.right);
-        armourText.setDisabled(true);
-        this.add(healthText).pad(4);
-        this.row();
-        this.add(healthBar);
-        this.row();
-        this.add(armourText).pad(4);
-        this.row();
-        this.add(armourBar);
+    }
 
+    private HUDProgressBar CreateStatBar(String name, float defaultValue, Skin skin, ProgressBar.ProgressBarStyle progressBarStyle){
+        HUDProgressBar bar = new HUDProgressBar(skin ,progressBarStyle);
+        bar.setValue(defaultValue);
+        TextField textField = new TextField(name, skin);
+        textField.scaleBy(.2f);
+        textField.setAlignment(Align.center);
+        textField.setDisabled(true);
+        this.add(textField).pad(4);
+        this.row();
+        this.add(bar);
+        this.row();
+        return bar;
     }
 }
