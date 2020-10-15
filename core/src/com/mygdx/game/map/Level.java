@@ -80,6 +80,8 @@ public class Level {
         //generateStairs
         generateStairs();
 
+        generateEnemy();
+
 
         //generate rectangular rooms
 //        for(int i = 0; i < numRooms; i++){
@@ -309,5 +311,20 @@ public class Level {
             if(n >= 6) arr[n-6] = 0;
         }
         return arr;
+    }
+    public void generateEnemy(){
+        int[] diff = iterateEnemy();
+        int x = 0;
+        int y = 0;
+        for(int i : diff){
+            if(i == 0) continue;
+            for(int j = 0; j < i; j++) {
+                while (!(map[x][y].getType().equals("floor") || map[x][y].getType().equals("grass"))) {
+                    x = (int) (Math.random() * width);
+                    y = (int) (Math.random() * height);
+                }
+                map[x][y].setType("enemy");
+            }
+        }
     }
 }

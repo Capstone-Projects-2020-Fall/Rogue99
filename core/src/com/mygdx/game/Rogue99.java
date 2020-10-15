@@ -100,6 +100,12 @@ public class Rogue99 extends ApplicationAdapter {
 					drawTile("stair_up", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("stair_down")) {
 					drawTile("stair_down", k.getPosX() * 36, k.getPosY() * 36);
+				} else if(k.getType().equals("enemy")){
+					if(Math.random() < 0.5){
+						drawTile("wasp", k.getPosX()*36, k.getPosY()*36);
+					} else{
+						drawTile("crab", k.getPosX()*36, k.getPosY()*36);
+					}
 				}
 			}
 		}
