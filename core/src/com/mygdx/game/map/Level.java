@@ -34,8 +34,6 @@ public class Level {
     //grass alive floor dead
     GenerationSettings grassSettings = new GenerationSettings(0.83, 4, 4, 3);
 
-    private final int numRooms = 5;
-
     public Level(int depth){
         this.depth = depth;
    }
@@ -92,22 +90,9 @@ public class Level {
         System.out.println("Zone 0: " + zones[0].tiles.size());
 
 
-        //generate grass
         generateGrass();
-
-        //generateStairs
         generateStairs();
-
         generateEnemy();
-
-
-        //generate rectangular rooms
-//        for(int i = 0; i < numRooms; i++){
-//            generateRooms();
-//        }
-        //TODO place entrance
-        //TODO place exit
-        //TODO add environment
     }
 
     //initializes grid to be all wall tiles
@@ -212,7 +197,6 @@ public class Level {
         floodFillUtil(x, y-1);
     }
 
-    //generate grass
     public void generateGrass(){
         Tile[][] grassMap = new Tile[width][height];
 
@@ -234,6 +218,7 @@ public class Level {
             }
         }
     }
+
     // place up and down stairs on map
     private void generateStairs() {
         int x_down = (int) (Math.random() * 60);
@@ -258,6 +243,7 @@ public class Level {
         map[x_up][y_up].setType("stair_up");
         entrance = map[x_down][y_down];
     }
+
     // returns false if distance between points is less than d
     private boolean checkDistance(double x1, double y1, double x2, double y2, int d){
         double ac = Math.abs(y2 - y1);
@@ -265,6 +251,7 @@ public class Level {
         if (!(Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1)) < d)) return true;
         return false;
     }
+
     // decides difficulty and number of enemies spawned based on depth of level. Returns an array where index is difficulty and value is
     // number of enemies with that difficulty
     public int[] iterateEnemy() {
@@ -283,6 +270,7 @@ public class Level {
         }
         return arr;
     }
+
     public void generateEnemy(){
         int[] diff = iterateEnemy();
         int x = 0;
