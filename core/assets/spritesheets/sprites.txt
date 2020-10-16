@@ -1277,14 +1277,14 @@ tile181
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile182
+wasp
   rotate: false
   xy: 196, 508
   size: 37, 37
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile183
+crab
   rotate: false
   xy: 235, 508
   size: 37, 37
