@@ -71,9 +71,9 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 
-		//initialize Inventory & HUD gui
-		createInventoryGui();
-		createHUDGui();
+		//initialize Inventory & HUD gui disabled for now
+//		createInventoryGui();
+//		createHUDGui();
 	}
 
 	@Override
