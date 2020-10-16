@@ -49,18 +49,15 @@ public class Rogue99 extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
-		skin = new Skin(Gdx.files.internal("uiskin.json"));
-		inventoryGui = new InventoryGui(skin);
-		Map<String,Integer> bars = new HashMap<>();
-		bars.put("Health", 100);
-		bars.put("Armour", 0);
-		hudGui = new HUDGui(skin, bars);
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(2500, 2160, camera);
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
 		addSprites();
+
+		//load skin for Inventory & HUD
+		skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 		//initialize first level
 		level = new Level(1);
@@ -69,10 +66,10 @@ public class Rogue99 extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
-		inventoryGui.setPosition(Gdx.graphics.getWidth() - PAD, 0);
-		hudGui.setPosition(Gdx.graphics.getWidth() - PAD, inventoryGui.getHeight() + HEIGHT_PAD);
-		stage.addActor(inventoryGui);
-		stage.addActor(hudGui);
+
+		//initialize Inventory & HUD gui
+		createInventoryGui();
+		createHUDGui();
 	}
 
 	@Override
@@ -137,5 +134,22 @@ public class Rogue99 extends ApplicationAdapter {
 		Sprite sprite = sprites.get(name);
 		sprite.setPosition(x, y);
 		sprite.draw(batch);
+	}
+
+	//creates HUD GUI & the map of the stats bars.
+	public void createHUDGui(){
+		Map<String,Integer> bars = new HashMap<>();
+		bars.put("Health", 100);
+		bars.put("Armour", 0);
+		hudGui = new HUDGui(skin, bars);
+		hudGui.setPosition(Gdx.graphics.getWidth() - PAD, inventoryGui.getHeight() + HEIGHT_PAD);
+		stage.addActor(hudGui);
+	}
+
+	//creates Inventory GUI
+	public void createInventoryGui(){
+		inventoryGui = new InventoryGui(skin);
+		inventoryGui.setPosition(Gdx.graphics.getWidth() - PAD, 0);
+		stage.addActor(inventoryGui);
 	}
 }
