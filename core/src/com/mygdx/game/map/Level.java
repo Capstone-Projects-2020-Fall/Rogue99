@@ -1,5 +1,6 @@
 package com.mygdx.game.map;
 
+import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.interactable.Interactable;
 import com.mygdx.game.item.Item;
 import com.mygdx.game.item.Potion;
@@ -7,6 +8,7 @@ import com.mygdx.game.item.Potion;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+
 
 public class Level {
     Random rand = new Random();
@@ -19,6 +21,7 @@ public class Level {
     private Tile entrance;
     private Zone[] zones = new Zone[4];
     private int zoneSize;
+    private ArrayList<Enemy> enemies = new ArrayList<>();
 
     /*
     GENERATION SETTINGS
@@ -273,17 +276,27 @@ public class Level {
 
     public void generateEnemy(){
         int[] diff = iterateEnemy();
+        int sum = 0;
+        int index = 1;
+        int u = 0;
         int x = 0;
         int y = 0;
         for(int i : diff){
+            sum += i;
             if(i == 0) continue;
-            for(int j = 0; j < i; j++) {
-                while (!(map[x][y].getType().equals("floor") || map[x][y].getType().equals("grass"))) {
-                    x = (int) (Math.random() * width);
-                    y = (int) (Math.random() * height);
+            for (int j = 0; j < sum; j++) {
+                Zone z = zones[u];
+                Tile tile;
+                do { tile = z.tiles.get(rand.nextInt(z.tiles.size()));
                 }
-                map[x][y].setType("enemy");
-            }
+                while (!tile.entities.isEmpty());
+                Enemy enemy = new Enemy(index);
+                enemies.add(enemy);
+                tile.getEntities().push(enemies.get(enemies.size() - 1));
+                u++;
+                if(u > 3) u = 0;
+                }
+            index++;
         }
     }
 
