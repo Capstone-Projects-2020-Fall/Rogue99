@@ -78,6 +78,7 @@ public class Level {
         }
 
         //generate zones
+        //System.out.println("Zone 0: " + zones[0].tiles.size());
         int limit;
         for(int i = 1; i < 4; i++){
             limit = rand.nextInt(200)+400;
@@ -87,6 +88,8 @@ public class Level {
             }
             System.out.println("Zone " + i + ": " + zones[i].tiles.size());
         }
+        System.out.println("Zone 0: " + zones[0].tiles.size());
+
 
         //generate grass
         generateGrass();
@@ -232,6 +235,7 @@ public class Level {
 
         map[x][y].setZone(zone.id);
         zone.tiles.add(map[x][y]);
+        zones[0].tiles.remove(map[x][y]);
 
         floodZoneUtil(zone, x+1, y, zoneLimit);
         floodZoneUtil(zone, x-1, y, zoneLimit);
