@@ -22,9 +22,9 @@ public class InventorySlot extends Widget {
     private Texture itemIcon;
 
 
-    public InventorySlot(Skin skin, Item item) {
+    public InventorySlot(Skin skin /*Item item*/) {
         this.skin = skin;
-        this.item = item;
+        //this.item = item;
         patch = skin.getPatch("default-round");
         //TODO change img to be item icon
         //itemIcon = item.getTexture();

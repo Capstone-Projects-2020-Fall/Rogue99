@@ -21,7 +21,7 @@ public class InventoryGui extends Window {
         this.scaleBy(1);
         int row = 0;
         for(int i = 0; i < INVENTORY_SIZE; i ++){
-            InventorySlot inventorySlot = new InventorySlot(skin, new Item());
+            InventorySlot inventorySlot = new InventorySlot(skin /* add item in here //new Item()*/);
             this.add(inventorySlot).width(InventorySlot.SIZE).height(InventorySlot.SIZE).pad(4);
             row++;
             if(row >= INVENTORY_ROWS){
