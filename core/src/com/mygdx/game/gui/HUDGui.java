@@ -1,12 +1,14 @@
 package com.mygdx.game.gui;
 
 import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class HUDGui extends Window {
@@ -16,6 +18,7 @@ public class HUDGui extends Window {
     private Drawable knob;
     private final int HUD_SIZE = 48 ;
     private final int HUD_WINDOW_WIDTH_OFFSET = 30;
+    public ArrayList<HUDProgressBar> hudBars;
 
     public HUDGui(Skin skin, Map<String, Integer> bars){
         super("Stats", skin);
@@ -27,20 +30,16 @@ public class HUDGui extends Window {
         bar = skin.getDrawable("default-slider");
         knob = skin.getDrawable("default-slider-knob");
         ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle(bar,knob);
+        hudBars = new ArrayList<>();
 
         for(String name: bars.keySet()){
             HUDProgressBar bar = CreateStatBar(name, bars.get(name), skin,progressBarStyle);
-            bar.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    return false;
-                }
-            });
+            hudBars.add(bar);
         }
     }
 
     private HUDProgressBar CreateStatBar(String name, float defaultValue, Skin skin, ProgressBar.ProgressBarStyle progressBarStyle){
-        HUDProgressBar bar = new HUDProgressBar(skin ,progressBarStyle);
+        HUDProgressBar bar = new HUDProgressBar(skin ,progressBarStyle, name);
         bar.setValue(defaultValue);
         TextField textField = new TextField(name, skin);
         textField.scaleBy(.2f);
@@ -51,5 +50,9 @@ public class HUDGui extends Window {
         this.add(bar);
         this.row();
         return bar;
+    }
+
+    public ArrayList<HUDProgressBar> getHudBars() {
+        return hudBars;
     }
 }

@@ -12,10 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.game.gui.HUDGui;
+import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,8 @@ public class Rogue99 extends ApplicationAdapter {
 	InventoryGui inventoryGui;
 	//HUD Actor
 	HUDGui hudGui;
+	//HUD bars list
+	ArrayList<HUDProgressBar> barList;
 
 	//texture atlas for sprite sheet
 	TextureAtlas textureAtlas;
@@ -144,6 +148,7 @@ public class Rogue99 extends ApplicationAdapter {
 		hudGui = new HUDGui(skin, bars);
 		hudGui.setPosition(Gdx.graphics.getWidth() - PAD, inventoryGui.getHeight() + HEIGHT_PAD);
 		stage.addActor(hudGui);
+		barList = hudGui.getHudBars();
 	}
 
 	//creates Inventory GUI
@@ -151,5 +156,14 @@ public class Rogue99 extends ApplicationAdapter {
 		inventoryGui = new InventoryGui(skin);
 		inventoryGui.setPosition(Gdx.graphics.getWidth() - PAD, 0);
 		stage.addActor(inventoryGui);
+	}
+
+	//adjust stats bars
+	public void changeBarValue(String barName, int newValue){
+		for(HUDProgressBar bar : barList){
+			if(bar.getName() == barName){
+				bar.setValue(newValue);
+			}
+		}
 	}
 }
