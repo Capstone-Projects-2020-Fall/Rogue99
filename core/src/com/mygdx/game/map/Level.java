@@ -1,5 +1,9 @@
 package com.mygdx.game.map;
 
+import com.mygdx.game.interactable.Interactable;
+import com.mygdx.game.item.Item;
+import com.mygdx.game.item.Potion;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -13,6 +17,8 @@ public class Level {
     private final int width = 60;
     private final int height = 60;
     private Tile entrance;
+    private Zone[] zones = new Zone[4];
+    private int zoneSize;
 
     /*
     GENERATION SETTINGS
@@ -72,7 +78,19 @@ public class Level {
             }
         }
 
-        //generateRoom();
+        //generate zones
+        //System.out.println("Zone 0: " + zones[0].tiles.size());
+        int limit;
+        for(int i = 1; i < 4; i++){
+            limit = rand.nextInt(200)+400;
+            zones[i] = new Zone(i, new ArrayList<Tile>());
+            while(zones[i].tiles.size() < 150){
+                generateZone(zones[i], limit);
+            }
+            System.out.println("Zone " + i + ": " + zones[i].tiles.size());
+        }
+        System.out.println("Zone 0: " + zones[0].tiles.size());
+
 
         //generate grass
         generateGrass();
@@ -143,55 +161,6 @@ public class Level {
         return map;
     }
 
-    public void generateRoom(){
-        //find top left corner
-        int cornerX;
-        int cornerY;
-        do {
-            cornerX = rand.nextInt(width);
-            cornerY = rand.nextInt(height);
-            if(cornerX <= 0) cornerX++;
-            if(cornerY <= 0) cornerY++;
-        }while(!map[cornerX][cornerY].getType().equals("wall") && !canPlaceRoom(cornerX, cornerY));
-        System.out.println("cornerX" + cornerX);
-        System.out.println("cornerY" + cornerY);
-
-
-        //carve out room
-        int dX = 0;
-        int dY = 0;
-        while(map[cornerX+dX][cornerY].getType().equals("wall") && map[cornerX+dX+2][cornerY].getType().equals("floor")){
-            while(map[cornerX+dX][cornerY+dY].getType().equals("wall") && map[cornerX][cornerY+dY+2].getType().equals("floor")){
-                map[cornerX+dX][cornerY+dY].setType("grass");
-            }
-        }
-    }
-
-    //determines whether a room can be placed at the starting coordinates
-    public boolean canPlaceRoom(int cornerX, int cornerY){
-        int roomWidth = 0;
-        int roomHeight = 0;
-        int d = 1;
-
-        while(cornerX+d < width-1 && map[cornerX+d][cornerY].getType().equals("wall") &&
-                !map[cornerX+d+2][cornerY].getType().equals("floor")){
-            roomWidth++;
-            d++;
-        }
-        d = 1;
-        while(cornerY+d < height-1 && map[cornerX][cornerY+d].getType().equals("wall") &&
-                !map[cornerX][cornerY+d+2].getType().equals("floor")){
-            roomHeight++;
-            d++;
-        }
-
-        if(roomWidth >= 5 && roomHeight >= 5){
-            return true;
-        } else{
-            return false;
-        }
-    }
-
     //encloses map with layer of wall tiles
     public void encloseMap(){
         //top and bottom
@@ -216,11 +185,14 @@ public class Level {
 
     //finds size of random room- if under a certain size, a new map will be generated
     public void floodFill(){
-        int startX, startY, count;
+        int startX, startY;
         do{
             startX = rand.nextInt(width);
             startY = rand.nextInt(height);
         }while(map[startX][startY].getType().equals("wall"));
+
+        //initialize Zone 0
+        zones[0] = new Zone(0, new ArrayList<Tile>());
 
         floodFillUtil(startX, startY);
     }
@@ -231,13 +203,16 @@ public class Level {
         map[x][y].flood();
         floodCount++;
 
+        zones[0].tiles.add(map[x][y]);
+        map[x][y].setZone(0);
+
         floodFillUtil(x+1, y);
         floodFillUtil(x-1, y);
         floodFillUtil(x, y+1);
         floodFillUtil(x, y-1);
     }
 
-    //generate grass 97
+    //generate grass
     public void generateGrass(){
         Tile[][] grassMap = new Tile[width][height];
 
@@ -247,16 +222,12 @@ public class Level {
             grassMap = iterate(grassMap, grassSettings, "grass", "floor");
         }
 
-        //TODO merge level map and grass map
         mergeGrass(grassMap);
     }
 
     public void mergeGrass(Tile[][] grassMap){
         for(int i = 0; i < width; i++){
             for(int k = 0; k < height; k++){
-//                System.out.println("level map type: " + this.map[i][k].getType());
-//                System.out.println("grass map type: " + grassMap[i][k].getType());
-
                 if(this.map[i][k].getType().equals("floor") && grassMap[i][k].getType().equals("grass")){
                     this.map[i][k].setType("grass");
                 }
@@ -327,4 +298,52 @@ public class Level {
             }
         }
     }
+
+    private void generateZone(Zone zone, int zoneLimit){
+        int startX, startY;
+        do{
+            startX = rand.nextInt(width);
+            startY = rand.nextInt(height);
+        }while(map[startX][startY].getType().equals("wall") && map[startX][startY].getZone() != 0);
+
+        floodZoneUtil(zone, startX, startY, zoneLimit);
+    }
+
+    private void floodZoneUtil(Zone zone, int x, int y, int zoneLimit){
+        if(map[x][y].getType().equals("wall") || map[x][y].getZone() != 0 || zone.tiles.size() == zoneLimit) return;
+
+        map[x][y].setZone(zone.id);
+        zone.tiles.add(map[x][y]);
+        zones[0].tiles.remove(map[x][y]);
+
+        floodZoneUtil(zone, x+1, y, zoneLimit);
+        floodZoneUtil(zone, x-1, y, zoneLimit);
+        floodZoneUtil(zone, x, y+1, zoneLimit);
+        floodZoneUtil(zone, x, y-1, zoneLimit);
+    }
+
+//    private void generateItems(){
+//        //generate potions
+//        int c = 100;
+//        for(int i = 0; i < 10; i++){
+//            int itemC = rand.nextInt(c);
+//            //if statement with odds of each potion type
+//            if(itemC < 10){
+//                generateItemUtil(new Potion(10, "healthpotion", 10));
+//            }
+//        }
+//
+//        //generate weapons
+//    }
+//
+//    private void generateItemUtil(Interactable item){
+//        int itemX, itemY;
+//
+//        do{
+//            itemX = rand.nextInt(60);
+//            itemY = rand.nextInt(60);
+//        }while(map[itemX][itemY].getType().equals("wall") && !map[itemX][itemY].getEntities().empty());
+//
+//        map[itemX][itemY].getEntities().push(item);
+//    }
 }

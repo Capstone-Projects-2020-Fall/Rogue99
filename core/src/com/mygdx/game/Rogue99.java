@@ -8,17 +8,30 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.mygdx.game.gui.InventoryGui;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.HashMap;
 
 public class Rogue99 extends ApplicationAdapter {
+
+	public final int PAD = 1000;
+
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	ExtendViewport viewport;
+
+	Texture img;
+
+	//Skin for inventory gui
+	Skin skin;
+
+	//InventoryGui Actor
+	InventoryGui inventoryGui;
 
 	//texture atlas for sprite sheet
 	TextureAtlas textureAtlas;
@@ -30,8 +43,11 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		img = new Texture("badlogic.jpg");
+		skin = new Skin(Gdx.files.internal("uiskin.json"));
+		inventoryGui = new InventoryGui(skin);
 		camera = new OrthographicCamera();
-		viewport = new ExtendViewport(2160, 2160, camera);
+		viewport = new ExtendViewport(2500, 2160, camera);
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -43,6 +59,9 @@ public class Rogue99 extends ApplicationAdapter {
 		stage = new LevelStage(level);
 		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
+		stage.setViewport(viewport);
+		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+		stage.addActor(inventoryGui);
 	}
 
 	@Override
@@ -53,10 +72,11 @@ public class Rogue99 extends ApplicationAdapter {
 
 		drawMap(level);
 		stage.act();
-
+		stage.draw();
 		batch.end();
 	}
-	
+
+
 	@Override
 	public void dispose () {
 		batch.dispose();
