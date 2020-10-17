@@ -4,6 +4,8 @@ import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.interactable.Interactable;
 import com.mygdx.game.item.Item;
 import com.mygdx.game.item.Potion;
+import com.mygdx.game.interactable.Character;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,8 @@ public class Level {
     private Zone[] zones = new Zone[4];
     private int zoneSize;
     private ArrayList<Enemy> enemies = new ArrayList<>();
+    private Character playerChar;
+
 
     /*
     GENERATION SETTINGS
@@ -48,7 +52,9 @@ public class Level {
     public int getDepth() {
         return depth;
     }
-
+    public Character getPlayerChar() {
+        return playerChar;
+    }
     public void generate(){
         /*
             generate random map with cellular automata- if there is no connected cavern at least as big as 45% of the
@@ -96,6 +102,7 @@ public class Level {
         generateGrass();
         generateStairs();
         generateEnemy();
+
     }
 
     //initializes grid to be all wall tiles

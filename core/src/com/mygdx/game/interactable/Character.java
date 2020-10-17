@@ -13,6 +13,8 @@ public class Character extends Interactable implements InputProcessor {
     public boolean down;
     public boolean left;
     public boolean right;
+    public float speed;
+
 
     @Override
     public void setPosX(int posX) {
@@ -49,7 +51,6 @@ public class Character extends Interactable implements InputProcessor {
     public int getPosY() {
         return super.getPosY();
     }
-
 
     public int getArmor() {
         return armor;

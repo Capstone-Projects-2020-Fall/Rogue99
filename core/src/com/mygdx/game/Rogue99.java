@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
+import com.mygdx.game.interactable.Character;
+import com.mygdx.game.interactable.Interactable;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -26,6 +28,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public final int PAD = 340;
 	public final int HEIGHT_PAD = 500;
 
+	Character userchar;
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	ExtendViewport viewport;
@@ -49,6 +52,7 @@ public class Rogue99 extends ApplicationAdapter {
 	Level level;
 	Stage stage;
 
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -70,7 +74,7 @@ public class Rogue99 extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
-
+		userchar = new Character();
 		//initialize Inventory & HUD gui disabled for now
 //		createInventoryGui();
 //		createHUDGui();
@@ -115,6 +119,7 @@ public class Rogue99 extends ApplicationAdapter {
 	//draws map for given level
 	public void drawMap(Level level) {
 		Tile[][] map = level.getMap();
+		Character playerChar = level.getPlayerChar();
 		for(Tile[] i : map){
 			for(Tile k : i){
 				//check type of tile and draw sprite
@@ -138,6 +143,8 @@ public class Rogue99 extends ApplicationAdapter {
 					} else{
 						drawTile("crab", k.getPosX()*36, k.getPosY()*36);
 					}
+				} else if(k.getEntities().contains(playerChar)){
+					drawTile("character", k.getPosX() *36, k.getPosY()*36);
 				}
 			}
 		}
