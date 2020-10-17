@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
+import com.mygdx.game.interactable.Hero;
+import com.mygdx.game.item.Item;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -164,10 +166,11 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//creates Inventory GUI
 	public void createInventoryGui(){
-		inventoryGui = new InventoryGui(skin);
+		inventoryGui = new InventoryGui(skin, /*place holder*/ new Hero(), this);
 		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
 		inventoryGui.getColor().a = .8f;
 		stage.addActor(inventoryGui);
+		inventoryGui.getInventorySlots().get(0).setItem(new Item());
 	}
 
 	//adjust stats bars
@@ -177,5 +180,10 @@ public class Rogue99 extends ApplicationAdapter {
 				bar.setValue(newValue);
 			}
 		}
+	}
+
+	//a function that is called when a player clicks on an item from inventory to use
+	public void usedItem(Item item){
+		System.out.println("Player used x item");
 	}
 }
