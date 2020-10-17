@@ -3,7 +3,9 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -45,7 +47,6 @@ public class Rogue99 extends ApplicationAdapter {
 	final HashMap<String, Sprite> sprites = new HashMap<>();
 
 	Level level;
-
 	Stage stage;
 
 	@Override
@@ -70,20 +71,21 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 
-		//initialize Inventory & HUD gui
+		//initialize Inventory & HUD gui disabled for now
 		createInventoryGui();
 		createHUDGui();
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1,0,0,1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		batch.begin();
 
+		drawMap(level);
 		stage.act();
 		stage.draw();
 		batch.end();
-
 	}
 
 
@@ -97,8 +99,6 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
-		inventoryGui.setPosition(Gdx.graphics.getWidth(),0);
-		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
 		batch.setProjectionMatrix(camera.combined);
 	}
 
@@ -127,6 +127,16 @@ public class Rogue99 extends ApplicationAdapter {
 						drawTile("shortgrass1", k.getPosX()*36, k.getPosY()*36);
 					} else{
 						drawTile("longgrass", k.getPosX()*36, k.getPosY()*36);
+					}
+				} else if(k.getType().equals("stair_up")){
+					drawTile("stair_up", k.getPosX()*36, k.getPosY()*36);
+				} else if(k.getType().equals("stair_down")) {
+					drawTile("stair_down", k.getPosX() * 36, k.getPosY() * 36);
+				} else if(k.getType().equals("enemy")){
+					if(Math.random() < 0.5){
+						drawTile("wasp", k.getPosX()*36, k.getPosY()*36);
+					} else{
+						drawTile("crab", k.getPosX()*36, k.getPosY()*36);
 					}
 				}
 			}
