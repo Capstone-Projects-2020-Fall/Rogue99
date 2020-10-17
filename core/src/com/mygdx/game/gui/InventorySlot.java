@@ -12,8 +12,8 @@ import com.mygdx.game.item.Item;
 
 public class InventorySlot extends Widget {
 
-    public static final float SIZE = 48;
-    public static final float OFFSET = 4;
+    public static final float SIZE = 36;
+    public static final float OFFSET = 2;
 
     private Skin skin;
     private NinePatch patch;

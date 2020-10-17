@@ -99,6 +99,8 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
+		inventoryGui.setPosition(Gdx.graphics.getWidth(),0);
+		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
 		batch.setProjectionMatrix(camera.combined);
 	}
 
@@ -146,7 +148,8 @@ public class Rogue99 extends ApplicationAdapter {
 		bars.put("Health", 100);
 		bars.put("Armour", 0);
 		hudGui = new HUDGui(skin, bars);
-		hudGui.setPosition(Gdx.graphics.getWidth() - PAD, inventoryGui.getHeight() + HEIGHT_PAD);
+		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
+		hudGui.getColor().a = .8f;
 		stage.addActor(hudGui);
 		barList = hudGui.getHudBars();
 	}
@@ -154,7 +157,8 @@ public class Rogue99 extends ApplicationAdapter {
 	//creates Inventory GUI
 	public void createInventoryGui(){
 		inventoryGui = new InventoryGui(skin);
-		inventoryGui.setPosition(Gdx.graphics.getWidth() - PAD, 0);
+		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+		inventoryGui.getColor().a = .8f;
 		stage.addActor(inventoryGui);
 	}
 

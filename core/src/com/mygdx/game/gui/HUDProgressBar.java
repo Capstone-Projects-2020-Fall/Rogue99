@@ -10,6 +10,7 @@ public class HUDProgressBar extends ProgressBar {
 
     public HUDProgressBar(Skin skin, ProgressBarStyle progressBarStyle, String name){
         super(0,100,1,false,progressBarStyle);
+        this.setSize(10, 10);
         this.skin = skin;
         this.name = name;
     }
