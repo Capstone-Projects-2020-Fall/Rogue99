@@ -73,6 +73,7 @@ public class Rogue99 extends ApplicationAdapter {
 		drawMap(level);
 		stage.act();
 		stage.draw();
+
 		batch.end();
 	}
 
