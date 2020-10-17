@@ -65,9 +65,9 @@ public class Level {
             }
 
             encloseMap();
+
+            //make sure level is connected and initiate zone 0
             floodFill();
-            System.out.println(floodCount);
-            System.out.println(width*height);
         }while((double)floodCount/(width*height) < 0.44);
 
         //loop through map- if tile is not filled, turn to wall
@@ -323,8 +323,8 @@ public class Level {
         floodZoneUtil(zone, x, y-1, zoneLimit);
     }
 
-//    private void generateItems(){
-//        //generate potions
+    private void generateItems(){
+        //generate potions
 //        int c = 100;
 //        for(int i = 0; i < 10; i++){
 //            int itemC = rand.nextInt(c);
@@ -333,18 +333,29 @@ public class Level {
 //                generateItemUtil(new Potion(10, "healthpotion", 10));
 //            }
 //        }
-//
-//        //generate weapons
-//    }
-//
-//    private void generateItemUtil(Interactable item){
-//        int itemX, itemY;
-//
-//        do{
-//            itemX = rand.nextInt(60);
-//            itemY = rand.nextInt(60);
-//        }while(map[itemX][itemY].getType().equals("wall") && !map[itemX][itemY].getEntities().empty());
-//
-//        map[itemX][itemY].getEntities().push(item);
-//    }
+
+        int c = 100;
+        int numItems, itemC;
+        for(Zone z : zones){
+            numItems = z.id+rand.nextInt(2);
+            for(int i = 0; i < numItems; i++){
+                itemC = rand.nextInt(c);
+                if(itemC < 10){
+                    generateItemUtil(new Potion(10, "healthpotion", 10), z);
+                }
+            }
+        }
+
+        //generate weapons
+    }
+
+    //generates item on random tile in given zone
+    private void generateItemUtil(Interactable item, Zone zone){
+        Tile tile;
+        do{
+            tile = zone.tiles.get(rand.nextInt(zone.tiles.size()));
+        } while(!tile.getEntities().empty());
+
+        tile.getEntities().push(item);
+    }
 }
