@@ -102,6 +102,8 @@ public class Rogue99 extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		batch.setProjectionMatrix(camera.combined);
+		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
+		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
 	}
 
 	//adds sprites to hash map for more efficient use
