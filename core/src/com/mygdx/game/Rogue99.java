@@ -170,7 +170,6 @@ public class Rogue99 extends ApplicationAdapter {
 		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
 		inventoryGui.getColor().a = .8f;
 		stage.addActor(inventoryGui);
-		inventoryGui.getInventorySlots().get(0).setItem(new Item());
 	}
 
 	//adjust stats bars

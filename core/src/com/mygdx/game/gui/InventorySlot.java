@@ -18,10 +18,9 @@ public class InventorySlot extends Widget {
     private Item item;
     private Texture img;
     private boolean isEmpty;
-    private Batch batch;
 
 
-    public InventorySlot(Skin skin, final Item item) {
+    public InventorySlot(Skin skin, Item item) {
         this.skin = skin;
         this.item = item;
         if(item == null){

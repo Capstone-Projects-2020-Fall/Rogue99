@@ -71,4 +71,16 @@ public class InventoryGui extends Window {
     public ArrayList<InventorySlot> getInventorySlots() {
         return inventorySlots;
     }
+
+    public void addItemToInventory(Item item) {
+            for (int i = 0; i < inventorySlots.size(); i++) {
+                if (inventorySlots.get(i).isEmpty()) {
+                    inventorySlots.get(i).setItem(item);
+                    System.out.println("added item");
+                    return;
+                }
+            }
+            // if reached here inventory is full
+    }
 }
+
