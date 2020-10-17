@@ -2,8 +2,7 @@ package com.mygdx.game.map;
 
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.interactable.Interactable;
-import com.mygdx.game.item.Item;
-import com.mygdx.game.item.Potion;
+import com.mygdx.game.item.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -324,24 +323,21 @@ public class Level {
     }
 
     private void generateItems(){
-        //generate potions
-//        int c = 100;
-//        for(int i = 0; i < 10; i++){
-//            int itemC = rand.nextInt(c);
-//            //if statement with odds of each potion type
-//            if(itemC < 10){
-//                generateItemUtil(new Potion(10, "healthpotion", 10));
-//            }
-//        }
-
         int c = 100;
         int numItems, itemC;
         for(Zone z : zones){
             numItems = z.id+rand.nextInt(2);
             for(int i = 0; i < numItems; i++){
                 itemC = rand.nextInt(c);
+                //TODO flesh out item chances once potion classes are finished
                 if(itemC < 10){
                     generateItemUtil(new Potion(10, "healthpotion", 10), z);
+                } else if(10 <= itemC && itemC < 30){
+                    generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
+                } else if(30 <= itemC && itemC < 50){
+                    generateItemUtil(new HealthScroll(20, "scroll", 10), z);
+                } else if(50 <= itemC && itemC < 70){
+                    generateItemUtil(new StrengthScroll(20, "scroll", 10), z);
                 }
             }
         }
