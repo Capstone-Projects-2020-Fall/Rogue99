@@ -15,6 +15,8 @@ import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
 import com.mygdx.game.interactable.Character;
+import com.mygdx.game.interactable.Control;
+import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -27,7 +29,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public final int PAD = 340;
 	public final int HEIGHT_PAD = 500;
 
-	Character userchar;
+	Hero hero;
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	ExtendViewport viewport;
@@ -48,8 +50,10 @@ public class Rogue99 extends ApplicationAdapter {
 	TextureAtlas textureAtlas;
 	final HashMap<String, Sprite> sprites = new HashMap<>();
 
-	Level level;
+	public Level level;
 	Stage stage;
+
+	boolean mapDrawn;
 
 	@Override
 	public void create () {
@@ -57,6 +61,8 @@ public class Rogue99 extends ApplicationAdapter {
 		img = new Texture("badlogic.jpg");
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(2500, 2160, camera);
+
+		mapDrawn = false;
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -69,11 +75,13 @@ public class Rogue99 extends ApplicationAdapter {
 		level = new Level(1);
 		level.generate();
 		stage = new LevelStage(level);
-		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 
-		userchar = new Character();
+		hero = new Hero(this, "tile169");
+		Control control = new Control(hero);
+
+		Gdx.input.setInputProcessor(control);
 		//initialize Inventory & HUD gui disabled for now
 //		createInventoryGui();
 //		createHUDGui();
@@ -85,7 +93,9 @@ public class Rogue99 extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
+
 		drawMap(level);
+
 		stage.act();
 		stage.draw();
 
@@ -119,40 +129,47 @@ public class Rogue99 extends ApplicationAdapter {
 	//draws map for given level
 	public void drawMap(Level level) {
 		Tile[][] map = level.getMap();
-		Character playerChar = level.getPlayerChar();
 		for(Tile[] i : map){
 			for(Tile k : i){
 				//check type of tile and draw sprite
 				if(k.getType().equals("floor")){
-					drawTile("floor", k.getPosX()*36, k.getPosY()*36);
+					drawTile(k,"floor", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("wall")){
-					drawTile("crackedwall", k.getPosX()*36, k.getPosY()*36);
+					drawTile(k,"crackedwall", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("grass")){
 					if(Math.random() < 0.5){
-						drawTile("shortgrass1", k.getPosX()*36, k.getPosY()*36);
+						drawTile(k,"shortgrass1", k.getPosX()*36, k.getPosY()*36);
 					} else{
-						drawTile("longgrass", k.getPosX()*36, k.getPosY()*36);
+						drawTile(k,"longgrass", k.getPosX()*36, k.getPosY()*36);
 					}
 				} else if(k.getType().equals("stair_up")){
-					drawTile("stair_up", k.getPosX()*36, k.getPosY()*36);
+					drawTile(k,"stair_up", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("stair_down")) {
-					drawTile("stair_down", k.getPosX() * 36, k.getPosY() * 36);
+					drawTile(k,"stair_down", k.getPosX() * 36, k.getPosY() * 36);
 				} else if(k.getType().equals("enemy")){
 					if(Math.random() < 0.5){
-						drawTile("wasp", k.getPosX()*36, k.getPosY()*36);
+						drawTile(k,"wasp", k.getPosX()*36, k.getPosY()*36);
 					} else{
-						drawTile("crab", k.getPosX()*36, k.getPosY()*36);
+						drawTile(k,"crab", k.getPosX()*36, k.getPosY()*36);
 					}
-				} else if (k.getEntities().contains(playerChar)){
-					drawTile("character", k.getPosX()*36, k.getPosY()*36);
 				}
 			}
 		}
+		level.entrance.getEntities().push(hero);
+		hero.setPosX(level.entrance.getPosX());
+		hero.setPosY(level.entrance.getPosY());
 	}
 
 	//draws tile on specified spot in screen
-	public void drawTile(String name, float x, float y) {
-		Sprite sprite = sprites.get(name);
+	public void drawTile(Tile tile, String name, float x, float y) {
+		Sprite sprite;
+		if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof  Hero){
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			sprite.setPosition(x,y);
+			sprite.draw(batch);
+		} else {
+			sprite = sprites.get(name);
+		}
 		sprite.setPosition(x, y);
 		sprite.draw(batch);
 	}

@@ -18,7 +18,7 @@ public class Level {
     private Tile[][] map;
     private final int width = 60;
     private final int height = 60;
-    private Tile entrance;
+    public Tile entrance;
     private Zone[] zones = new Zone[4];
     private int zoneSize;
     private ArrayList<Enemy> enemies = new ArrayList<>();
