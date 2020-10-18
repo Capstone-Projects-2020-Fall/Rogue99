@@ -1,12 +1,13 @@
 package com.mygdx.game.map;
 
+import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.interactable.Interactable;
-import com.mygdx.game.item.Item;
-import com.mygdx.game.item.Potion;
+import com.mygdx.game.item.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+
 
 public class Level {
     Random rand = new Random();
@@ -19,6 +20,7 @@ public class Level {
     private Tile entrance;
     private Zone[] zones = new Zone[4];
     private int zoneSize;
+    private ArrayList<Enemy> enemies = new ArrayList<>();
 
     /*
     GENERATION SETTINGS
@@ -62,9 +64,9 @@ public class Level {
             }
 
             encloseMap();
+
+            //make sure level is connected and initiate zone 0
             floodFill();
-            System.out.println(floodCount);
-            System.out.println(width*height);
         }while((double)floodCount/(width*height) < 0.44);
 
         //loop through map- if tile is not filled, turn to wall
@@ -273,17 +275,27 @@ public class Level {
 
     public void generateEnemy(){
         int[] diff = iterateEnemy();
+        int sum = 0;
+        int index = 1;
+        int u = 0;
         int x = 0;
         int y = 0;
         for(int i : diff){
+            sum += i;
             if(i == 0) continue;
-            for(int j = 0; j < i; j++) {
-                while (!(map[x][y].getType().equals("floor") || map[x][y].getType().equals("grass"))) {
-                    x = (int) (Math.random() * width);
-                    y = (int) (Math.random() * height);
+            for (int j = 0; j < sum; j++) {
+                Zone z = zones[u];
+                Tile tile;
+                do { tile = z.tiles.get(rand.nextInt(z.tiles.size()));
                 }
-                map[x][y].setType("enemy");
-            }
+                while (!tile.entities.isEmpty());
+                Enemy enemy = new Enemy(index);
+                enemies.add(enemy);
+                tile.getEntities().push(enemies.get(enemies.size() - 1));
+                u++;
+                if(u > 3) u = 0;
+                }
+            index++;
         }
     }
 
@@ -310,28 +322,36 @@ public class Level {
         floodZoneUtil(zone, x, y-1, zoneLimit);
     }
 
-//    private void generateItems(){
-//        //generate potions
-//        int c = 100;
-//        for(int i = 0; i < 10; i++){
-//            int itemC = rand.nextInt(c);
-//            //if statement with odds of each potion type
-//            if(itemC < 10){
-//                generateItemUtil(new Potion(10, "healthpotion", 10));
-//            }
-//        }
-//
-//        //generate weapons
-//    }
-//
-//    private void generateItemUtil(Interactable item){
-//        int itemX, itemY;
-//
-//        do{
-//            itemX = rand.nextInt(60);
-//            itemY = rand.nextInt(60);
-//        }while(map[itemX][itemY].getType().equals("wall") && !map[itemX][itemY].getEntities().empty());
-//
-//        map[itemX][itemY].getEntities().push(item);
-//    }
+    private void generateItems(){
+        int c = 100;
+        int numItems, itemC;
+        for(Zone z : zones){
+            numItems = z.id+rand.nextInt(2);
+            for(int i = 0; i < numItems; i++){
+                itemC = rand.nextInt(c);
+                //TODO flesh out item chances once potion classes are finished
+                if(itemC < 10){
+                    generateItemUtil(new Potion(10, "healthpotion", 10), z);
+                } else if(10 <= itemC && itemC < 30){
+                    generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
+                } else if(30 <= itemC && itemC < 50){
+                    generateItemUtil(new HealthScroll(20, "scroll", 10), z);
+                } else if(50 <= itemC && itemC < 70){
+                    generateItemUtil(new StrengthScroll(20, "scroll", 10), z);
+                }
+            }
+        }
+
+        //generate weapons
+    }
+
+    //generates item on random tile in given zone
+    private void generateItemUtil(Interactable item, Zone zone){
+        Tile tile;
+        do{
+            tile = zone.tiles.get(rand.nextInt(zone.tiles.size()));
+        } while(!tile.getEntities().empty());
+
+        tile.getEntities().push(item);
+    }
 }
