@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
+import com.mygdx.game.item.Item;
 import com.mygdx.game.interactable.Character;
 import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
@@ -79,12 +80,13 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 
+		//initialize Inventory & HUD gui disabled for now
+		createInventoryGui();
+		createHUDGui();
+
 		Control control = new Control(hero);
 
 		Gdx.input.setInputProcessor(control);
-		//initialize Inventory & HUD gui disabled for now
-//		createInventoryGui();
-//		createHUDGui();
 	}
 
 	@Override
@@ -114,6 +116,8 @@ public class Rogue99 extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		batch.setProjectionMatrix(camera.combined);
+		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
+		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
 	}
 
 	//adds sprites to hash map for more efficient use
@@ -152,6 +156,16 @@ public class Rogue99 extends ApplicationAdapter {
 					} else{
 						drawTile(k,"crab", k.getPosX()*36, k.getPosY()*36);
 					}
+				} else if(k.getType().equals("stair_up")){
+					drawTile("stair_up", k.getPosX()*36, k.getPosY()*36);
+				} else if(k.getType().equals("stair_down")) {
+					drawTile("stair_down", k.getPosX() * 36, k.getPosY() * 36);
+				} else if(k.getType().equals("enemy")){
+					if(Math.random() < 0.5){
+						drawTile("wasp", k.getPosX()*36, k.getPosY()*36);
+					} else{
+						drawTile("crab", k.getPosX()*36, k.getPosY()*36);
+					}
 				}
 			}
 		}
@@ -177,15 +191,17 @@ public class Rogue99 extends ApplicationAdapter {
 		bars.put("Health", 100);
 		bars.put("Armour", 0);
 		hudGui = new HUDGui(skin, bars);
-		hudGui.setPosition(Gdx.graphics.getWidth() - PAD, inventoryGui.getHeight() + HEIGHT_PAD);
+		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
+		hudGui.getColor().a = .8f;
 		stage.addActor(hudGui);
 		barList = hudGui.getHudBars();
 	}
 
 	//creates Inventory GUI
 	public void createInventoryGui(){
-		inventoryGui = new InventoryGui(skin);
-		inventoryGui.setPosition(Gdx.graphics.getWidth() - PAD, 0);
+		inventoryGui = new InventoryGui(skin, /*place holder*/ new Hero(), this);
+		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+		inventoryGui.getColor().a = .8f;
 		stage.addActor(inventoryGui);
 	}
 
@@ -196,5 +212,10 @@ public class Rogue99 extends ApplicationAdapter {
 				bar.setValue(newValue);
 			}
 		}
+	}
+
+	//a function that is called when a player clicks on an item from inventory to use
+	public void usedItem(Item item){
+		System.out.println("Player used x item");
 	}
 }
