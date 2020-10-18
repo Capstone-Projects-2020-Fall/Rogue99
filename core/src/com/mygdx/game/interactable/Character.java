@@ -1,12 +1,14 @@
 package com.mygdx.game.interactable;
 
-public class Character extends Interactable {
+import com.badlogic.gdx.InputProcessor;
+
+public class Character extends Interactable  {
 
     private int maxHP;
     private int currHP;
     private int armor;
     private int str;
-
+    private Character character;
     @Override
     public void setPosX(int posX) {
         super.setPosX(posX);
