@@ -14,7 +14,7 @@ public class Weapon extends Item {
         this.x = x;
         this.y = y;
 
-        tecture = new Texture("spritesheets/weapon.PNG");
+        tecture = new Texture("spritesheets/sprites.png");
     }
 
     @Override
@@ -29,5 +29,10 @@ public class Weapon extends Item {
     public void render(SpriteBatch batch){
         batch.draw(tecture, x, y);
     }
+    
+    /* weapons sprites
+    * s143
+    * s252 to s260
+    * */
 }
 
