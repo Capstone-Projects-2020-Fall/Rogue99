@@ -18,7 +18,15 @@ public class Potion extends Item{
         return sprite;
     }
 
-    public void use(Character character) {
-            character.setCurrHP(Math.min( character.getMaxHP(), character.getCurrHP() + healAmt ) );
+    public boolean use(Character character) {
+        if(character.getCurrHP() == character.getMaxHP()){
+            // return to inventory
+            return false;
+        } else if(character.getCurrHP() + healAmt > character.getMaxHP()) {
+            character.setCurrHP(character.getMaxHP());
+        }else {
+            character.setCurrHP(character.getCurrHP() + healAmt);
+        }
+        return true;
     }
 }

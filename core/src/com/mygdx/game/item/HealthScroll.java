@@ -18,7 +18,8 @@ public class HealthScroll extends Item{
         return sprite;
     }
 
-    public void use(Character character) {
+    public boolean use(Character character) {
         character.setMaxHP(character.getMaxHP() + hpAmt  );
+        return true;
     }
 }

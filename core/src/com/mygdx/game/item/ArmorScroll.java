@@ -18,7 +18,8 @@ public class ArmorScroll extends Item{
         return sprite;
     }
 
-    public void use(Character character) {
-            character.setArmor( character.getArmor() + armorAmt );
+    public boolean use(Character character) {
+        character.setArmor( character.getArmor() + armorAmt );
+        return true;
     }
 }

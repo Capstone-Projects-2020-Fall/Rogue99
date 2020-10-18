@@ -44,6 +44,7 @@ public class InventoryGui extends Window {
                         System.out.println("Item picked up");
                         //TODO figure out how to pass the item back
                         game.usedItem(slot.getItem());
+                        inventory.remove(slot.getItem());
                         slot.setEmpty(true);
                     }
                     super.clicked(event, x, y);

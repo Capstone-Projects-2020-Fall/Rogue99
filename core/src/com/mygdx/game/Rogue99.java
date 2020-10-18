@@ -39,6 +39,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public final int PAD = 340;
 	public final int HEIGHT_PAD = 132;
+	public final String HEALTHBAR = "Health";
+	public final String ARMOURBAR = "Armour";
 
 	Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
@@ -224,7 +226,7 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite.draw(batch);
 		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Enemy){
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			System.out.println("ENEMY SPRITE" + tile.getEntities().peek().getSprite());
+			//System.out.println("ENEMY SPRITE" + tile.getEntities().peek().getSprite());
 			sprite.setPosition(x,y);
 			sprite.draw(batch);
 		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthScroll){
@@ -255,8 +257,8 @@ public class Rogue99 extends ApplicationAdapter {
 	//creates HUD GUI & the map of the stats bars.
 	public void createHUDGui(){
 		Map<String,Integer> bars = new HashMap<>();
-		bars.put("Health", 100);
-		bars.put("Armour", 0);
+		bars.put(HEALTHBAR, 100);
+		bars.put(ARMOURBAR, 0);
 		hudGui = new HUDGui(skin, bars);
 		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
 		hudGui.getColor().a = .8f;
@@ -266,7 +268,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//creates Inventory GUI
 	public void createInventoryGui(){
-		inventoryGui = new InventoryGui(skin, /*place holder*/ hero, this);
+		inventoryGui = new InventoryGui(skin, hero, this);
 		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
 		inventoryGui.getColor().a = .8f;
 		stage.addActor(inventoryGui);
@@ -284,7 +286,17 @@ public class Rogue99 extends ApplicationAdapter {
 	//a function that is called when a player clicks on an item from inventory to use
 	public void usedItem(Item item){
 		System.out.println("Player used x item");
-		item.use(this.hero);
+		if(!item.use(this.hero)){
+			inventoryGui.addItemToInventory(item);
+		} else {
+			if(item.getSprite().equals("potion")){
+				changeBarValue(HEALTHBAR, hero.getCurrHP());
+				System.out.println(hudGui.getHudBars().get(1).getValue());
+				System.out.println(hero.getCurrHP());
+			} else if(item.getSprite().equals("scroll")){
+				changeBarValue(ARMOURBAR, hero.getArmor());
+			}
+		}
 	}
 
 	public void setShowInventory(boolean showInventory) {

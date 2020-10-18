@@ -35,13 +35,13 @@ public class HUDGui extends Window {
         hudBars = new ArrayList<>();
 
         for(String name: bars.keySet()){
-            HUDProgressBar bar = CreateStatBar(name, bars.get(name), skin,progressBarStyle);
+            HUDProgressBar bar = CreateStatBar(name, bars.get(name), 100,skin,progressBarStyle);
             hudBars.add(bar);
         }
     }
 
-    private HUDProgressBar CreateStatBar(String name, float defaultValue, Skin skin, ProgressBar.ProgressBarStyle progressBarStyle){
-        HUDProgressBar bar = new HUDProgressBar(skin ,progressBarStyle, name);
+    private HUDProgressBar CreateStatBar(String name, float defaultValue,int maxValue , Skin skin, ProgressBar.ProgressBarStyle progressBarStyle){
+        HUDProgressBar bar = new HUDProgressBar(skin, maxValue,progressBarStyle, name);
         bar.setValue(defaultValue);
         TextField textField = new TextField(name, skin);
         textField.setAlignment(Align.center);
