@@ -2,6 +2,7 @@ package com.mygdx.game.map;
 
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.interactable.Interactable;
+import com.mygdx.game.interactable.Character;
 import com.mygdx.game.item.*;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class Level {
     private Zone[] zones = new Zone[4];
     private int zoneSize;
     private ArrayList<Enemy> enemies = new ArrayList<>();
+    private Character playerChar;
+
 
     /*
     GENERATION SETTINGS
@@ -46,6 +49,10 @@ public class Level {
 
     public int getDepth() {
         return depth;
+    }
+
+    public Character getPlayerChar(){
+        return this.playerChar;
     }
 
     public void generate(){
