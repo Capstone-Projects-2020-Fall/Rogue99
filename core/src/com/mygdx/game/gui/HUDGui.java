@@ -18,6 +18,7 @@ public class HUDGui extends Window {
     private Drawable knob;
     private final int HUD_SIZE = 26 ;
     private final int HUD_WINDOW_WIDTH_OFFSET = 30;
+    public int Window_Width;
     public ArrayList<HUDProgressBar> hudBars;
 
     public HUDGui(Skin skin, Map<String, Integer> bars){
@@ -27,6 +28,7 @@ public class HUDGui extends Window {
         this.setMovable(false);
         this.align(Align.center);
         this.setSize(HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET, HUD_SIZE * (bars.size() + 1) + HUD_WINDOW_WIDTH_OFFSET);
+        Window_Width = HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET;
         bar = skin.getDrawable("default-slider");
         knob = skin.getDrawable("default-slider-knob");
         ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle(bar,knob);

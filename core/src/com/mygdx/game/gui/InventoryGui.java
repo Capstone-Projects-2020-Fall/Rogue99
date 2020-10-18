@@ -15,8 +15,9 @@ public class InventoryGui extends Window {
     private static final int INVENTORY_ROWS = 2;
     private static final int INVENTORY_COLUMNS = 5;
     private static final int INVENTORY_SIZE = 10;
-    private static final int INVENTORY_WINDOW_WIDTH_OFFSET = 10;
-    private static final int INVENTORY_WINDOW_HEIGHT_OFFSET = 35;
+    private static final int INVENTORY_WINDOW_WIDTH_SIZE = 26;
+    private static final int INVENTORY_WINDOW_WIDTH_OFFSET = 30;
+    private static final int INVENTORY_WINDOW_HEIGHT_OFFSET = 60;
 
     ArrayList<Item> inventory;
     ArrayList<InventorySlot> inventorySlots;
@@ -27,14 +28,14 @@ public class InventoryGui extends Window {
         super("Inventory", skin);
         this.setResizable(false);
         this.setMovable(false);
-        this.setSize(InventorySlot.SIZE*INVENTORY_ROWS + INVENTORY_WINDOW_WIDTH_OFFSET,InventorySlot.SIZE*INVENTORY_COLUMNS + INVENTORY_WINDOW_HEIGHT_OFFSET);
+        this.setSize(INVENTORY_WINDOW_WIDTH_SIZE*3+INVENTORY_WINDOW_WIDTH_OFFSET, InventorySlot.SIZE*INVENTORY_COLUMNS + INVENTORY_WINDOW_HEIGHT_OFFSET);
         //this.scaleBy(1);
         this.inventory = hero.getInventory();
         this.game = game;
         inventorySlots = new ArrayList<>();
         int row = 0;
         for(int i = 0; i < INVENTORY_SIZE; i++){
-            final InventorySlot slot = new InventorySlot(skin,null);
+            final InventorySlot slot = new InventorySlot(skin,null, null);
             slot.addListener(new ClickListener(){
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -49,7 +50,7 @@ public class InventoryGui extends Window {
                 }
             });
             inventorySlots.add(slot);
-            this.add(slot).width(InventorySlot.SIZE).height(InventorySlot.SIZE).pad(1);
+            this.add(slot).width(InventorySlot.SIZE).height(InventorySlot.SIZE).pad(4);
             row++;
             if(row >= INVENTORY_ROWS){
                 this.row();
@@ -60,7 +61,7 @@ public class InventoryGui extends Window {
             for(Item item : inventory){
                 for(int i = 0; i < inventorySlots.size(); i++){
                     if (inventorySlots.get(i).isEmpty()){
-                        inventorySlots.get(i).setItem(item);
+                        inventorySlots.get(i).setItem(item, game.sprites.get(item.getSprite()));
                         return;
                     }
                 }
@@ -75,7 +76,7 @@ public class InventoryGui extends Window {
     public void addItemToInventory(Item item) {
             for (int i = 0; i < inventorySlots.size(); i++) {
                 if (inventorySlots.get(i).isEmpty()) {
-                    inventorySlots.get(i).setItem(item);
+                    inventorySlots.get(i).setItem(item, game.sprites.get(item.getSprite()));
                     System.out.println("added item");
                     return;
                 }

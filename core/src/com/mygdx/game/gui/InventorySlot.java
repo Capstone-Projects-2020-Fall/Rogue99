@@ -3,6 +3,7 @@ package com.mygdx.game.gui;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
@@ -16,11 +17,11 @@ public class InventorySlot extends Widget {
     private Skin skin;
     private NinePatch patch;
     private Item item;
-    private Texture img;
+    private Sprite itemIcon;
     private boolean isEmpty;
 
 
-    public InventorySlot(Skin skin, Item item) {
+    public InventorySlot(Skin skin, Item item, Sprite itemIcon) {
         this.skin = skin;
         this.item = item;
         if(item == null){
@@ -29,7 +30,7 @@ public class InventorySlot extends Widget {
             isEmpty = false;
         }
         patch = skin.getPatch("default-round");
-        img = new Texture("badlogic.jpg");
+        this.itemIcon = itemIcon;
         this.setTouchable(Touchable.enabled);
     }
 
@@ -39,8 +40,8 @@ public class InventorySlot extends Widget {
         patch.draw(batch,this.getX(),this.getY(),this.getWidth(),this.getHeight());
         //TODO change img in next line to be the item icon
         if(!isEmpty){
-            batch.draw(/* place holder item.getTexture()*/ img, this.getX() + OFFSET, this.getY() + OFFSET, this.getWidth() - OFFSET * 2, this.getHeight() - OFFSET * 2);
-            batch.setColor(1,1,1,1);
+            batch.draw(itemIcon, this.getX() + OFFSET, this.getY() + OFFSET, this.getWidth() - OFFSET * 2, this.getHeight() - OFFSET * 2);
+            batch.setColor(0,0,0,0);
         }
         super.draw(batch, parentAlpha);
     }
@@ -53,8 +54,9 @@ public class InventorySlot extends Widget {
         isEmpty = empty;
     }
 
-    public void setItem(Item item){
+    public void setItem(Item item, Sprite itemIcon){
         this.item = item;
+        this.itemIcon = itemIcon;
         isEmpty = false;
     }
 

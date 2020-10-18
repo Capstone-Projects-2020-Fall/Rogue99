@@ -104,6 +104,7 @@ public class Hero extends Character{
                 // pick it up
                 if(inventory.size() != 10){
                     inventory.add((Item) game.level.getMap()[x][y].getEntities().pop());
+                    game.inventoryGui.addItemToInventory(inventory.get(inventory.size()-1));
                 }
                 System.out.println(inventory.get(0).getSprite());
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();

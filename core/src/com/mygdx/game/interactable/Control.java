@@ -3,13 +3,16 @@ package com.mygdx.game.interactable;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
+import com.mygdx.game.Rogue99;
 
 public class Control extends InputAdapter implements InputProcessor {
 
     Hero hero;
+    Rogue99 game;
 
-    public Control(Hero hero){
+    public Control(Hero hero, Rogue99 game){
         this.hero = hero;
+        this.game = game;
     }
 
     @Override
@@ -36,6 +39,14 @@ public class Control extends InputAdapter implements InputProcessor {
                 System.out.println("RIGHT!");
                 hero.update(hero.RIGHT);
                 break;
+            case Input.Keys.I:
+                System.out.println("I");
+                if(game.isShowInventory()){
+                    game.setShowInventory(false);
+                } else {
+                    game.setShowInventory(true);
+                }
+                break;
         }
         return false;
     }
@@ -47,6 +58,7 @@ public class Control extends InputAdapter implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        System.out.println(screenX + " " + screenY + " " + pointer + " " + button);
         return false;
     }
 

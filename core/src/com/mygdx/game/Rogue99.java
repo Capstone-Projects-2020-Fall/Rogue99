@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,7 +10,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -33,7 +37,7 @@ import java.util.Map;
 public class Rogue99 extends ApplicationAdapter {
 
 	public final int PAD = 340;
-	public final int HEIGHT_PAD = 500;
+	public final int HEIGHT_PAD = 132;
 
 	Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
@@ -46,20 +50,22 @@ public class Rogue99 extends ApplicationAdapter {
 	Skin skin;
 
 	//InventoryGui Actor
-	InventoryGui inventoryGui;
+	public InventoryGui inventoryGui;
 	//HUD Actor
-	HUDGui hudGui;
+	public HUDGui hudGui;
 	//HUD bars list
 	ArrayList<HUDProgressBar> barList;
 
 	//texture atlas for sprite sheet
 	TextureAtlas textureAtlas;
-	final HashMap<String, Sprite> sprites = new HashMap<>();
+	public final HashMap<String, Sprite> sprites = new HashMap<>();
 
 	public Level level;
 	Stage stage;
+	Control control;
 
 	boolean mapDrawn;
+	boolean showInventory;
 
 
 
@@ -77,6 +83,7 @@ public class Rogue99 extends ApplicationAdapter {
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		mapDrawn = false;
+		showInventory = false;
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -98,7 +105,7 @@ public class Rogue99 extends ApplicationAdapter {
 		createInventoryGui();
 		createHUDGui();
 
-		Control control = new Control(hero);
+		control = new Control(hero, this);
 
 		Gdx.input.setInputProcessor(control);
 	}
@@ -119,7 +126,23 @@ public class Rogue99 extends ApplicationAdapter {
 		camera.update();
 
 		stage.act();
-		stage.draw();
+		if(isShowInventory()){
+			Gdx.input.setInputProcessor(stage);
+			inventoryGui.setPosition(hero.getPosX()*36 + 72, hero.getPosY()*36 - 108);
+			hudGui.setPosition(hero.getPosX()*36 + 72, hero.getPosY()*36 + HEIGHT_PAD);
+			stage.draw();
+			stage.addListener(new InputListener(){
+				@Override
+				public boolean keyUp(InputEvent event, int keycode) {
+					if(keycode == Input.Keys.I){
+						setShowInventory(false);
+					}
+					return super.keyDown(event, keycode);
+				}
+			});
+		} else {
+			Gdx.input.setInputProcessor(control);
+		}
 
 		batch.end();
 	}
@@ -255,5 +278,13 @@ public class Rogue99 extends ApplicationAdapter {
 	//a function that is called when a player clicks on an item from inventory to use
 	public void usedItem(Item item){
 		System.out.println("Player used x item");
+	}
+
+	public void setShowInventory(boolean showInventory) {
+		this.showInventory = showInventory;
+	}
+
+	public boolean isShowInventory() {
+		return showInventory;
 	}
 }
