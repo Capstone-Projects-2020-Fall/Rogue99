@@ -20,6 +20,8 @@ public class Hero extends Character{
         this.game = game;
         this.sprite = sprite;
         inventory = new ArrayList<>();
+        this.setMaxHP(100);
+        this.setCurrHP(100);
     }
 
     @Override
@@ -95,7 +97,7 @@ public class Hero extends Character{
     }
 
     private void move(int x, int y){
-        System.out.println(x + " " + y);
+        //System.out.println(x + " " + y);
         if(!game.level.getMap()[x][y].getType().equals("wall")){
             if(!game.level.getMap()[x][y].getEntities().isEmpty() && game.level.getMap()[x][y].getEntities().peek() instanceof Enemy){
                 // attack

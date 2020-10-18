@@ -22,4 +22,9 @@ public class ArmorScroll extends Item{
         character.setArmor( character.getArmor() + armorAmt );
         return true;
     }
+
+    @Override
+    public int getId() {
+        return Item.ARMORSCROLL;
+    }
 }

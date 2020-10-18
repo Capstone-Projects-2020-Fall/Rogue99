@@ -15,4 +15,9 @@ public class StrengthScroll extends Item{
             character.setStr( character.getStr() + strAmt );
             return true;
     }
+
+    @Override
+    public int getId() {
+        return Item.STRENGTHSCROLL;
+    }
 }

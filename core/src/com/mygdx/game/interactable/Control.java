@@ -24,23 +24,18 @@ public class Control extends InputAdapter implements InputProcessor {
     public boolean keyUp(int keycode) {
         switch (keycode) {
             case Input.Keys.DOWN:
-                System.out.println("DOWN!");
                 hero.update(hero.DOWN);
                 break;
             case Input.Keys.UP:
-                System.out.println("UP!");
                 hero.update(hero.UP);
                 break;
             case Input.Keys.LEFT:
-                System.out.println("LEFT!");
                 hero.update(hero.LEFT);
                 break;
             case Input.Keys.RIGHT:
-                System.out.println("RIGHT!");
                 hero.update(hero.RIGHT);
                 break;
             case Input.Keys.I:
-                System.out.println("I");
                 if(game.isShowInventory()){
                     game.setShowInventory(false);
                 } else {
@@ -58,7 +53,6 @@ public class Control extends InputAdapter implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println(screenX + " " + screenY + " " + pointer + " " + button);
         return false;
     }
 

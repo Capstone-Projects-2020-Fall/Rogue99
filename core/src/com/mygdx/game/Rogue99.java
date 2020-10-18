@@ -286,15 +286,23 @@ public class Rogue99 extends ApplicationAdapter {
 	//a function that is called when a player clicks on an item from inventory to use
 	public void usedItem(Item item){
 		System.out.println("Player used x item");
-		if(!item.use(this.hero)){
+		System.out.println(hero.getMaxHP());
+		if(!item.use(hero)){
 			inventoryGui.addItemToInventory(item);
 		} else {
-			if(item.getSprite().equals("potion")){
+			item.use(hero);
+			if(item.getId() == Item.POTION){
 				changeBarValue(HEALTHBAR, hero.getCurrHP());
+				hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
 				System.out.println(hudGui.getHudBars().get(1).getValue());
 				System.out.println(hero.getCurrHP());
-			} else if(item.getSprite().equals("scroll")){
+			} else if(item.getId() == Item.ARMORSCROLL){
 				changeBarValue(ARMOURBAR, hero.getArmor());
+				hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
+			} else if(item.getId() == Item.HEALTHSCROLL) {
+				// do something
+			} else if(item.getId() == Item.STRENGTHSCROLL){
+				// do something
 			}
 		}
 	}

@@ -9,7 +9,6 @@ public class Potion extends Item{
     public Potion(int rarity, String sprite, int heal) {
         super.rarity = rarity;
         this.sprite = sprite;
-
         healAmt = heal;
     }
 
@@ -28,5 +27,10 @@ public class Potion extends Item{
             character.setCurrHP(character.getCurrHP() + healAmt);
         }
         return true;
+    }
+
+    @Override
+    public int getId() {
+        return Item.POTION;
     }
 }

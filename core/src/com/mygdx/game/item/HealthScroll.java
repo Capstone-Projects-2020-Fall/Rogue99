@@ -22,4 +22,9 @@ public class HealthScroll extends Item{
         character.setMaxHP(character.getMaxHP() + hpAmt  );
         return true;
     }
+
+    @Override
+    public int getId() {
+        return Item.HEALTHSCROLL;
+    }
 }

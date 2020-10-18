@@ -18,8 +18,10 @@ public class HUDGui extends Window {
     private Drawable knob;
     private final int HUD_SIZE = 26 ;
     private final int HUD_WINDOW_WIDTH_OFFSET = 30;
+    private final int HUD_WINDOW_HEIGHT_OFFSET = 80;
     public int Window_Width;
     public ArrayList<HUDProgressBar> hudBars;
+    public ArrayList<TextField> statsNumTexts;
 
     public HUDGui(Skin skin, Map<String, Integer> bars){
         super("Stats", skin);
@@ -27,12 +29,13 @@ public class HUDGui extends Window {
         this.setResizable(false);
         this.setMovable(false);
         this.align(Align.center);
-        this.setSize(HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET, HUD_SIZE * (bars.size() + 1) + HUD_WINDOW_WIDTH_OFFSET);
+        this.setSize(HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET, HUD_SIZE * (bars.size() + 1) + HUD_WINDOW_HEIGHT_OFFSET);
         Window_Width = HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET;
         bar = skin.getDrawable("default-slider");
         knob = skin.getDrawable("default-slider-knob");
         ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle(bar,knob);
         hudBars = new ArrayList<>();
+        statsNumTexts = new ArrayList<>();
 
         for(String name: bars.keySet()){
             HUDProgressBar bar = CreateStatBar(name, bars.get(name), 100,skin,progressBarStyle);
@@ -46,7 +49,15 @@ public class HUDGui extends Window {
         TextField textField = new TextField(name, skin);
         textField.setAlignment(Align.center);
         textField.setDisabled(true);
+
+        TextField numTextfield = new TextField(String.valueOf(defaultValue), skin);
+        numTextfield.setAlignment(Align.center);
+        numTextfield.setDisabled(true);
+        statsNumTexts.add(numTextfield);
+
         this.add(textField).size(72,20).pad(4);
+        this.row();
+        this.add(numTextfield).size(72,20).pad(1);
         this.row();
         this.add(bar).size(84,10);
         this.row();
