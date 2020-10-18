@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
+import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.item.ArmorScroll;
 import com.mygdx.game.item.HealthScroll;
 import com.mygdx.game.item.Item;
@@ -198,6 +199,11 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			sprite.setPosition(x,y);
 			sprite.draw(batch);
+		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Enemy){
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			System.out.println("ENEMY SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setPosition(x,y);
+			sprite.draw(batch);
 		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthScroll){
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("HEALTH SCROLL SPRITE" + tile.getEntities().peek().getSprite());
@@ -255,5 +261,6 @@ public class Rogue99 extends ApplicationAdapter {
 	//a function that is called when a player clicks on an item from inventory to use
 	public void usedItem(Item item){
 		System.out.println("Player used x item");
+		item.use(this.hero);
 	}
 }

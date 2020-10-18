@@ -103,8 +103,8 @@ public class Level {
 
         generateGrass();
         generateStairs();
+        generateEnemy();
         generateItems();
-        //generateEnemy();
 
         this.entrance.getEntities().push(hero);
         hero.setPosX(this.entrance.getPosX());
@@ -257,7 +257,7 @@ public class Level {
             y_up = (int) (Math.random() * 60);
         }
         map[x_up][y_up].setType("stair_up");
-        entrance = map[x_down][y_down];
+        entrance = map[x_up][y_up];
     }
 
     // returns false if distance between points is less than d
@@ -288,6 +288,7 @@ public class Level {
     }
 
     public void generateEnemy(){
+        System.out.println("in generateEnemy");
         int[] diff = iterateEnemy();
         int sum = 0;
         int index = 1;
@@ -300,15 +301,18 @@ public class Level {
             for (int j = 0; j < sum; j++) {
                 Zone z = zones[u];
                 Tile tile;
-                do { tile = z.tiles.get(rand.nextInt(z.tiles.size()));
-                }
-                while (!tile.entities.isEmpty());
-                Enemy enemy = new Enemy(index);
+
+                do {
+                    tile = z.tiles.get(rand.nextInt(z.tiles.size()));
+                } while (!tile.entities.isEmpty());
+
+                Enemy enemy = new Enemy(index, "wasp", tile);
+                System.out.println("ENEMY GENERATED: " + enemy.getSprite());
                 enemies.add(enemy);
-                tile.getEntities().push(enemies.get(enemies.size() - 1));
+                tile.getEntities().push(enemy);
                 u++;
                 if(u > 3) u = 0;
-                }
+            }
             index++;
         }
     }
@@ -340,17 +344,17 @@ public class Level {
         int c = 100;
         int numItems, itemC;
         for(Zone z : zones){
-            numItems = z.id+rand.nextInt(2);
+            numItems = 2 + z.id+rand.nextInt(2);
             for(int i = 0; i < numItems; i++){
                 itemC = rand.nextInt(c);
                 //TODO flesh out item chances once potion classes are finished
-                if(itemC < 10){
-                    generateItemUtil(new Potion(10, "potion", 10), z);
-                } else if(10 <= itemC && itemC < 30){
+                if(itemC < 40){
+                    generateItemUtil(new Potion(40, "potion", 10), z);
+                } else if(40 <= itemC && itemC < 60){
                     generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
-                } else if(30 <= itemC && itemC < 50){
+                } else if(60 <= itemC && itemC < 80){
                     generateItemUtil(new HealthScroll(20, "scroll", 10), z);
-                } else if(50 <= itemC && itemC < 70){
+                } else if(80 <= itemC && itemC < 100){
                     generateItemUtil(new StrengthScroll(20, "scroll", 10), z);
                 }
             }
