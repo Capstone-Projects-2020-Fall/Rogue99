@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.game.gui.InventoryGui;
+import com.mygdx.game.item.Weapon;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -26,6 +27,7 @@ public class Rogue99 extends ApplicationAdapter {
 	ExtendViewport viewport;
 
 	Texture img;
+	Weapon weapon;
 
 	//Skin for inventory gui
 	Skin skin;
@@ -49,6 +51,7 @@ public class Rogue99 extends ApplicationAdapter {
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(2500, 2160, camera);
 
+		weapon = new Weapon(1250, 1084);
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
 		addSprites();
@@ -73,6 +76,8 @@ public class Rogue99 extends ApplicationAdapter {
 		drawMap(level);
 		stage.act();
 		stage.draw();
+		//weapon.render(batch);
+		drawWeapon("tile143", 1250, 1050);
 		batch.end();
 	}
 
@@ -123,6 +128,12 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//draws tile on specified spot in screen
 	public void drawTile(String name, float x, float y) {
+		Sprite sprite = sprites.get(name);
+		sprite.setPosition(x, y);
+		sprite.draw(batch);
+	}
+
+	public void drawWeapon(String name, float x, float y) {
 		Sprite sprite = sprites.get(name);
 		sprite.setPosition(x, y);
 		sprite.draw(batch);
