@@ -14,8 +14,10 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
-import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.item.Item;
+import com.mygdx.game.interactable.Character;
+import com.mygdx.game.interactable.Control;
+import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -28,6 +30,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public final int PAD = 340;
 	public final int HEIGHT_PAD = 500;
 
+	Hero hero;
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	ExtendViewport viewport;
@@ -48,8 +51,10 @@ public class Rogue99 extends ApplicationAdapter {
 	TextureAtlas textureAtlas;
 	final HashMap<String, Sprite> sprites = new HashMap<>();
 
-	Level level;
+	public Level level;
 	Stage stage;
+
+	boolean mapDrawn;
 
 	@Override
 	public void create () {
@@ -58,6 +63,8 @@ public class Rogue99 extends ApplicationAdapter {
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(2500, 2160, camera);
 
+		mapDrawn = false;
+
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
 		addSprites();
@@ -65,17 +72,21 @@ public class Rogue99 extends ApplicationAdapter {
 		//load skin for Inventory & HUD
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+		hero = new Hero(this, "tile169");
 		//initialize first level
-		level = new Level(1);
+		level = new Level(1, hero);
 		level.generate();
 		stage = new LevelStage(level);
-		Gdx.input.setInputProcessor(stage);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 
 		//initialize Inventory & HUD gui disabled for now
 		createInventoryGui();
 		createHUDGui();
+
+		Control control = new Control(hero);
+
+		Gdx.input.setInputProcessor(control);
 	}
 
 	@Override
@@ -84,9 +95,12 @@ public class Rogue99 extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
+
 		drawMap(level);
+
 		stage.act();
 		stage.draw();
+
 		batch.end();
 	}
 
@@ -123,14 +137,24 @@ public class Rogue99 extends ApplicationAdapter {
 			for(Tile k : i){
 				//check type of tile and draw sprite
 				if(k.getType().equals("floor")){
-					drawTile("floor", k.getPosX()*36, k.getPosY()*36);
+					drawTile(k,"floor", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("wall")){
-					drawTile("crackedwall", k.getPosX()*36, k.getPosY()*36);
+					drawTile(k,"crackedwall", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("grass")){
 					if(Math.random() < 0.5){
-						drawTile("shortgrass1", k.getPosX()*36, k.getPosY()*36);
+						drawTile(k,"shortgrass1", k.getPosX()*36, k.getPosY()*36);
 					} else{
-						drawTile("longgrass", k.getPosX()*36, k.getPosY()*36);
+						drawTile(k,"longgrass", k.getPosX()*36, k.getPosY()*36);
+					}
+				} else if(k.getType().equals("stair_up")){
+					drawTile(k,"stair_up", k.getPosX()*36, k.getPosY()*36);
+				} else if(k.getType().equals("stair_down")) {
+					drawTile(k,"stair_down", k.getPosX() * 36, k.getPosY() * 36);
+				} else if(k.getType().equals("enemy")){
+					if(Math.random() < 0.5){
+						drawTile(k,"wasp", k.getPosX()*36, k.getPosY()*36);
+					} else{
+						drawTile(k,"crab", k.getPosX()*36, k.getPosY()*36);
 					}
 				} else if(k.getType().equals("stair_up")){
 					drawTile("stair_up", k.getPosX()*36, k.getPosY()*36);
@@ -148,8 +172,15 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	//draws tile on specified spot in screen
-	public void drawTile(String name, float x, float y) {
-		Sprite sprite = sprites.get(name);
+	public void drawTile(Tile tile, String name, float x, float y) {
+		Sprite sprite;
+		if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof  Hero){
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			sprite.setPosition(x,y);
+			sprite.draw(batch);
+		} else {
+			sprite = sprites.get(name);
+		}
 		sprite.setPosition(x, y);
 		sprite.draw(batch);
 	}
