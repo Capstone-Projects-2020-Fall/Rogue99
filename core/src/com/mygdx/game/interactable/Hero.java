@@ -1,5 +1,6 @@
 package com.mygdx.game.interactable;
 
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.Item;
 import com.mygdx.game.item.Potion;
@@ -13,10 +14,24 @@ public class Hero extends Character{
     private ArrayList<Item> inventory;
     Rogue99 game;
     String sprite;
+    public Vector3 pos3 = new Vector3();
 
     public Hero(Rogue99 game, String sprite) {
         this.game = game;
         this.sprite = sprite;
+        inventory = new ArrayList<>();
+    }
+
+    @Override
+    public void setPosX(int posX) {
+        super.setPosX(posX);
+        pos3.x = getPosX()*36;
+    }
+
+    @Override
+    public void setPosY(int posY) {
+        super.setPosY(posY);
+        pos3.y = getPosY()*36;
     }
 
     public void setInventory(ArrayList<Item> inventory) {
@@ -90,6 +105,11 @@ public class Hero extends Character{
                 if(inventory.size() != 10){
                     inventory.add((Item) game.level.getMap()[x][y].getEntities().pop());
                 }
+                System.out.println(inventory.get(0).getSprite());
+                game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
+                setPosX(x);
+                setPosY(y);
+                game.level.getMap()[x][y].getEntities().push(this);
             } else {
                 // move to new position
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();

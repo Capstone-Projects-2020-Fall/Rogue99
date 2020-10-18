@@ -990,7 +990,7 @@ tile140
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile141
+potion
   rotate: false
   xy: 196, 391
   size: 37, 37
@@ -2656,7 +2656,7 @@ tile378
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile379
+scroll
   rotate: false
   xy: 235, 976
   size: 37, 37

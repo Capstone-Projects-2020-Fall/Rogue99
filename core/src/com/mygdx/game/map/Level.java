@@ -1,5 +1,6 @@
 package com.mygdx.game.map;
 
+import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.interactable.Interactable;
@@ -24,6 +25,7 @@ public class Level {
     private int zoneSize;
     private ArrayList<Enemy> enemies = new ArrayList<>();
     private Hero hero;
+    private Rogue99 game;
 
 
     /*
@@ -40,7 +42,8 @@ public class Level {
     //grass alive floor dead
     GenerationSettings grassSettings = new GenerationSettings(0.83, 4, 4, 3);
 
-    public Level(int depth, Hero hero){
+    public Level(Rogue99 game, int depth, Hero hero){
+        this.game = game;
         this.depth = depth;
         this.hero = hero;
    }
@@ -100,7 +103,8 @@ public class Level {
 
         generateGrass();
         generateStairs();
-        generateEnemy();
+        generateItems();
+        //generateEnemy();
 
         this.entrance.getEntities().push(hero);
         hero.setPosX(this.entrance.getPosX());
@@ -341,7 +345,7 @@ public class Level {
                 itemC = rand.nextInt(c);
                 //TODO flesh out item chances once potion classes are finished
                 if(itemC < 10){
-                    generateItemUtil(new Potion(10, "healthpotion", 10), z);
+                    generateItemUtil(new Potion(10, "potion", 10), z);
                 } else if(10 <= itemC && itemC < 30){
                     generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
                 } else if(30 <= itemC && itemC < 50){

@@ -8,16 +8,21 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
+import com.mygdx.game.item.ArmorScroll;
+import com.mygdx.game.item.HealthScroll;
 import com.mygdx.game.item.Item;
 import com.mygdx.game.interactable.Character;
 import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
+import com.mygdx.game.item.Potion;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -31,8 +36,8 @@ public class Rogue99 extends ApplicationAdapter {
 	public final int HEIGHT_PAD = 500;
 
 	Hero hero;
-	SpriteBatch batch;
-	OrthographicCamera camera;
+	SpriteBatch batch;	public OrthographicCamera camera;
+
 	ExtendViewport viewport;
 
 	Texture img;
@@ -56,12 +61,20 @@ public class Rogue99 extends ApplicationAdapter {
 
 	boolean mapDrawn;
 
+
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-		camera = new OrthographicCamera();
+
+
+
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 		viewport = new ExtendViewport(2500, 2160, camera);
+
+		camera.zoom = 0.4f;
+		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		mapDrawn = false;
 
@@ -69,12 +82,13 @@ public class Rogue99 extends ApplicationAdapter {
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
 		addSprites();
 
+
 		//load skin for Inventory & HUD
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 		hero = new Hero(this, "tile169");
 		//initialize first level
-		level = new Level(1, hero);
+		level = new Level(this,1, hero);
 		level.generate();
 		stage = new LevelStage(level);
 		stage.getViewport().setCamera(camera);
@@ -93,10 +107,16 @@ public class Rogue99 extends ApplicationAdapter {
 	public void render () {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		batch.setProjectionMatrix(camera.combined);
+
 		batch.begin();
 
 
 		drawMap(level);
+
+		camera.position.lerp(hero.pos3, 0.1f);
+		camera.update();
 
 		stage.act();
 		stage.draw();
@@ -178,11 +198,29 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			sprite.setPosition(x,y);
 			sprite.draw(batch);
-		} else {
-			sprite = sprites.get(name);
+		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthScroll){
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			//System.out.println("HEALTH SCROLL SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setPosition(x,y);
+			sprite.draw(batch);
+		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof ArmorScroll) {
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			//System.out.println("ARMOR SCROLL SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
 		}
-		sprite.setPosition(x, y);
-		sprite.draw(batch);
+		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Potion) {
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
+		}
+			else {
+			sprite = sprites.get(name);
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
+		}
+
 	}
 
 	//creates HUD GUI & the map of the stats bars.
