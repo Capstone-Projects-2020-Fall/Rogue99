@@ -71,14 +71,14 @@ public class Rogue99 extends ApplicationAdapter {
 		//load skin for Inventory & HUD
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+		hero = new Hero(this, "tile169");
 		//initialize first level
-		level = new Level(1);
+		level = new Level(1, hero);
 		level.generate();
 		stage = new LevelStage(level);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 
-		hero = new Hero(this, "tile169");
 		Control control = new Control(hero);
 
 		Gdx.input.setInputProcessor(control);
@@ -155,9 +155,6 @@ public class Rogue99 extends ApplicationAdapter {
 				}
 			}
 		}
-		level.entrance.getEntities().push(hero);
-		hero.setPosX(level.entrance.getPosX());
-		hero.setPosY(level.entrance.getPosY());
 	}
 
 	//draws tile on specified spot in screen

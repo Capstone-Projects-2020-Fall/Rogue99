@@ -1,6 +1,7 @@
 package com.mygdx.game.map;
 
 import com.mygdx.game.interactable.Enemy;
+import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.interactable.Interactable;
 import com.mygdx.game.interactable.Character;
 import com.mygdx.game.item.*;
@@ -22,7 +23,7 @@ public class Level {
     private Zone[] zones = new Zone[4];
     private int zoneSize;
     private ArrayList<Enemy> enemies = new ArrayList<>();
-    private Character playerChar;
+    private Hero hero;
 
 
     /*
@@ -39,8 +40,9 @@ public class Level {
     //grass alive floor dead
     GenerationSettings grassSettings = new GenerationSettings(0.83, 4, 4, 3);
 
-    public Level(int depth){
+    public Level(int depth, Hero hero){
         this.depth = depth;
+        this.hero = hero;
    }
 
     public Tile[][] getMap() {
@@ -51,9 +53,6 @@ public class Level {
         return depth;
     }
 
-    public Character getPlayerChar(){
-        return this.playerChar;
-    }
 
     public void generate(){
         /*
@@ -102,6 +101,10 @@ public class Level {
         generateGrass();
         generateStairs();
         generateEnemy();
+
+        this.entrance.getEntities().push(hero);
+        hero.setPosX(this.entrance.getPosX());
+        hero.setPosY(this.entrance.getPosY());
     }
 
     //initializes grid to be all wall tiles

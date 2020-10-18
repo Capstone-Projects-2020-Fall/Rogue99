@@ -65,16 +65,16 @@ public class Hero extends Character{
         int y = getPosY();
         switch (direction){
             case DOWN:
-                move(x, y + 1);
+                move(x, y - 1);
                 break;
             case UP:
-                move(x, y -1);
+                move(x, y + 1);
                 break;
             case LEFT:
-                move(x + 1, y);
+                move(x - 1, y);
                 break;
             case RIGHT:
-                move(x - 1, y);
+                move(x + 1, y);
                 break;
         }
     }
@@ -92,8 +92,10 @@ public class Hero extends Character{
                 }
             } else {
                 // move to new position
+                game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 setPosX(x);
                 setPosY(y);
+                game.level.getMap()[x][y].getEntities().push(this);
             }
         }
     }
