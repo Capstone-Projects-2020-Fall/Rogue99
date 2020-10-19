@@ -55,7 +55,7 @@ public class HUDGui extends Window {
         numTextfield.setDisabled(true);
         statsNumTexts.add(numTextfield);
 
-        this.add(textField).size(72,20).pad(4);
+        this.add(textField).size(82,20).pad(4);
         this.row();
         this.add(numTextfield).size(72,20).pad(1);
         this.row();

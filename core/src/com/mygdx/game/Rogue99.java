@@ -9,20 +9,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.item.*;
-import com.mygdx.game.interactable.Character;
 import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.*;
@@ -53,8 +49,10 @@ public class Rogue99 extends ApplicationAdapter {
 	public InventoryGui inventoryGui;
 	//HUD Actor
 	public HUDGui hudGui;
+	public HUDGui enemyHud;
 	//HUD bars list
 	ArrayList<HUDProgressBar> barList;
+	public ArrayList<HUDProgressBar> enemyBarList;
 
 	//texture atlas for sprite sheet
 	TextureAtlas textureAtlas;
@@ -66,6 +64,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	boolean mapDrawn;
 	boolean showInventory;
+	boolean attacking;
 
 	Item EquippedWeapon;
 
@@ -86,6 +85,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 		mapDrawn = false;
 		showInventory = false;
+		attacking = false;
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -106,6 +106,7 @@ public class Rogue99 extends ApplicationAdapter {
 		//initialize Inventory & HUD gui disabled for now
 		createInventoryGui();
 		createHUDGui();
+		createEnemyHud();
 
 		control = new Control(hero, this);
 
@@ -132,6 +133,7 @@ public class Rogue99 extends ApplicationAdapter {
 			Gdx.input.setInputProcessor(stage);
 			inventoryGui.setPosition(hero.getPosX()*36 + 72, hero.getPosY()*36 - 108);
 			hudGui.setPosition(hero.getPosX()*36 + 72, hero.getPosY()*36 + HEIGHT_PAD);
+			enemyHud.setPosition(Gdx.graphics.getWidth(), 0);
 			stage.draw();
 			stage.addListener(new InputListener(){
 				@Override
@@ -144,6 +146,13 @@ public class Rogue99 extends ApplicationAdapter {
 			});
 		} else {
 			Gdx.input.setInputProcessor(control);
+		}
+
+		if(isAttacking()){
+			inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+			hudGui.setPosition(hero.getPosX()*36 + 144, hero.getPosY()*36);
+			enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() *36);
+			stage.draw();
 		}
 
 		batch.end();
@@ -271,6 +280,17 @@ public class Rogue99 extends ApplicationAdapter {
 		barList = hudGui.getHudBars();
 	}
 
+	public void createEnemyHud(){
+		Map<String, Integer> bars = new HashMap<>();
+		bars.put("EnemyHP", 0);
+		bars.put("EnemyAR", 0);
+		enemyHud = new HUDGui(skin, bars);
+		enemyBarList = enemyHud.getHudBars();
+		enemyHud.getColor().a = .8f;
+		enemyHud.setSize(26*3+40,26*(enemyBarList.size() + 1) + 80);
+		stage.addActor(enemyHud);
+	}
+
 	//creates Inventory GUI
 	public void createInventoryGui(){
 		inventoryGui = new InventoryGui(skin, hero, this);
@@ -282,6 +302,11 @@ public class Rogue99 extends ApplicationAdapter {
 	//adjust stats bars
 	public void changeBarValue(String barName, int newValue){
 		for(HUDProgressBar bar : barList){
+			if(bar.getName() == barName){
+				bar.setValue(newValue);
+			}
+		}
+		for(HUDProgressBar bar : enemyBarList){
 			if(bar.getName() == barName){
 				bar.setValue(newValue);
 			}
@@ -329,5 +354,14 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public boolean isShowInventory() {
 		return showInventory;
+	}
+
+	public void setAttacking(boolean attacking) {
+		System.out.println(attacking);
+		this.attacking = attacking;
+	}
+
+	public boolean isAttacking() {
+		return attacking;
 	}
 }
