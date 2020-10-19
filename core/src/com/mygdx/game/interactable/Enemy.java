@@ -34,22 +34,26 @@ public class Enemy extends Character {
 
     public void moveEnemy(Tile[][] map, Hero hero){
         //find shortest path to hero
+        System.out.println("HERO X: " + hero.getPosX() + " HERO Y: " + hero.getPosY());
         Stack<Tile> path = getShortestPath(map[hero.getPosX()][hero.getPosY()], map);
-        if(path.size() < 15){
-            path.pop();
-            Tile newTile = path.pop();
-
-            //remove enemy from current tile and push to new
-            tile.getEntities().pop();
-            tile = newTile;
-            newTile.getEntities().push(this);
-            System.out.println("ENEMY MOVED");
+        if(path == null){
+            return;
         }
+        path.pop();
+        Tile newTile = path.pop();
+
+        //remove enemy from current tile and push to new
+        tile.getEntities().pop();
+        tile = newTile;
+        newTile.getEntities().push(this);
+        System.out.println("ENEMY MOVED");
     }
 
     public Stack<Tile> getShortestPath(Tile target, Tile[][] map){
         ArrayList<Tile> open = new ArrayList<>();
         ArrayList<Tile> closed = new ArrayList<>();
+
+        System.out.println("STARTING TILE: " + tile.getPosX() + " " + tile.getPosY());
 
         //add starting tile to open list
         this.tile.f = 0;
@@ -101,9 +105,14 @@ public class Enemy extends Character {
                 Stack<Tile> path = new Stack<>();
                 Tile c = target;
                 while(c.parent != null){
+                    System.out.println("path: " + c.parent.getPosX() + " " + c.parent.getPosY());
                     path.push(c);
                     c = c.parent;
+                    if(path.size() >= 15){
+                        return null;
+                    }
                 }
+                //System.out.println("Shortest path found");
                 return path;
             }
         }
