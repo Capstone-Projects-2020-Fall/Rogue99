@@ -25,6 +25,7 @@ public class Enemy extends Character {
         this.setCurrHP(getMaxHP());
         this.sprite = sprite;
         this.tile = tile;
+        this.game = game;
     }
 
     @Override
@@ -135,5 +136,16 @@ public class Enemy extends Character {
 
     public int getDifficulty() {
         return difficulty;
+    }
+
+    public void attack(Hero hero){
+        if (getStr() > hero.getArmor()) {
+            hero.setCurrHP(hero.getCurrHP() + hero.getArmor() - getStr());
+        }
+        System.out.println("enemy health after attack: " + hero.getCurrHP());
+        game.changeBarValue(game.HEALTHBAR, hero.getCurrHP());
+        game.changeBarValue(game.ARMOURBAR, hero.getArmor());
+        game.hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
+        game.hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
     }
 }

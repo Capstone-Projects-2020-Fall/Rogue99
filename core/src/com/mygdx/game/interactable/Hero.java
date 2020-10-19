@@ -140,6 +140,7 @@ public class Hero extends Character{
         game.enemyHud.statsNumTexts.get(1).setText(String.valueOf(enemy.getArmor()));
         if(enemy.getCurrHP() > 0){
             game.level.getMap()[x][y].getEntities().push(enemy);
+            enemy.attack(this);
         }
     }
 
