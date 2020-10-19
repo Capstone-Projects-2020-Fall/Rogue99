@@ -22,7 +22,7 @@ public class Hero extends Character{
         inventory = new ArrayList<>();
         this.setMaxHP(100);
         this.setCurrHP(100);
-        this.setStr(5);
+        this.setStr(15);
     }
 
     @Override
