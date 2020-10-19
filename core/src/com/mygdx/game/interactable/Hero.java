@@ -126,8 +126,10 @@ public class Hero extends Character{
 
     public void attack(int x, int y){
         Enemy enemy = (Enemy) game.level.getMap()[x][y].getEntities().pop();
-        System.out.println("enemy health: " + enemy.getCurrHP());
-        enemy.setCurrHP(enemy.getCurrHP() - getStr());
+        System.out.println("enemy health: " + enemy.getCurrHP() + " enemy armor: " + enemy.getArmor());
+        if (getStr() > enemy.getArmor()) {
+            enemy.setCurrHP(enemy.getCurrHP() + enemy.getArmor() - getStr());
+        }
         System.out.println("enemy health after attack: " + enemy.getCurrHP());
         if(enemy.getCurrHP() > 0){
             game.level.getMap()[x][y].getEntities().push(enemy);
