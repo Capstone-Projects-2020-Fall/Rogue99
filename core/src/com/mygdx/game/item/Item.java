@@ -8,9 +8,13 @@ public abstract class Item extends Interactable {
     public static final int ARMORSCROLL = 2;
     public static final int HEALTHSCROLL = 3;
     public static final int STRENGTHSCROLL = 4;
+    public static final int WEAPON = 5;
+
     protected int rarity;
     protected String sprite;
     protected int id;
     public abstract boolean use(Character character);
     public abstract int getId();
+    public abstract void setEquipped(boolean b);
+    public abstract int getDmgModifier();
 }

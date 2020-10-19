@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.item.Item;
+import com.mygdx.game.item.Weapon;
 
 import java.util.ArrayList;
 
@@ -41,11 +42,13 @@ public class InventoryGui extends Window {
                 public void clicked(InputEvent event, float x, float y) {
                     System.out.println("Item Clicked!");
                     if(!slot.isEmpty()){
-                        System.out.println("Item picked up");
-                        //TODO figure out how to pass the item back
                         game.usedItem(slot.getItem());
-                        inventory.remove(slot.getItem());
-                        slot.setEmpty(true);
+                        if(slot.getItem() instanceof Weapon){
+
+                        } else {
+                            inventory.remove(slot.getItem());
+                            slot.setEmpty(true);
+                        }
                     }
                     super.clicked(event, x, y);
                 }

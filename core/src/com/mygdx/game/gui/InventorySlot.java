@@ -38,7 +38,6 @@ public class InventorySlot extends Widget {
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(1,1,1,parentAlpha);
         patch.draw(batch,this.getX(),this.getY(),this.getWidth(),this.getHeight());
-        //TODO change img in next line to be the item icon
         if(!isEmpty){
             batch.draw(itemIcon, this.getX() + OFFSET, this.getY() + OFFSET, this.getWidth() - OFFSET * 2, this.getHeight() - OFFSET * 2);
             batch.setColor(0,0,0,0);

@@ -22,6 +22,7 @@ public class Hero extends Character{
         inventory = new ArrayList<>();
         this.setMaxHP(100);
         this.setCurrHP(100);
+        this.setStr(5);
     }
 
     @Override
@@ -101,7 +102,7 @@ public class Hero extends Character{
         if(!game.level.getMap()[x][y].getType().equals("wall")){
             if(!game.level.getMap()[x][y].getEntities().isEmpty() && game.level.getMap()[x][y].getEntities().peek() instanceof Enemy){
                 // attack
-
+                attack(x,y);
             } else if(!game.level.getMap()[x][y].getEntities().isEmpty() && game.level.getMap()[x][y].getEntities().peek() instanceof Item){
                 // pick it up
                 if(inventory.size() != 10){
@@ -120,6 +121,16 @@ public class Hero extends Character{
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
             }
+        }
+    }
+
+    public void attack(int x, int y){
+        Enemy enemy = (Enemy) game.level.getMap()[x][y].getEntities().pop();
+        System.out.println("enemy health: " + enemy.getCurrHP());
+        enemy.setCurrHP(enemy.getCurrHP() - getStr());
+        System.out.println("enemy health after attack: " + enemy.getCurrHP());
+        if(enemy.getCurrHP() > 0){
+            game.level.getMap()[x][y].getEntities().push(enemy);
         }
     }
 

@@ -348,14 +348,17 @@ public class Level {
             for(int i = 0; i < numItems; i++){
                 itemC = rand.nextInt(c);
                 //TODO flesh out item chances once potion classes are finished
-                if(itemC < 40){
+                if(itemC < 20){
                     generateItemUtil(new Potion(40, "potion", 10), z);
-                } else if(40 <= itemC && itemC < 60){
+                } else if(20 <= itemC && itemC < 40){
                     generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
-                } else if(60 <= itemC && itemC < 80){
+                } else if(40 <= itemC && itemC < 60){
                     generateItemUtil(new HealthScroll(20, "scroll", 10), z);
-                } else if(80 <= itemC && itemC < 100){
+                } else if(60 <= itemC && itemC < 80){
                     generateItemUtil(new StrengthScroll(20, "scroll", 10), z);
+                } else if(80 <= itemC && itemC < 100){
+                    System.out.println("weapon generated!");
+                    generateItemUtil(new Weapon(20, "tile261", 10), z);
                 }
             }
         }

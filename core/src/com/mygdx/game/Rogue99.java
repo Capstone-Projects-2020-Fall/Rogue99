@@ -21,13 +21,10 @@ import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
 import com.mygdx.game.interactable.Enemy;
-import com.mygdx.game.item.ArmorScroll;
-import com.mygdx.game.item.HealthScroll;
-import com.mygdx.game.item.Item;
+import com.mygdx.game.item.*;
 import com.mygdx.game.interactable.Character;
 import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
-import com.mygdx.game.item.Potion;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -69,6 +66,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 	boolean mapDrawn;
 	boolean showInventory;
+
+	Item EquippedWeapon;
 
 
 
@@ -246,6 +245,12 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
+		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Weapon) {
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
+		}
 			else {
 			sprite = sprites.get(name);
 			sprite.setPosition(x, y);
@@ -300,9 +305,20 @@ public class Rogue99 extends ApplicationAdapter {
 				changeBarValue(ARMOURBAR, hero.getArmor());
 				hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
 			} else if(item.getId() == Item.HEALTHSCROLL) {
-				// do something
+				// write code here for visual changes if wanted //
 			} else if(item.getId() == Item.STRENGTHSCROLL){
-				// do something
+				// write code here for visual changes if wanted //
+			} else if(item.getId() == Item.WEAPON){
+					item.setEquipped(true);
+					System.out.println("Weapon used: " + item.use(hero));
+					if(EquippedWeapon != null){
+						EquippedWeapon.setEquipped(false);
+						// revert changes from previous weapon to damage //
+						hero.setStr(hero.getStr() - EquippedWeapon.getDmgModifier());
+					}
+					// do something with damage modifier in combat //
+					hero.setStr(hero.getStr() + item.getDmgModifier());
+					EquippedWeapon = item;
 			}
 		}
 	}

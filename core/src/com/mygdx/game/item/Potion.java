@@ -33,4 +33,14 @@ public class Potion extends Item{
     public int getId() {
         return Item.POTION;
     }
+
+    @Override
+    public void setEquipped(boolean b) {
+
+    }
+
+    @Override
+    public int getDmgModifier() {
+        return 0;
+    }
 }

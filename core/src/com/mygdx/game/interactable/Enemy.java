@@ -17,6 +17,7 @@ public class Enemy extends Character {
             super.setArmor(getArmor() + 5);
             super.setStr(getStr() + 2);
         }
+        this.setCurrHP(getMaxHP());
         this.sprite = sprite;
         this.tile = tile;
     }

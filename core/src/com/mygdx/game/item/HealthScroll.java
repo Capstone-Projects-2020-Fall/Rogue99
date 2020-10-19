@@ -27,4 +27,14 @@ public class HealthScroll extends Item{
     public int getId() {
         return Item.HEALTHSCROLL;
     }
+
+    @Override
+    public void setEquipped(boolean b) {
+
+    }
+
+    @Override
+    public int getDmgModifier() {
+        return 0;
+    }
 }
