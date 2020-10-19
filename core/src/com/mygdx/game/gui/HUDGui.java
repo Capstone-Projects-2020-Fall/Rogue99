@@ -16,38 +16,50 @@ public class HUDGui extends Window {
     private NinePatch patch;
     private Drawable bar;
     private Drawable knob;
-    private final int HUD_SIZE = 48 ;
+    private final int HUD_SIZE = 26 ;
     private final int HUD_WINDOW_WIDTH_OFFSET = 30;
+    private final int HUD_WINDOW_HEIGHT_OFFSET = 80;
+    public int Window_Width;
     public ArrayList<HUDProgressBar> hudBars;
+    public ArrayList<TextField> statsNumTexts;
 
     public HUDGui(Skin skin, Map<String, Integer> bars){
         super("Stats", skin);
         patch = skin.getPatch("default-round");
         this.setResizable(false);
         this.setMovable(false);
-        this.setSize(HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET, HUD_SIZE * (bars.size() + 1) + HUD_WINDOW_WIDTH_OFFSET);
-        this.scaleBy(1);
+        this.align(Align.center);
+        this.setSize(HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET, HUD_SIZE * (bars.size() + 1) + HUD_WINDOW_HEIGHT_OFFSET);
+        Window_Width = HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET;
         bar = skin.getDrawable("default-slider");
         knob = skin.getDrawable("default-slider-knob");
         ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle(bar,knob);
         hudBars = new ArrayList<>();
+        statsNumTexts = new ArrayList<>();
 
         for(String name: bars.keySet()){
-            HUDProgressBar bar = CreateStatBar(name, bars.get(name), skin,progressBarStyle);
+            HUDProgressBar bar = CreateStatBar(name, bars.get(name), 100,skin,progressBarStyle);
             hudBars.add(bar);
         }
     }
 
-    private HUDProgressBar CreateStatBar(String name, float defaultValue, Skin skin, ProgressBar.ProgressBarStyle progressBarStyle){
-        HUDProgressBar bar = new HUDProgressBar(skin ,progressBarStyle, name);
+    private HUDProgressBar CreateStatBar(String name, float defaultValue,int maxValue , Skin skin, ProgressBar.ProgressBarStyle progressBarStyle){
+        HUDProgressBar bar = new HUDProgressBar(skin, maxValue,progressBarStyle, name);
         bar.setValue(defaultValue);
         TextField textField = new TextField(name, skin);
-        textField.scaleBy(.2f);
         textField.setAlignment(Align.center);
         textField.setDisabled(true);
-        this.add(textField).pad(4);
+
+        TextField numTextfield = new TextField(String.valueOf(defaultValue), skin);
+        numTextfield.setAlignment(Align.center);
+        numTextfield.setDisabled(true);
+        statsNumTexts.add(numTextfield);
+
+        this.add(textField).size(72,20).pad(4);
         this.row();
-        this.add(bar);
+        this.add(numTextfield).size(72,20).pad(1);
+        this.row();
+        this.add(bar).size(84,10);
         this.row();
         return bar;
     }

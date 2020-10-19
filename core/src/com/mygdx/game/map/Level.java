@@ -1,11 +1,11 @@
 package com.mygdx.game.map;
 
+import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Enemy;
+import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.interactable.Interactable;
-import com.mygdx.game.item.Item;
-import com.mygdx.game.item.Potion;
 import com.mygdx.game.interactable.Character;
-
+import com.mygdx.game.item.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,11 +20,12 @@ public class Level {
     private Tile[][] map;
     private final int width = 60;
     private final int height = 60;
-    private Tile entrance;
+    public Tile entrance;
     private Zone[] zones = new Zone[4];
     private int zoneSize;
     private ArrayList<Enemy> enemies = new ArrayList<>();
-    private Character playerChar;
+    private Hero hero;
+    private Rogue99 game;
 
 
     /*
@@ -41,8 +42,10 @@ public class Level {
     //grass alive floor dead
     GenerationSettings grassSettings = new GenerationSettings(0.83, 4, 4, 3);
 
-    public Level(int depth){
+    public Level(Rogue99 game, int depth, Hero hero){
+        this.game = game;
         this.depth = depth;
+        this.hero = hero;
    }
 
     public Tile[][] getMap() {
@@ -52,9 +55,8 @@ public class Level {
     public int getDepth() {
         return depth;
     }
-    public Character getPlayerChar() {
-        return playerChar;
-    }
+
+
     public void generate(){
         /*
             generate random map with cellular automata- if there is no connected cavern at least as big as 45% of the
@@ -71,9 +73,9 @@ public class Level {
             }
 
             encloseMap();
+
+            //make sure level is connected and initiate zone 0
             floodFill();
-            System.out.println(floodCount);
-            System.out.println(width*height);
         }while((double)floodCount/(width*height) < 0.44);
 
         //loop through map- if tile is not filled, turn to wall
@@ -102,7 +104,11 @@ public class Level {
         generateGrass();
         generateStairs();
         generateEnemy();
+        generateItems();
 
+        this.entrance.getEntities().push(hero);
+        hero.setPosX(this.entrance.getPosX());
+        hero.setPosY(this.entrance.getPosY());
     }
 
     //initializes grid to be all wall tiles
@@ -251,7 +257,7 @@ public class Level {
             y_up = (int) (Math.random() * 60);
         }
         map[x_up][y_up].setType("stair_up");
-        entrance = map[x_down][y_down];
+        entrance = map[x_up][y_up];
     }
 
     // returns false if distance between points is less than d
@@ -282,6 +288,7 @@ public class Level {
     }
 
     public void generateEnemy(){
+        System.out.println("in generateEnemy");
         int[] diff = iterateEnemy();
         int sum = 0;
         int index = 1;
@@ -294,15 +301,18 @@ public class Level {
             for (int j = 0; j < sum; j++) {
                 Zone z = zones[u];
                 Tile tile;
-                do { tile = z.tiles.get(rand.nextInt(z.tiles.size()));
-                }
-                while (!tile.entities.isEmpty());
-                Enemy enemy = new Enemy(index);
+
+                do {
+                    tile = z.tiles.get(rand.nextInt(z.tiles.size()));
+                } while (!tile.entities.isEmpty());
+
+                Enemy enemy = new Enemy(index, "wasp", tile);
+                System.out.println("ENEMY GENERATED: " + enemy.getSprite());
                 enemies.add(enemy);
-                tile.getEntities().push(enemies.get(enemies.size() - 1));
+                tile.getEntities().push(enemy);
                 u++;
                 if(u > 3) u = 0;
-                }
+            }
             index++;
         }
     }
@@ -330,28 +340,39 @@ public class Level {
         floodZoneUtil(zone, x, y-1, zoneLimit);
     }
 
-//    private void generateItems(){
-//        //generate potions
-//        int c = 100;
-//        for(int i = 0; i < 10; i++){
-//            int itemC = rand.nextInt(c);
-//            //if statement with odds of each potion type
-//            if(itemC < 10){
-//                generateItemUtil(new Potion(10, "healthpotion", 10));
-//            }
-//        }
-//
-//        //generate weapons
-//    }
-//
-//    private void generateItemUtil(Interactable item){
-//        int itemX, itemY;
-//
-//        do{
-//            itemX = rand.nextInt(60);
-//            itemY = rand.nextInt(60);
-//        }while(map[itemX][itemY].getType().equals("wall") && !map[itemX][itemY].getEntities().empty());
-//
-//        map[itemX][itemY].getEntities().push(item);
-//    }
+    private void generateItems(){
+        int c = 100;
+        int numItems, itemC;
+        for(Zone z : zones){
+            numItems = 2 + z.id+rand.nextInt(2);
+            for(int i = 0; i < numItems; i++){
+                itemC = rand.nextInt(c);
+                //TODO flesh out item chances once potion classes are finished
+                if(itemC < 20){
+                    generateItemUtil(new Potion(40, "potion", 10), z);
+                } else if(20 <= itemC && itemC < 40){
+                    generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
+                } else if(40 <= itemC && itemC < 60){
+                    generateItemUtil(new HealthScroll(20, "scroll", 10), z);
+                } else if(60 <= itemC && itemC < 80){
+                    generateItemUtil(new StrengthScroll(20, "scroll", 10), z);
+                } else if(80 <= itemC && itemC < 100){
+                    System.out.println("weapon generated!");
+                    generateItemUtil(new Weapon(20, "tile261", 10), z);
+                }
+            }
+        }
+
+        //generate weapons
+    }
+
+    //generates item on random tile in given zone
+    private void generateItemUtil(Interactable item, Zone zone){
+        Tile tile;
+        do{
+            tile = zone.tiles.get(rand.nextInt(zone.tiles.size()));
+        } while(!tile.getEntities().empty());
+
+        tile.getEntities().push(item);
+    }
 }

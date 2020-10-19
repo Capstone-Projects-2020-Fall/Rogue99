@@ -15,6 +15,12 @@ public class Tile {
     private boolean floodFilled = false;
     private int zone;
 
+    //variables used for A* algorithm
+    public int f;
+    public int g;
+    public int h;
+    public Tile parent;
+
     //TODO We will come back for this later
     Stack<Interactable> entities = new Stack<>();
 
