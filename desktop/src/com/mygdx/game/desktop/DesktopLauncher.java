@@ -7,8 +7,8 @@ import com.mygdx.game.Rogue99;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 1800;
-		config.width = 2500;
+		config.height = 2500;
+		config.width = 2160;
 		new LwjglApplication(new Rogue99(), config);
 	}
 }

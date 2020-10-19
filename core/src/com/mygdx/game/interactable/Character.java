@@ -1,11 +1,27 @@
 package com.mygdx.game.interactable;
 
-public class Character extends Interactable {
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.mygdx.game.Rogue99;
+import com.mygdx.game.item.Item;
+
+public class Character extends Interactable  {
 
     private int maxHP;
     private int currHP;
     private int armor;
     private int str;
+    public boolean up;
+    public boolean down;
+    public boolean left;
+    public boolean right;
+    public float speed;
+
+    public final int DOWN = 0;
+    public final int UP = 1;
+    public final int LEFT = 2;
+    public final int RIGHT = 3;
+
 
     @Override
     public void setPosX(int posX) {
@@ -58,4 +74,7 @@ public class Character extends Interactable {
     public int getStr() {
         return str;
     }
+
+
+
 }

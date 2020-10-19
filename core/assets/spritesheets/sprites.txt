@@ -73,14 +73,14 @@ tile009
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile010
+stair_down
   rotate: false
   xy: 391, 1
   size: 37, 37
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile011
+stair_up
   rotate: false
   xy: 430, 1
   size: 37, 37
@@ -668,7 +668,7 @@ tile094
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile095
+shortgrass1
   rotate: false
   xy: 1, 274
   size: 37, 37
@@ -689,7 +689,7 @@ tile097
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile098
+longgrass
   rotate: false
   xy: 118, 274
   size: 37, 37
@@ -990,7 +990,7 @@ tile140
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile141
+potion
   rotate: false
   xy: 196, 391
   size: 37, 37
@@ -1277,14 +1277,14 @@ tile181
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile182
+wasp
   rotate: false
   xy: 196, 508
   size: 37, 37
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile183
+crab
   rotate: false
   xy: 235, 508
   size: 37, 37
@@ -2656,7 +2656,7 @@ tile378
   orig: 39, 39
   offset: 2, 0
   index: -1
-tile379
+scroll
   rotate: false
   xy: 235, 976
   size: 37, 37
