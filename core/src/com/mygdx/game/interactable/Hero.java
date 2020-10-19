@@ -123,6 +123,7 @@ public class Hero extends Character{
                 game.level.getMap()[x][y].getEntities().push(this);
                 game.setAttacking(false);
             }
+            game.level.moveEnemies();
         }
     }
 
