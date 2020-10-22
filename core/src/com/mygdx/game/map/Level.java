@@ -109,8 +109,6 @@ public class Level {
 
         generateGrass();
         generateStairs();
-        generateEnemy();
-        generateItems();
 
         this.entrance.getEntities().push(hero);
         hero.setPosX(this.entrance.getPosX());

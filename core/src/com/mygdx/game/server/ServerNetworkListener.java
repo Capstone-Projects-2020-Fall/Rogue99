@@ -22,6 +22,10 @@ public class ServerNetworkListener  extends Listener {
     @Override
     public void received(Connection connection, Object object) {
         //TODO Deal with received Packtes after they are built
+        if(object instanceof Packets.Packet01Map) {
+            Packets.Packet01Map packet = (Packets.Packet01Map) object;
+            packet.level.generate();
+        }
 
         super.received(connection, object);
     }

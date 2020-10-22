@@ -27,7 +27,7 @@ public class GameServer extends Server {
 
     private void registerPackets(){
         Kryo kryo = server.getKryo();
-
+        kryo.register(Packets.Packet01Map.class);
         //TODO Register Packets After they are built
 
     }
