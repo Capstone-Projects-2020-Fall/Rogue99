@@ -3,7 +3,6 @@ package com.mygdx.game.server;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
-import com.mygdx.game.map.Level;
 
 import java.io.IOException;
 
@@ -11,10 +10,10 @@ public class GameServer extends Server {
 
     int ServerPort = 5000;
 
-    public static  Server server;
+    public Server server;
     ServerNetworkListener serverNetworkListener;
 
-    public static Level level;
+    public static String seed;
     Kryo kryo;
 
     public GameServer() {
@@ -25,7 +24,7 @@ public class GameServer extends Server {
         registerPackets();
         server.addListener(serverNetworkListener);
 
-        level = new Level(null, 1, null);
+        seed = String.valueOf(System.currentTimeMillis());
         try {
             server.bind(ServerPort);
         } catch (IOException e) {
@@ -47,7 +46,6 @@ public class GameServer extends Server {
 
     public static void main(String[] args) {
         new GameServer();
-        //level.generate();
-        System.out.println(level.getDepth());
+        System.out.println(seed);
     }
 }

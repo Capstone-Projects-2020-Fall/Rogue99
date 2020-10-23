@@ -20,10 +20,9 @@ public class ServerNetworkListener  extends Listener {
 
     @Override
     public void connected(Connection connection) {
-//        Packets.Packet002Map mapPacket = new Packets.Packet002Map();
-//
-//        mapPacket.level = gameServer.level;
-//        server.sendToAllTCP(mapPacket);
+        Packets.Packet002Map mapPacket = new Packets.Packet002Map();
+        mapPacket.seed = gameServer.seed;
+        connection.sendTCP(mapPacket);
     }
 
     @Override
