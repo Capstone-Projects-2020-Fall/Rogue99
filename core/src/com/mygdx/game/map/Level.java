@@ -7,14 +7,16 @@ import com.mygdx.game.interactable.Interactable;
 import com.mygdx.game.interactable.Character;
 import com.mygdx.game.item.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 
-public class Level {
-    Random rand = new Random();
+public class Level implements Serializable {
+    Random rand;
     private int floodCount;
+    private String seed;
 
     private final int depth;
     private Tile[][] map;
@@ -62,8 +64,16 @@ public class Level {
         }
     }
 
+    public void setSeed(String seed) {
+        this.seed = seed;
+    }
+
+    public String generateSeed() {
+        return String.valueOf(System.currentTimeMillis());
+    }
 
     public void generate(){
+        rand = new Random(seed.hashCode());
         /*
             generate random map with cellular automata- if there is no connected cavern at least as big as 45% of the
             map, regenerate the map and try again
@@ -123,7 +133,7 @@ public class Level {
         map = new Tile[width][height];
         for(int i = 0; i < width; i++){
             for(int k = 0; k < height; k++){
-                if(Math.random() < gen.probability) {
+                if(rand.nextDouble() < gen.probability) {
                     map[i][k] = new Tile(i, k, type1, type1Pop);
                 } else{
                     map[i][k] = new Tile(i, k, type2, type2Pop);

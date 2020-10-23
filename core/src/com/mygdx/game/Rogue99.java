@@ -98,6 +98,9 @@ public class Rogue99 extends ApplicationAdapter {
 		hero = new Hero(this, "tile169");
 		//initialize first level
 		level = new Level(this,1, hero);
+		String seed = level.generateSeed();
+		System.out.println(seed);
+		level.setSeed(seed);
 		level.generate();
 		stage = new LevelStage(level);
 		stage.getViewport().setCamera(camera);

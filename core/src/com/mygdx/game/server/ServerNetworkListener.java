@@ -1,23 +1,29 @@
 package com.mygdx.game.server;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class ServerNetworkListener  extends Listener {
 
     Server server;
+    GameServer gameServer;
+    Kryo kryo;
 
-    public ServerNetworkListener(Server server){
+    public ServerNetworkListener(Server server, GameServer gameServer, Kryo kryo){
         this.server = server;
+        this.gameServer = gameServer;
+        this.kryo = kryo;
     }
 
     @Override
     public void connected(Connection connection) {
+//        Packets.Packet002Map mapPacket = new Packets.Packet002Map();
+//
+//        mapPacket.level = gameServer.level;
+//        server.sendToAllTCP(mapPacket);
     }
 
     @Override
