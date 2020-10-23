@@ -2,6 +2,7 @@ package com.mygdx.game.client;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
+import com.mygdx.game.Packets;
 
 public class MPClient {
     int portSocket = 5000;

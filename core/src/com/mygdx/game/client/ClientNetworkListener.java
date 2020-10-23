@@ -3,6 +3,7 @@ package com.mygdx.game.client;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.mygdx.game.Packets;
 
 public class ClientNetworkListener extends Listener {
     private Client client;
