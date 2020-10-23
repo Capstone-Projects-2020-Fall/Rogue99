@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.mygdx.game.client.MPClient;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
@@ -37,7 +38,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
-
+	MPClient client;
 	ExtendViewport viewport;
 
 	Texture img;
@@ -74,7 +75,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 
-
+		client = new MPClient(this);
 
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
