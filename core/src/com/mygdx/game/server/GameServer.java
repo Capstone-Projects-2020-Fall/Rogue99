@@ -2,12 +2,13 @@ package com.mygdx.game.server;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Server;
+import com.mygdx.game.Packets;
 
 import java.io.IOException;
 
 public class GameServer extends Server {
 
-    int ServerPort = 3000;
+    int ServerPort = 5000;
 
     Server server;
     ServerNetworkListener serverNetworkListener;
@@ -29,7 +30,7 @@ public class GameServer extends Server {
         Kryo kryo = server.getKryo();
 
         //TODO Register Packets After they are built
-
+        kryo.register(Packets.Packet001Connection.class);
     }
 
     public static void main(String[] args) {
