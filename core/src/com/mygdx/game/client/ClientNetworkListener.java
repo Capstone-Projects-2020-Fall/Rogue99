@@ -12,7 +12,9 @@ public class ClientNetworkListener extends Listener {
     }
 
     public void connected(Connection c){
-        System.out.println("CLIENT connected");
+        Packets.Packet001Connection a = new Packets.Packet001Connection();
+        a.name = "test client";
+        c.sendTCP(a);
     }
 
     public void disconnected(Connection c){
@@ -20,7 +22,10 @@ public class ClientNetworkListener extends Listener {
     }
 
     public void received(Connection c, Object o){
-        //TODO if(o instance of [PACKET CLASS])
-        //same code as server received method
+        //System.out.println("RECEIVED");
+        if(o instanceof Packets.Packet001Connection){
+            String servermsg = ((Packets.Packet001Connection) o).name;
+            System.out.println(servermsg);
+        }
     }
 }

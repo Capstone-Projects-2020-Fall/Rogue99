@@ -4,8 +4,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 
 public class MPClient {
-    int portSocket; //TODO set equal to port #
-    String ipAddress; //TODO set equal to ip address
+    int portSocket = 5000;
+    String ipAddress = "100.34.155.72";
 
     public Client client;
     private ClientNetworkListener cnl;
@@ -14,9 +14,13 @@ public class MPClient {
         client = new Client();
         cnl = new ClientNetworkListener();
 
+        cnl.init(client);
+
+        registerPackets();
+
         client.addListener(cnl);
 
-        client.start();
+        new Thread(client).start();
 
         try{
             client.connect(5000, ipAddress, portSocket);
@@ -27,6 +31,10 @@ public class MPClient {
 
     private void registerPackets(){
         Kryo kryo = client.getKryo();
-        //kryo.register();  TODO pass in packet class
+        kryo.register(Packets.Packet001Connection.class);
+    }
+
+    public static void main(String[] args) {
+        new MPClient();
     }
 }
