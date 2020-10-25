@@ -23,8 +23,8 @@ public class Level {
     public Tile entrance;
     private Zone[] zones = new Zone[4];
     private int zoneSize;
-    private ArrayList<Enemy> enemies = new ArrayList<>();
-    private Hero hero;
+    public ArrayList<Enemy> enemies = new ArrayList<>();
+    public Hero hero;
     private Rogue99 game;
 
 
@@ -54,6 +54,12 @@ public class Level {
 
     public int getDepth() {
         return depth;
+    }
+
+    public void moveEnemies(){
+        for(Enemy enemy : enemies){
+            enemy.moveEnemy(map, hero);
+        }
     }
 
 
@@ -306,7 +312,7 @@ public class Level {
                     tile = z.tiles.get(rand.nextInt(z.tiles.size()));
                 } while (!tile.entities.isEmpty());
 
-                Enemy enemy = new Enemy(index, "wasp", tile);
+                Enemy enemy = new Enemy(index, "wasp", tile, game);
                 System.out.println("ENEMY GENERATED: " + enemy.getSprite());
                 enemies.add(enemy);
                 tile.getEntities().push(enemy);
