@@ -14,10 +14,12 @@ import java.util.Random;
 
 
 public class Level implements Serializable {
-    Random rand;
+    Random randGen;
+    Random rand = new Random();
+
+    //generation settings/features
     private int floodCount;
     private String seed;
-
     private final int depth;
     private Tile[][] map;
     private final int width = 60;
@@ -25,8 +27,13 @@ public class Level implements Serializable {
     public Tile entrance;
     private Zone[] zones = new Zone[4];
     private int zoneSize;
+
+    //active entities
     public ArrayList<Enemy> enemies = new ArrayList<>();
     public Hero hero;
+    public ArrayList<Hero> players = new ArrayList<>();
+
+
     private Rogue99 game;
 
 
@@ -73,7 +80,6 @@ public class Level implements Serializable {
     }
 
     public void generate(){
-        rand = new Random(seed.hashCode());
         /*
             generate random map with cellular automata- if there is no connected cavern at least as big as 45% of the
             map, regenerate the map and try again
@@ -130,10 +136,11 @@ public class Level implements Serializable {
     //initializes grid to be all wall tiles
     public Tile[][] initialize(Tile[][] map, GenerationSettings gen, String type1, String type2, boolean type1Pop,
                                boolean type2Pop){
+        randGen = new Random(seed.hashCode());
         map = new Tile[width][height];
         for(int i = 0; i < width; i++){
             for(int k = 0; k < height; k++){
-                if(rand.nextDouble() < gen.probability) {
+                if(randGen.nextDouble() < gen.probability) {
                     map[i][k] = new Tile(i, k, type1, type1Pop);
                 } else{
                     map[i][k] = new Tile(i, k, type2, type2Pop);
@@ -204,8 +211,8 @@ public class Level implements Serializable {
     public void floodFill(){
         int startX, startY;
         do{
-            startX = rand.nextInt(width);
-            startY = rand.nextInt(height);
+            startX = randGen.nextInt(width);
+            startY = randGen.nextInt(height);
         }while(map[startX][startY].getType().equals("wall"));
 
         //initialize Zone 0

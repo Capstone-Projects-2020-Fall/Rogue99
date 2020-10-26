@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
+import com.mygdx.game.Rogue99;
 import com.mygdx.game.map.Level;
 import com.mygdx.game.map.Tile;
 
@@ -11,9 +12,11 @@ import java.nio.ByteBuffer;
 
 public class ClientNetworkListener extends Listener {
     private Client client;
+    private Rogue99 game;
 
-    public void init(Client client){
+    public void init(Client client, Rogue99 game){
         this.client = client;
+        this.game = game;
     }
 
     public void connected(Connection c){
@@ -34,8 +37,9 @@ public class ClientNetworkListener extends Listener {
             String servermsg = ((Packets.Packet001Connection) o).name;
             System.out.println(servermsg);
         } else if(o instanceof Packets.Packet002Map){
-            //TODO receives map, generate items and enemies, draw
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
+            //receives seed, sets seed of level at specified depth
+            game.levels.get(((Packets.Packet002Map) o).depth).setSeed(((Packets.Packet002Map) o).seed);
         } else if(o instanceof Packets.Packet003Movement){
             //TODO receives player name and position, updates map
         } else if(o instanceof Packets.Packet004Potion){

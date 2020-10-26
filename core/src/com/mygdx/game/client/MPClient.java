@@ -7,7 +7,7 @@ import com.mygdx.game.Rogue99;
 
 public class MPClient {
 
-    Rogue99 game;
+    private Rogue99 game;
 
     int portSocket = 5000;
     String ipAddress = "100.34.155.72";
@@ -21,7 +21,7 @@ public class MPClient {
         client = new Client();
         cnl = new ClientNetworkListener();
 
-        cnl.init(client);
+        cnl.init(client, this.game);
 
         registerPackets();
 
@@ -44,6 +44,10 @@ public class MPClient {
         kryo.register(Packets.Packet003Movement.class);
         kryo.register(Packets.Packet004Potion.class);
         kryo.register(Packets.Packet005Stats.class);
+    }
+
+    public Rogue99 getGame(){
+        return this.game;
     }
 
 //    public static void main(String[] args) {

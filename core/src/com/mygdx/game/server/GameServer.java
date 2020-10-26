@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GameServer extends Server {
 
@@ -13,6 +14,7 @@ public class GameServer extends Server {
     public Server server;
     ServerNetworkListener serverNetworkListener;
 
+    public ArrayList<String> seeds;
     public static String seed;
     Kryo kryo;
 
@@ -24,7 +26,11 @@ public class GameServer extends Server {
         registerPackets();
         server.addListener(serverNetworkListener);
 
-        seed = String.valueOf(System.currentTimeMillis());
+
+        seeds.add(String.valueOf(System.currentTimeMillis()));
+        //seed = String.valueOf(System.currentTimeMillis());
+
+
         try {
             server.bind(ServerPort);
         } catch (IOException e) {
@@ -46,6 +52,6 @@ public class GameServer extends Server {
 
     public static void main(String[] args) {
         new GameServer();
-        System.out.println(seed);
+        //System.out.println(seed);
     }
 }

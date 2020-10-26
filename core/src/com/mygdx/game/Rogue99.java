@@ -59,7 +59,11 @@ public class Rogue99 extends ApplicationAdapter {
 	TextureAtlas textureAtlas;
 	public final HashMap<String, Sprite> sprites = new HashMap<>();
 
+	//level objects
+	//level list contains all levels generated so far
 	public Level level;
+	public ArrayList<Level> levels;
+
 	Stage stage;
 	Control control;
 
@@ -75,12 +79,12 @@ public class Rogue99 extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 
+		//initialize client
 		client = new MPClient(this);
 
+		//initialize camera and viewport
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
 		viewport = new ExtendViewport(2500, 2160, camera);
-
 		camera.zoom = 0.4f;
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -92,17 +96,22 @@ public class Rogue99 extends ApplicationAdapter {
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
 		addSprites();
 
-
 		//load skin for Inventory & HUD
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+		//create player's hero
 		hero = new Hero(this, "tile169");
+
 		//initialize first level
+		levels = new ArrayList<>();
 		level = new Level(this,1, hero);
-		String seed = level.generateSeed();
-		System.out.println(seed);
-		level.setSeed(seed);
+		levels.add(level);
+		client.client.sendTCP(new Packets.Packet006RequestSeed(0));
+//		String seed = level.generateSeed();
+//		System.out.println(seed);
+//		level.setSeed(seed);
 		level.generate();
+
 		stage = new LevelStage(level);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
