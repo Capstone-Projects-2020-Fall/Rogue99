@@ -10,7 +10,7 @@ public class MPClient {
     private Rogue99 game;
 
     int portSocket = 5000;
-    String ipAddress = "100.34.155.72";
+    String ipAddress = "localhost";
 
     public Client client;
     private ClientNetworkListener cnl;
@@ -44,6 +44,7 @@ public class MPClient {
         kryo.register(Packets.Packet003Movement.class);
         kryo.register(Packets.Packet004Potion.class);
         kryo.register(Packets.Packet005Stats.class);
+        kryo.register(Packets.Packet006RequestSeed.class);
     }
 
     public Rogue99 getGame(){

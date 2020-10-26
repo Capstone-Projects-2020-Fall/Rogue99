@@ -27,8 +27,8 @@ public class GameServer extends Server {
         server.addListener(serverNetworkListener);
 
 
-        seeds.add(String.valueOf(System.currentTimeMillis()));
-        //seed = String.valueOf(System.currentTimeMillis());
+        //seeds.add(String.valueOf(System.currentTimeMillis()));
+        seed = String.valueOf(System.currentTimeMillis());
 
 
         try {
@@ -48,6 +48,7 @@ public class GameServer extends Server {
         kryo.register(Packets.Packet003Movement.class);
         kryo.register(Packets.Packet004Potion.class);
         kryo.register(Packets.Packet005Stats.class);
+        kryo.register(Packets.Packet006RequestSeed.class);
     }
 
     public static void main(String[] args) {
