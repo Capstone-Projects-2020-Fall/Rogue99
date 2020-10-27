@@ -35,7 +35,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public final int HEIGHT_PAD = 132;
 	public final String HEALTHBAR = "Health";
 	public final String ARMOURBAR = "Armour";
-	boolean multiplayer;
+
 
 	Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
@@ -73,6 +73,7 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean attacking;
 	boolean mapGenerated;
 	boolean seedReceived;
+	boolean multiplayer;
 
 	Item EquippedWeapon;
 	String seed;
@@ -115,7 +116,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	private void init_single_player(){
 
-		generateLevel(String.valueOf(System.currentTimeMillis()), 1);
+		generateLevel(String.valueOf(System.currentTimeMillis()), 0);
 
 
 
@@ -130,7 +131,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 		//get seed from server
-		client.client.sendTCP(new Packets.Packet006RequestSeed(1));
+		client.client.sendTCP(new Packets.Packet006RequestSeed(0));
 
 
 		control = new Control(hero, this);
@@ -230,16 +231,6 @@ public class Rogue99 extends ApplicationAdapter {
 						drawTile(k,"shortgrass1", k.getPosX()*36, k.getPosY()*36);
 					} else{
 						drawTile(k,"longgrass", k.getPosX()*36, k.getPosY()*36);
-					}
-				} else if(k.getType().equals("stair_up")){
-					drawTile(k,"stair_up", k.getPosX()*36, k.getPosY()*36);
-				} else if(k.getType().equals("stair_down")) {
-					drawTile(k,"stair_down", k.getPosX() * 36, k.getPosY() * 36);
-				} else if(k.getType().equals("enemy")){
-					if(Math.random() < 0.5){
-						drawTile(k,"wasp", k.getPosX()*36, k.getPosY()*36);
-					} else{
-						drawTile(k,"crab", k.getPosX()*36, k.getPosY()*36);
 					}
 				} else if(k.getType().equals("stair_up")){
 					drawTile(k,"stair_up", k.getPosX()*36, k.getPosY()*36);
@@ -400,6 +391,7 @@ public class Rogue99 extends ApplicationAdapter {
 	// generate the level and level stage
 	private void generateLevel(String seed, int depth){
 		//initialize first level
+		System.out.println(seed);
 		level = new Level(this,depth, hero);
 		levels.add(level);
 		level.setSeed(seed);
@@ -410,6 +402,7 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.setViewport(viewport);
 		generateGuiElements();
 		mapGenerated = true;
+
 	}
 
 
@@ -429,8 +422,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public void newLevel(int depth){
 		if(multiplayer)
-		client.client.sendTCP(new Packets.Packet006RequestSeed(depth));
+		client.client.sendTCP(new Packets.Packet006RequestSeed(depth++));
 		// single player option
-		else ;
+		else generateLevel(level.generateSeed(), depth++);
 	}
 }

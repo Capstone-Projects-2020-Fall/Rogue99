@@ -140,7 +140,7 @@ public class Level implements Serializable {
     //initializes grid to be all wall tiles
     public Tile[][] initialize(Tile[][] map, GenerationSettings gen, String type1, String type2, boolean type1Pop,
                                boolean type2Pop){
-        randGen = new Random(seed.hashCode());
+        randGen = new Random(Long.valueOf(seed));
         map = new Tile[width][height];
         for(int i = 0; i < width; i++){
             for(int k = 0; k < height; k++){
@@ -299,7 +299,7 @@ public class Level implements Serializable {
     // decides difficulty and number of enemies spawned based on depth of level. Returns an array where index is difficulty and value is
     // number of enemies with that difficulty
     public int[] iterateEnemy() {
-        int[] arr = new int[depth+1];
+        int[] arr = new int[depth+2];
         int n = 0;
         arr[0] = 4;
         arr[1] = 1;
