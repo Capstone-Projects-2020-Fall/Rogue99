@@ -11,7 +11,23 @@ public class StrengthScroll extends Item{
 
         strAmt = str;
     }
-    public void use(Character character) {
+    public boolean use(Character character) {
             character.setStr( character.getStr() + strAmt );
+            return true;
+    }
+
+    @Override
+    public int getId() {
+        return Item.STRENGTHSCROLL;
+    }
+
+    @Override
+    public void setEquipped(boolean b) {
+
+    }
+
+    @Override
+    public int getDmgModifier() {
+        return 0;
     }
 }
