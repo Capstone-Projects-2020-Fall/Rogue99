@@ -1,5 +1,6 @@
 package com.mygdx.game.map;
 
+import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.interactable.Hero;
@@ -25,6 +26,7 @@ public class Level implements Serializable {
     private final int width = 60;
     private final int height = 60;
     public Tile entrance;
+    public Tile exit;
     private Zone[] zones = new Zone[4];
     private int zoneSize;
 
@@ -131,6 +133,8 @@ public class Level implements Serializable {
         this.entrance.getEntities().push(hero);
         hero.setPosX(this.entrance.getPosX());
         hero.setPosY(this.entrance.getPosY());
+
+        hero.depth = this.depth;
     }
 
     //initializes grid to be all wall tiles
@@ -273,6 +277,7 @@ public class Level implements Serializable {
             else y_down = (int) (Math.random() * 15) + 45;
         }
         map[x_down][y_down].setType("stair_down");
+        exit = map[x_down][y_down];
         // picks a random tile that isn't a wall and is far enough away from the other stairs and has at least 1 wall neighbor
         while (!checkDistance(x_down, y_down, x_up, y_up, 50) || map[x_up][y_up].getType().equals("wall")
                 || countAliveNeighbors(map[x_up][y_up], "wall") < 1) {
@@ -398,4 +403,5 @@ public class Level implements Serializable {
 
         tile.getEntities().push(item);
     }
+
 }

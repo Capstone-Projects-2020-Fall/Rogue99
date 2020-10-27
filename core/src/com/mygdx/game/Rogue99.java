@@ -35,6 +35,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public final int HEIGHT_PAD = 132;
 	public final String HEALTHBAR = "Health";
 	public final String ARMOURBAR = "Armour";
+	boolean multiplayer;
 
 	Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
@@ -376,5 +377,12 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public boolean isAttacking() {
 		return attacking;
+	}
+
+	public void newLevel(int depth){
+		if(multiplayer)
+		client.client.sendTCP(new Packets.Packet006RequestSeed(depth));
+		// single player option
+		else ;
 	}
 }
