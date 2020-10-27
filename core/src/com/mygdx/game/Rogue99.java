@@ -131,7 +131,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 		//get seed from server
-		client.client.sendTCP(new Packets.Packet006RequestSeed(0));
+		client.client.sendTCP(new Packets.Packet006RequestSeed().depth);
 
 
 		control = new Control(hero, this);
@@ -422,7 +422,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public void newLevel(int depth){
 		if(multiplayer)
-		client.client.sendTCP(new Packets.Packet006RequestSeed(depth++));
+		client.client.sendTCP(new Packets.Packet006RequestSeed().depth = depth++);
 		// single player option
 		else generateLevel(level.generateSeed(), depth++);
 	}
