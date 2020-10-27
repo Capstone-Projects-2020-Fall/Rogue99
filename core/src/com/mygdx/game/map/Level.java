@@ -404,4 +404,8 @@ public class Level implements Serializable {
         tile.getEntities().push(item);
     }
 
+    public String getSeed() {
+        return seed;
+    }
+
 }

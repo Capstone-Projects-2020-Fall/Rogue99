@@ -71,17 +71,18 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean mapDrawn;
 	boolean showInventory;
 	boolean attacking;
+	boolean mapGenerated;
+	boolean seedReceived;
 
 	Item EquippedWeapon;
-
+	String seed;
 
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 
-		//initialize client
-		client = new MPClient(this);
+
 
 		//initialize camera and viewport
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -92,6 +93,8 @@ public class Rogue99 extends ApplicationAdapter {
 		mapDrawn = false;
 		showInventory = false;
 		attacking = false;
+		mapGenerated = false;
+		seedReceived = false;
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -103,27 +106,34 @@ public class Rogue99 extends ApplicationAdapter {
 		//create player's hero
 		hero = new Hero(this, "tile169");
 
-		//initialize first level
 		levels = new ArrayList<>();
-		level = new Level(this,1, hero);
-		levels.add(level);
-		client.client.sendTCP(new Packets.Packet006RequestSeed(0));
-//		String seed = level.generateSeed();
-//		System.out.println(seed);
-//		level.setSeed(seed);
-		level.generate();
 
-		stage = new LevelStage(level);
-		stage.getViewport().setCamera(camera);
-		stage.setViewport(viewport);
+		init_single_player();
+		//init_multiplayer();
 
-		//initialize Inventory & HUD gui disabled for now
-		createInventoryGui();
-		createHUDGui();
-		createEnemyHud();
+	}
+
+	private void init_single_player(){
+
+		generateLevel(String.valueOf(System.currentTimeMillis()), 1);
+
+
 
 		control = new Control(hero, this);
 
+		Gdx.input.setInputProcessor(control);
+	}
+
+	private void init_multiplayer() {
+		//initialize client
+		client = new MPClient(this);
+
+
+		//get seed from server
+		client.client.sendTCP(new Packets.Packet006RequestSeed(1));
+
+
+		control = new Control(hero, this);
 		Gdx.input.setInputProcessor(control);
 	}
 
@@ -136,38 +146,47 @@ public class Rogue99 extends ApplicationAdapter {
 
 		batch.begin();
 
+		// only draw map and ui elements if the map is actually generated
+		if (mapGenerated) {
+			drawMap(level);
+			stage.act();
+			if (isShowInventory()) {
+				Gdx.input.setInputProcessor(stage);
+				inventoryGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
+				hudGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 + HEIGHT_PAD);
+				enemyHud.setPosition(Gdx.graphics.getWidth(), 0);
+				stage.draw();
+				stage.addListener(new InputListener() {
+					@Override
+					public boolean keyUp(InputEvent event, int keycode) {
+						if (keycode == Input.Keys.I) {
+							setShowInventory(false);
+						}
+						return super.keyDown(event, keycode);
+					}
+				});
+			} else {
+				Gdx.input.setInputProcessor(control);
+			}
 
-		drawMap(level);
+			if (isAttacking()) {
+				inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
+				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
+				stage.draw();
+			}
+		}
+
+		// Only Main thread has access to OpenGL so it needs to be the one generating the map
+		// MPClient or its network listeners can't just use generateLevel because they are on a different thread.
+		if (seedReceived) {
+			generateLevel(seed, 1);
+			seedReceived = false;
+		}
 
 		camera.position.lerp(hero.pos3, 0.1f);
 		camera.update();
 
-		stage.act();
-		if(isShowInventory()){
-			Gdx.input.setInputProcessor(stage);
-			inventoryGui.setPosition(hero.getPosX()*36 + 72, hero.getPosY()*36 - 108);
-			hudGui.setPosition(hero.getPosX()*36 + 72, hero.getPosY()*36 + HEIGHT_PAD);
-			enemyHud.setPosition(Gdx.graphics.getWidth(), 0);
-			stage.draw();
-			stage.addListener(new InputListener(){
-				@Override
-				public boolean keyUp(InputEvent event, int keycode) {
-					if(keycode == Input.Keys.I){
-						setShowInventory(false);
-					}
-					return super.keyDown(event, keycode);
-				}
-			});
-		} else {
-			Gdx.input.setInputProcessor(control);
-		}
-
-		if(isAttacking()){
-			inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
-			hudGui.setPosition(hero.getPosX()*36 + 144, hero.getPosY()*36);
-			enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() *36);
-			stage.draw();
-		}
 
 		batch.end();
 	}
@@ -184,8 +203,6 @@ public class Rogue99 extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		batch.setProjectionMatrix(camera.combined);
-		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
-		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
 	}
 
 	//adds sprites to hash map for more efficient use
@@ -378,6 +395,37 @@ public class Rogue99 extends ApplicationAdapter {
 	public boolean isAttacking() {
 		return attacking;
 	}
+
+
+	// generate the level and level stage
+	private void generateLevel(String seed, int depth){
+		//initialize first level
+		level = new Level(this,depth, hero);
+		levels.add(level);
+		level.setSeed(seed);
+		level.generate();
+
+		stage = new LevelStage(level);
+		stage.getViewport().setCamera(camera);
+		stage.setViewport(viewport);
+		generateGuiElements();
+		mapGenerated = true;
+	}
+
+
+	// Get the seed from server
+	public void setSeed (String seed){
+		this.seed = seed;
+		seedReceived = true;
+	}
+
+	// Generate GUI Elements
+	private void generateGuiElements(){
+		//initialize Inventory & HUD gui
+		createInventoryGui();
+		createHUDGui();
+		createEnemyHud();
+  }
 
 	public void newLevel(int depth){
 		if(multiplayer)
