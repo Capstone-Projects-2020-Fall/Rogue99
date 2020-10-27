@@ -105,6 +105,8 @@ public class Rogue99 extends ApplicationAdapter {
 		//create player's hero
 		hero = new Hero(this, "tile169");
 
+		levels = new ArrayList<>();
+
 		init_single_player();
 		//init_multiplayer();
 
@@ -112,7 +114,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	private void init_single_player(){
 
-		generateLevel(String.valueOf(System.currentTimeMillis()));
+		generateLevel(String.valueOf(System.currentTimeMillis()), 1);
 
 
 
@@ -177,7 +179,7 @@ public class Rogue99 extends ApplicationAdapter {
 		// Only Main thread has access to OpenGL so it needs to be the one generating the map
 		// MPClient or its network listeners can't just use generateLevel because they are on a different thread.
 		if (seedReceived) {
-			generateLevel(seed);
+			generateLevel(seed, 1);
 			seedReceived = false;
 		}
 
@@ -394,10 +396,9 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	// generate the level and level stage
-	private void generateLevel(String seed){
+	private void generateLevel(String seed, int depth){
 		//initialize first level
-		levels = new ArrayList<>();
-		level = new Level(this,1, hero);
+		level = new Level(this,depth, hero);
 		levels.add(level);
 		level.setSeed(seed);
 		level.generate();
