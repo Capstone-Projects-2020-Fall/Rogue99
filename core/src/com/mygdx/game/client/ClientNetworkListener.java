@@ -50,7 +50,6 @@ public class ClientNetworkListener extends Listener {
             else {
                 game.getHero().setCurrHP(0);
             }
-
         } else if(o instanceof Packets.Packet005Stats){
             //TODO receives stats of other player
         }

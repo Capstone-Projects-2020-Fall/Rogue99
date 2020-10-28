@@ -6,6 +6,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
 
+import java.util.Random;
+
 public class ServerNetworkListener  extends Listener {
 
     Server server;
@@ -52,7 +54,17 @@ public class ServerNetworkListener  extends Listener {
             connection.sendTCP(mapAnswer);
         }
         else if(object instanceof Packets.Packet004Potion){
+            Connection[] connectionList = server.getConnections();
+            if (connectionList.length < 2) {
 
+            }
+
+            Random rand = new Random();
+            int i = rand.nextInt() % connectionList.length;
+            while (connectionList[i] == connection && connectionList.length < 2) {
+                i = rand.nextInt() % connectionList.length;
+            }
+            connectionList[i].sendTCP(object);
         }
     }
 
