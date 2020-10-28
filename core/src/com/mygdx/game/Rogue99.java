@@ -176,7 +176,9 @@ public class Rogue99 extends ApplicationAdapter {
 				Gdx.input.setInputProcessor(control);
 			}
 
-			drawHeroes();
+			if(!players.isEmpty()){
+				drawHeroes();
+			}
 
 			if (isAttacking()) {
 				inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
