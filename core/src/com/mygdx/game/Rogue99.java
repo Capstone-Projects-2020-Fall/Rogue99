@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,6 +25,7 @@ import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.sun.java.swing.action.AlignRightAction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +66,9 @@ public class Rogue99 extends ApplicationAdapter {
 	//level list contains all levels generated so far
 	public Level level;
 	public ArrayList<Level> levels;
+
+	//list of other players
+	public ArrayList<Hero> players;
 
 	Stage stage;
 	Control control;
@@ -126,6 +131,7 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	private void init_multiplayer() {
+		players = new ArrayList<>();
 		//initialize client
 		client = new MPClient(this);
 
@@ -169,6 +175,8 @@ public class Rogue99 extends ApplicationAdapter {
 			} else {
 				Gdx.input.setInputProcessor(control);
 			}
+
+			drawHeroes();
 
 			if (isAttacking()) {
 				inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
@@ -288,6 +296,18 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite.draw(batch);
 		}
 
+	}
+
+	private void drawHeroes(){
+		for(Hero player : players) {
+			if(player.depth == hero.depth){
+				Sprite sprite = sprites.get("players");
+				sprite.setPosition(player.getPosX()*36, player.getPosY()*36);
+				sprite.setColor(Color.CORAL);
+				sprite.setAlpha(.5f);
+				sprite.draw(batch);
+			}
+		}
 	}
 
 	//creates HUD GUI & the map of the stats bars.
@@ -425,5 +445,9 @@ public class Rogue99 extends ApplicationAdapter {
 		client.client.sendTCP(new Packets.Packet006RequestSeed().depth = depth++);
 		// single player option
 		else generateLevel(level.generateSeed(), depth++);
+	}
+
+	public void addPlayer(Hero player){
+		players.add(player);
 	}
 }

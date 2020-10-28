@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
+import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.Level;
 import com.mygdx.game.map.Tile;
 
@@ -34,8 +35,8 @@ public class ClientNetworkListener extends Listener {
         if(o instanceof Packets.Packet000ConnectionAnswer){
             //TODO if o is false, return client to main menu and show message, close connection
         } else if(o instanceof Packets.Packet001Connection){
-            String servermsg = ((Packets.Packet001Connection) o).name;
-            System.out.println(servermsg);
+            //TODO set player name in hero
+            game.addPlayer(new Hero(game, "players"));
         } else if(o instanceof Packets.Packet002Map){
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
             //receives seed, sets seed of level at specified depth
