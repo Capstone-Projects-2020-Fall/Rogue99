@@ -64,7 +64,7 @@ public class ServerNetworkListener  extends Listener {
         else if(object instanceof Packets.Packet004Potion){
             Connection[] connectionList = server.getConnections();
             if (connectionList.length < 2) {
-
+                connection.sendTCP(object);
             }
 
             Random rand = new Random();
