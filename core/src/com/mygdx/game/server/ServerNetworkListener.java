@@ -51,6 +51,9 @@ public class ServerNetworkListener  extends Listener {
             mapAnswer.depth = ((Packets.Packet006RequestSeed) object).depth;
             connection.sendTCP(mapAnswer);
         }
+        else if(object instanceof Packets.Packet004Potion){
+
+        }
     }
 
 }

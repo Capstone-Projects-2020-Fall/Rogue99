@@ -1,16 +1,13 @@
 package com.mygdx.game.map;
 
-import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.interactable.Interactable;
-import com.mygdx.game.interactable.Character;
 import com.mygdx.game.item.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 
@@ -377,13 +374,15 @@ public class Level implements Serializable {
                 itemC = rand.nextInt(c);
                 //TODO flesh out item chances once potion classes are finished
                 if(itemC < 20){
-                    generateItemUtil(new Potion(40, "potion", 10), z);
+                    generateItemUtil(new HealthPotion(20, "potion", 10), z);
                 } else if(20 <= itemC && itemC < 40){
-                    generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
+                    generateItemUtil(new DamagePotion(20, "potion", 10), z);
                 } else if(40 <= itemC && itemC < 60){
                     generateItemUtil(new HealthScroll(20, "scroll", 10), z);
-                } else if(60 <= itemC && itemC < 80){
+                } else if(60 <= itemC && itemC < 70){
                     generateItemUtil(new StrengthScroll(20, "scroll", 10), z);
+                } else if(70 <= itemC && itemC < 80){
+                    generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
                 } else if(80 <= itemC && itemC < 100){
                     System.out.println("weapon generated!");
                     generateItemUtil(new Weapon(20, "tile261", 10), z);

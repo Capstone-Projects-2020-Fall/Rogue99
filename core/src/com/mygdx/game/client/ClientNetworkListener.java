@@ -44,7 +44,13 @@ public class ClientNetworkListener extends Listener {
         } else if(o instanceof Packets.Packet003Movement){
             //TODO receives player name and position, updates map
         } else if(o instanceof Packets.Packet004Potion){
-            //TODO receives potion, uses
+            if(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
+                game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);
+            }
+            else {
+                game.getHero().setCurrHP(0);
+            }
+
         } else if(o instanceof Packets.Packet005Stats){
             //TODO receives stats of other player
         }

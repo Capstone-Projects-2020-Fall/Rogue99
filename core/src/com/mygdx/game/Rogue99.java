@@ -270,7 +270,13 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
-		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Potion) {
+		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthPotion) {
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
+		}
+		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof DamagePotion) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
 			sprite.setPosition(x, y);
@@ -343,12 +349,20 @@ public class Rogue99 extends ApplicationAdapter {
 			inventoryGui.addItemToInventory(item);
 		} else {
 			item.use(hero);
-			if(item.getId() == Item.POTION){
+			if(item.getId() == Item.HEALTHPOTION){
 				changeBarValue(HEALTHBAR, hero.getCurrHP());
 				hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
 				System.out.println(hudGui.getHudBars().get(1).getValue());
 				System.out.println(hero.getCurrHP());
-			} else if(item.getId() == Item.ARMORSCROLL){
+			}
+			else if(item.getId() == Item.DAMAGEPOTION){
+				Packets.Packet004Potion potion = new Packets.Packet004Potion();
+				potion.ID = Item.DAMAGEPOTION;
+				potion.value = ( (DamagePotion) item).getDmgAmt();
+
+				client.client.sendTCP(potion);
+			}
+			else if(item.getId() == Item.ARMORSCROLL){
 				changeBarValue(ARMOURBAR, hero.getArmor());
 				hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
 			} else if(item.getId() == Item.HEALTHSCROLL) {
@@ -425,5 +439,9 @@ public class Rogue99 extends ApplicationAdapter {
 		client.client.sendTCP(new Packets.Packet006RequestSeed().depth = depth++);
 		// single player option
 		else generateLevel(level.generateSeed(), depth++);
+	}
+
+	public Hero getHero() {
+		return hero;
 	}
 }
