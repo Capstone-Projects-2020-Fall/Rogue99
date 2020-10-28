@@ -78,7 +78,7 @@ public class Level implements Serializable {
     }
 
     public String generateSeed() {
-        return String.valueOf(System.currentTimeMillis());
+        return String.valueOf(System.currentTimeMillis() + rand.nextInt());
     }
 
     public void generate(){
@@ -88,6 +88,7 @@ public class Level implements Serializable {
         */
         do {
             System.out.println("New map generated");
+            System.out.println("generate() seed: " + seed);
             floodCount = 0;
             this.map = initialize(this.map, levelSettings, "floor", "wall", false, true);
 
@@ -134,7 +135,29 @@ public class Level implements Serializable {
         hero.setPosX(this.entrance.getPosX());
         hero.setPosY(this.entrance.getPosY());
 
-        hero.depth = this.depth;
+        //hero.depth = this.depth;
+    }
+
+    public boolean generateFloorPlan(){
+        do {
+            System.out.println("New map generated");
+            this.seed = generateSeed();
+            System.out.println("NEW SEED: " + seed);
+            floodCount = 0;
+            this.map = initialize(this.map, levelSettings, "floor", "wall", false, true);
+
+            //run initialized map through cellular automata algorithm
+            for (int i = 0; i < levelSettings.iterations; i++) {
+                this.map = iterate(this.map, levelSettings, "floor", "wall");
+            }
+
+            encloseMap();
+
+            //make sure level is connected and initiate zone 0
+            floodFill();
+        }while((double)floodCount/(width*height) < 0.44);
+        System.out.println("FINAL SEED: " + this.seed);
+        return true;
     }
 
     //initializes grid to be all wall tiles
@@ -316,7 +339,7 @@ public class Level implements Serializable {
     }
 
     public void generateEnemy(){
-        System.out.println("in generateEnemy");
+        //System.out.println("in generateEnemy");
         int[] diff = iterateEnemy();
         int sum = 0;
         int index = 1;
@@ -335,7 +358,7 @@ public class Level implements Serializable {
                 } while (!tile.entities.isEmpty());
 
                 Enemy enemy = new Enemy(index, "wasp", tile, game);
-                System.out.println("ENEMY GENERATED: " + enemy.getSprite());
+                //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
                 enemies.add(enemy);
                 tile.getEntities().push(enemy);
                 u++;

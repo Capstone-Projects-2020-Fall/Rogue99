@@ -26,7 +26,7 @@ public class GameServer extends Server {
         registerPackets();
         server.addListener(serverNetworkListener);
 
-
+        seeds = new ArrayList<>();
         //seeds.add(String.valueOf(System.currentTimeMillis()));
         seed = String.valueOf(System.currentTimeMillis());
 

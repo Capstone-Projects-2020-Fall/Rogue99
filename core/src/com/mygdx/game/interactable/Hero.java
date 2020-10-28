@@ -39,36 +39,9 @@ public class Hero extends Character{
         pos3.y = getPosY()*36;
     }
 
-    public void setInventory(ArrayList<Item> inventory) {
-        this.inventory = inventory;
-    }
-
     public ArrayList<Item> getInventory() {
         return inventory;
     }
-
-    public void pickup(Item item){
-
-    }
-
-    public void drop(Item item){
-
-    }
-
-    public void useItem(Item item){
-
-    }
-
-    public void usePotion(Potion potion){
-
-    }
-
-    //TODO implement Weapon Object
-    public void useWeapon(/*Weapon weapon*/){
-
-    }
-
-    public void useScroll(){}
 
     @Override
     public void setSprite(String sprite) {
@@ -112,12 +85,13 @@ public class Hero extends Character{
                     inventory.add((Item) game.level.getMap()[x][y].getEntities().pop());
                     game.inventoryGui.addItemToInventory(inventory.get(inventory.size()-1));
                 }
-                System.out.println(inventory.get(0).getSprite());
+                //System.out.println(inventory.get(0).getSprite());
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 setPosX(x);
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
             } else if (game.level.getMap()[x][y].getType().equals("stair_down")){
+                depth++;
                 game.newLevel(depth);
             }  else {
                 // move to new position
