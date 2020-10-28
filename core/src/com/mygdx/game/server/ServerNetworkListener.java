@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
+import com.mygdx.game.map.Level;
 
 import java.util.Random;
 
@@ -22,9 +23,9 @@ public class ServerNetworkListener  extends Listener {
 
     @Override
     public void connected(Connection connection) {
-        Packets.Packet002Map mapPacket = new Packets.Packet002Map();
-        mapPacket.seed = gameServer.seed;
-        connection.sendTCP(mapPacket);
+//        Packets.Packet002Map mapPacket = new Packets.Packet002Map();
+//        mapPacket.seed = gameServer.seed;
+//        connection.sendTCP(mapPacket);
     }
 
     @Override
@@ -45,8 +46,15 @@ public class ServerNetworkListener  extends Listener {
         if(object instanceof Packets.Packet006RequestSeed){
             //if level seed is not in list, generate a new seed and add to list
             //then send seed at index=depth
-            if(((Packets.Packet006RequestSeed) object).depth >= gameServer.seeds.size()){
-                gameServer.seeds.add(String.valueOf(System.currentTimeMillis()));
+            System.out.println("Gameserver seeds size: " + gameServer.seeds.size());
+            System.out.println("Server: depth requested: " + ((Packets.Packet006RequestSeed) object).depth);
+            if(((Packets.Packet006RequestSeed) object).depth == gameServer.seeds.size()){
+                //TODO call generateFloorplan to get working seed
+                Level level = new Level(null, ((Packets.Packet006RequestSeed) object).depth, null);
+                level.generateFloorPlan();
+
+                System.out.println("Seed added to server seed list");
+                gameServer.seeds.add(level.getSeed());
             }
             Packets.Packet002Map mapAnswer = new Packets.Packet002Map();
             mapAnswer.seed = gameServer.seeds.get(((Packets.Packet006RequestSeed) object).depth);
@@ -67,5 +75,4 @@ public class ServerNetworkListener  extends Listener {
             connectionList[i].sendTCP(object);
         }
     }
-
 }

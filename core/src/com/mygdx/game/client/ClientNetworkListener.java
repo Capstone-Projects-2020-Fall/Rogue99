@@ -38,9 +38,9 @@ public class ClientNetworkListener extends Listener {
             System.out.println(servermsg);
         } else if(o instanceof Packets.Packet002Map){
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
-            //receives seed, sets seed of level at specified depth
-            //game.levels.get(((Packets.Packet002Map) o).depth).setSeed(((Packets.Packet002Map) o).seed);
-            game.setSeed(((Packets.Packet002Map) o).seed);
+            //receives seed, sets seed of level at specified depth, generates level
+            //game.generateLevel(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
+            game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
             //TODO receives player name and position, updates map
         } else if(o instanceof Packets.Packet004Potion){

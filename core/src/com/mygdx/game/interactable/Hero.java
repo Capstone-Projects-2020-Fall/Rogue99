@@ -3,7 +3,7 @@ package com.mygdx.game.interactable;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.Item;
-import com.mygdx.game.item.HealthPotion;
+import com.mygdx.game.item.Potion;
 
 import java.util.ArrayList;
 
@@ -59,7 +59,7 @@ public class Hero extends Character{
 
     }
 
-    public void usePotion(HealthPotion potion){
+    public void usePotion(Potion potion){
 
     }
 
