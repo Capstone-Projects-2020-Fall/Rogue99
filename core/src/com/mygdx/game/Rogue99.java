@@ -87,7 +87,7 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-
+		players = new ArrayList<>();
 
 
 		//initialize camera and viewport
@@ -131,7 +131,6 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	private void init_multiplayer() {
-		players = new ArrayList<>();
 		//initialize client
 		client = new MPClient(this);
 
