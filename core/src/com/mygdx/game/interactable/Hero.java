@@ -3,7 +3,7 @@ package com.mygdx.game.interactable;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.Item;
-import com.mygdx.game.item.Potion;
+import com.mygdx.game.item.HealthPotion;
 
 import java.util.ArrayList;
 
@@ -14,9 +14,11 @@ public class Hero extends Character{
     private ArrayList<Item> inventory;
     Rogue99 game;
     String sprite;
+    public int depth;
     public Vector3 pos3 = new Vector3();
 
     public Hero(Rogue99 game, String sprite) {
+        depth = 0;
         this.game = game;
         this.sprite = sprite;
         inventory = new ArrayList<>();
@@ -57,7 +59,7 @@ public class Hero extends Character{
 
     }
 
-    public void usePotion(Potion potion){
+    public void usePotion(HealthPotion potion){
 
     }
 
@@ -115,7 +117,9 @@ public class Hero extends Character{
                 setPosX(x);
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
-            } else {
+            } else if (game.level.getMap()[x][y].getType().equals("stair_down")){
+                game.newLevel(depth);
+            }  else {
                 // move to new position
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 setPosX(x);
