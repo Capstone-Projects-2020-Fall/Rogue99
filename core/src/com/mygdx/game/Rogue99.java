@@ -36,6 +36,26 @@ public class Rogue99 extends ApplicationAdapter {
 	public final String HEALTHBAR = "Health";
 	public final String ARMOURBAR = "Armour";
 
+	private Texture bg;
+	private Texture play;
+	private Texture play_hover;
+	private Texture multi;
+	private Texture multi_hover;
+	private Texture setting;
+	private Texture setting_hover;
+	private Texture exit;
+	private Texture exit_hover;
+	private Texture Title;
+
+	private Sprite sp;
+	public static int WIDTH;
+	public static int HEIGHT;
+
+
+
+
+
+
 
 	public Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
@@ -73,6 +93,7 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean attacking;
 	boolean mapGenerated;
 	boolean seedReceived;
+	boolean showMainMenu;
 	public boolean multiplayer;
 
 	Item EquippedWeapon;
@@ -107,12 +128,30 @@ public class Rogue99 extends ApplicationAdapter {
 		hero = new Hero(this, "tile169");
 
 		levels = new ArrayList<>();
-
-		init_single_player();
+		showMainMenu = true;
+		mainMenu();
+		//init_single_player();
 		//init_multiplayer();
 
 	}
-
+	private void mainMenu() {
+		WIDTH = Gdx.graphics.getWidth();
+		HEIGHT = Gdx.graphics.getHeight();
+		camera = new OrthographicCamera(WIDTH, HEIGHT);
+		camera.translate(WIDTH/2, HEIGHT/2);
+		camera.update();
+		bg = new Texture("spritesheets/cave.png");
+		sp = new Sprite(bg);
+		play = new Texture("spritesheets/play.png");
+		play_hover = new Texture("spritesheets/play_hover.png");
+		multi = new Texture("spritesheets/multiplay.png");
+		multi_hover = new Texture("spritesheets/mutliplay_hover.png");
+		setting = new Texture("spritesheets/setting.png");
+		setting_hover = new Texture("spritesheets/setting_hover.png");
+		exit = new Texture("spritesheets/exit.png");
+		exit_hover = new Texture("spritesheets/exit_hover.png");
+		Title = new Texture("spritesheets/title.png");
+	}
 	private void init_single_player(){
 		Level tempLevel = new Level(null, 0, null);
 		tempLevel.generateFloorPlan();
@@ -146,49 +185,79 @@ public class Rogue99 extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
+		if (showMainMenu) {
+			sp.draw(batch);
+			batch.draw(play, WIDTH/2 - 100 / 2, 350, 100, 100);
+			batch.draw(multi, WIDTH/2 - 170/2, 290, 170, 100);
+			batch.draw(setting, WIDTH/2 - 170/2, 230, 170, 100);
+			batch.draw(exit, WIDTH/2 - 100/2, 170, 100, 100);
+			batch.draw(Title, WIDTH/2 - 500/2, 600, 500, 400);
 
-		// only draw map and ui elements if the map is actually generated
-		if (mapGenerated) {
-			drawMap(level);
-			stage.act();
-			if (isShowInventory()) {
-				Gdx.input.setInputProcessor(stage);
-				inventoryGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
-				hudGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 + HEIGHT_PAD);
-				enemyHud.setPosition(Gdx.graphics.getWidth(), 0);
-				stage.draw();
-				stage.addListener(new InputListener() {
-					@Override
-					public boolean keyUp(InputEvent event, int keycode) {
-						if (keycode == Input.Keys.I) {
-							setShowInventory(false);
+			if (Gdx.input.getX() < WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 -100/2 && HEIGHT - Gdx.input.getY() <
+					350 + 100 && HEIGHT - Gdx.input.getY() > 350) { //cuts screen to make active when in tha zone
+				batch.draw(play_hover,WIDTH/2 - 100 / 2, 350, 100, 100);
+				if(Gdx.input.isTouched()) {
+					init_single_player();
+					showMainMenu = false;
+				}
+
+			} else if (Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
+					290 + 100 && HEIGHT - Gdx.input.getY() > 290) {
+				batch.draw(multi_hover, WIDTH/2 - 170/2, 290, 170, 100);
+			} else if(Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
+					230 + 100 && HEIGHT - Gdx.input.getY() > 230) {
+				batch.draw(setting_hover, WIDTH/2 - 170/2, 230, 170, 100);
+			} else if(Gdx.input.getX() <WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 - 100/2 && HEIGHT - Gdx.input.getY() <
+					170 + 100 && HEIGHT - Gdx.input.getY() > 170) {
+				batch.draw(exit_hover, WIDTH/2 - 100/2, 170, 100, 100);
+				if(Gdx.input.isTouched()) {
+					Gdx.app.exit();
+				}
+			}
+
+		}
+		else{
+			if (mapGenerated) {
+				drawMap(level);
+				stage.act();
+				if (isShowInventory()) {
+					Gdx.input.setInputProcessor(stage);
+					inventoryGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
+					hudGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 + HEIGHT_PAD);
+					enemyHud.setPosition(Gdx.graphics.getWidth(), 0);
+					stage.draw();
+					stage.addListener(new InputListener() {
+						@Override
+						public boolean keyUp(InputEvent event, int keycode) {
+							if (keycode == Input.Keys.I) {
+								setShowInventory(false);
+							}
+							return super.keyDown(event, keycode);
 						}
-						return super.keyDown(event, keycode);
-					}
-				});
-			} else {
-				Gdx.input.setInputProcessor(control);
+					});
+				} else {
+					Gdx.input.setInputProcessor(control);
+				}
+
+				if (isAttacking()) {
+					inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+					hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
+					enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
+					stage.draw();
+				}
 			}
 
-			if (isAttacking()) {
-				inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
-				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
-				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
-				stage.draw();
+			// Only Main thread has access to OpenGL so it needs to be the one generating the map
+			// MPClient or its network listeners can't just use generateLevel because they are on a different thread.
+			if (seedReceived) {
+				generateLevel(serverSeed, serverDepth);
+				seedReceived = false;
 			}
+
+			camera.position.lerp(hero.pos3, 0.1f);
+			camera.update();
+
 		}
-
-		// Only Main thread has access to OpenGL so it needs to be the one generating the map
-		// MPClient or its network listeners can't just use generateLevel because they are on a different thread.
-		if (seedReceived) {
-			generateLevel(serverSeed, serverDepth);
-			seedReceived = false;
-		}
-
-		camera.position.lerp(hero.pos3, 0.1f);
-		camera.update();
-
-
 		batch.end();
 	}
 
