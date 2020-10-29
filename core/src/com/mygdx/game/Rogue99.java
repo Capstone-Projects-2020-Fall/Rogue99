@@ -204,6 +204,10 @@ public class Rogue99 extends ApplicationAdapter {
 			} else if (Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
 					290 + 100 && HEIGHT - Gdx.input.getY() > 290) {
 				batch.draw(multi_hover, WIDTH/2 - 170/2, 290, 170, 100);
+				if(Gdx.input.isTouched()) {
+					init_multiplayer();
+					showMainMenu = false;
+				}
 			} else if(Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
 					230 + 100 && HEIGHT - Gdx.input.getY() > 230) {
 				batch.draw(setting_hover, WIDTH/2 - 170/2, 230, 170, 100);
