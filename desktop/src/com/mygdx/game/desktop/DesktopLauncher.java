@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		config.height = 2500;
 		config.width = 2160;
 		config.resizable = false;
-		new LwjglApplication(new Rogue99(), config);
-		//new LwjglApplication(new MainMenu(), config);
+		//new LwjglApplication(new Rogue99(), config);
+		new LwjglApplication(new MainMenu(), config);
 	}
 }
