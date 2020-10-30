@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
+import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.Level;
 import com.mygdx.game.map.Tile;
 
@@ -34,8 +35,8 @@ public class ClientNetworkListener extends Listener {
         if(o instanceof Packets.Packet000ConnectionAnswer){
             //TODO if o is false, return client to main menu and show message, close connection
         } else if(o instanceof Packets.Packet001Connection){
-            String servermsg = ((Packets.Packet001Connection) o).name;
-            System.out.println(servermsg);
+            //TODO set player name in hero
+            game.addPlayer(new Hero(game, "players"));
         } else if(o instanceof Packets.Packet002Map){
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
             //receives seed, sets seed of level at specified depth, generates level
@@ -43,6 +44,9 @@ public class ClientNetworkListener extends Listener {
             game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
             //TODO receives player name and position, updates map
+            System.out.println("x: " + ((Packets.Packet003Movement) o).xPos + " y: " + ((Packets.Packet003Movement) o).yPos);
+            game.players.get(0).setPosX(((Packets.Packet003Movement) o).xPos);
+            game.players.get(0).setPosY(((Packets.Packet003Movement) o).yPos);
         } else if(o instanceof Packets.Packet004Potion){
             if(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
                 game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);

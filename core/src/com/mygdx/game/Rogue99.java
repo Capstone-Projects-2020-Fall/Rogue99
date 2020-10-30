@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,6 +25,7 @@ import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.sun.java.swing.action.AlignRightAction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,7 +61,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
-	MPClient client;
+	public MPClient client;
 	ExtendViewport viewport;
 
 	Texture img;
@@ -85,6 +87,9 @@ public class Rogue99 extends ApplicationAdapter {
 	public Level level;
 	public ArrayList<Level> levels;
 
+	//list of other players
+	public ArrayList<Hero> players;
+
 	Stage stage;
 	Control control;
 
@@ -104,6 +109,8 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+
+		players = new ArrayList<>();
 
 		//initialize camera and viewport
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -128,11 +135,11 @@ public class Rogue99 extends ApplicationAdapter {
 		hero = new Hero(this, "tile169");
 
 		levels = new ArrayList<>();
+
 		showMainMenu = true;
 		mainMenu();
 		//init_single_player();
 		//init_multiplayer();
-
 	}
 	private void mainMenu() {
 		WIDTH = Gdx.graphics.getWidth();
@@ -217,6 +224,17 @@ public class Rogue99 extends ApplicationAdapter {
 				if(Gdx.input.isTouched()) {
 					Gdx.app.exit();
 				}
+			}
+
+			if(!players.isEmpty()){
+				drawHeroes();
+			}
+
+			if (isAttacking()) {
+				inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
+				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
+				stage.draw();
 			}
 
 		}
@@ -369,6 +387,19 @@ public class Rogue99 extends ApplicationAdapter {
 
 	}
 
+	private void drawHeroes(){
+		//System.out.println("Drawing hero");
+		for(Hero player : players) {
+			if(player.depth == hero.depth){
+				Sprite sprite = sprites.get("players");
+				sprite.setPosition(player.getPosX()*36, player.getPosY()*36);
+				sprite.setColor(Color.CORAL);
+				sprite.setAlpha(.5f);
+				sprite.draw(batch);
+			}
+		}
+	}
+
 	//creates HUD GUI & the map of the stats bars.
 	public void createHUDGui(){
 		Map<String,Integer> bars = new HashMap<>();
@@ -489,6 +520,10 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.setViewport(viewport);
 		generateGuiElements();
 		mapGenerated = true;
+		Packets.Packet003Movement movement = new Packets.Packet003Movement();
+		movement.xPos = hero.getPosX();
+		movement.yPos = hero.getPosY();
+		client.client.sendTCP(movement);
 	}
 
 
@@ -522,5 +557,10 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public Hero getHero() {
 		return hero;
+	}
+
+	public void addPlayer(Hero player){
+		System.out.println("Player Added");
+		players.add(player);
 	}
 }

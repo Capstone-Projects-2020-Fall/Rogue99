@@ -1,6 +1,7 @@
 package com.mygdx.game.interactable;
 
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.Item;
 import com.mygdx.game.item.HealthPotion;
@@ -127,6 +128,10 @@ public class Hero extends Character{
                 game.level.getMap()[x][y].getEntities().push(this);
                 game.setAttacking(false);
             }
+            Packets.Packet003Movement movement = new Packets.Packet003Movement();
+            movement.xPos = x;
+            movement.yPos = y;
+            game.client.client.sendTCP(movement);
             game.level.moveEnemies();
         }
     }

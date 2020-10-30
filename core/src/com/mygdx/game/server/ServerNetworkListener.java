@@ -9,16 +9,20 @@ import com.mygdx.game.map.Level;
 
 import java.util.Random;
 
+import java.util.ArrayList;
+
 public class ServerNetworkListener  extends Listener {
 
     Server server;
     GameServer gameServer;
     Kryo kryo;
+    ArrayList<Object> connectionsInfo;
 
     public ServerNetworkListener(Server server, GameServer gameServer, Kryo kryo){
         this.server = server;
         this.gameServer = gameServer;
         this.kryo = kryo;
+        connectionsInfo = new ArrayList<>();
     }
 
     @Override
@@ -36,14 +40,20 @@ public class ServerNetworkListener  extends Listener {
     public void received(Connection connection, Object object) {
         if(object instanceof Packets.Packet001Connection){
             //TODO connection handling
-            Packets.Packet000ConnectionAnswer answer = new Packets.Packet000ConnectionAnswer();
-            connection.sendTCP(answer);
-        } else {
+            Packets.Packet000ConnectionAnswer connectionAnswer = new Packets.Packet000ConnectionAnswer();
+            connectionAnswer.answer = true;
+            connection.sendTCP(connectionAnswer);
             server.sendToAllExceptTCP(connection.getID(), object);
+            if(connectionsInfo.size() > 0){
+                for(Object o : connectionsInfo){
+                    connection.sendTCP(o);
+                }
+            }
+            connectionsInfo.add(object);
         }
 
         //server receives map request, sends seed
-        if(object instanceof Packets.Packet006RequestSeed){
+        else if(object instanceof Packets.Packet006RequestSeed){
             //if level seed is not in list, generate a new seed and add to list
             //then send seed at index=depth
             System.out.println("Gameserver seeds size: " + gameServer.seeds.size());
@@ -60,6 +70,8 @@ public class ServerNetworkListener  extends Listener {
             mapAnswer.seed = gameServer.seeds.get(((Packets.Packet006RequestSeed) object).depth);
             mapAnswer.depth = ((Packets.Packet006RequestSeed) object).depth;
             connection.sendTCP(mapAnswer);
+        } else if(object instanceof Packets.Packet003Movement){
+            server.sendToAllExceptTCP(connection.getID(), object);
         }
         else if(object instanceof Packets.Packet004Potion){
             Connection[] connectionList = server.getConnections();
