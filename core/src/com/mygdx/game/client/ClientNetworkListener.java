@@ -36,7 +36,9 @@ public class ClientNetworkListener extends Listener {
             //TODO if o is false, return client to main menu and show message, close connection
         } else if(o instanceof Packets.Packet001Connection){
             //TODO set player name in hero
-            game.addPlayer(new Hero(game, "players"));
+            Hero player = new Hero(game, "players");
+            player.depth = 0;
+            game.addPlayer(player);
         } else if(o instanceof Packets.Packet002Map){
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
             //receives seed, sets seed of level at specified depth, generates level

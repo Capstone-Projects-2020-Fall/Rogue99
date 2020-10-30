@@ -136,10 +136,10 @@ public class Rogue99 extends ApplicationAdapter {
 
 		levels = new ArrayList<>();
 
-		showMainMenu = true;
-		mainMenu();
+//		showMainMenu = true;
+//		mainMenu();
 		//init_single_player();
-		//init_multiplayer();
+		init_multiplayer();
 	}
 	private void mainMenu() {
 		WIDTH = Gdx.graphics.getWidth();
@@ -226,17 +226,6 @@ public class Rogue99 extends ApplicationAdapter {
 				}
 			}
 
-			if(!players.isEmpty()){
-				drawHeroes();
-			}
-
-			if (isAttacking()) {
-				inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
-				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
-				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
-				stage.draw();
-			}
-
 		}
 		else{
 			if (mapGenerated) {
@@ -260,6 +249,10 @@ public class Rogue99 extends ApplicationAdapter {
 				} else {
 					Gdx.input.setInputProcessor(control);
 				}
+
+				//if(!players.isEmpty()){
+				drawHeroes();
+				//}
 
 				if (isAttacking()) {
 					inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
@@ -390,7 +383,10 @@ public class Rogue99 extends ApplicationAdapter {
 	private void drawHeroes(){
 		//System.out.println("Drawing hero");
 		for(Hero player : players) {
+			System.out.println("Hero depth: " + hero.depth);
+			System.out.println("player depth: " + player.depth);
 			if(player.depth == hero.depth){
+				System.out.println("same depth");
 				Sprite sprite = sprites.get("players");
 				sprite.setPosition(player.getPosX()*36, player.getPosY()*36);
 				sprite.setColor(Color.CORAL);
