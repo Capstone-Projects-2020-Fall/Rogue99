@@ -30,6 +30,7 @@ import com.sun.java.swing.action.AlignRightAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Rogue99 extends ApplicationAdapter {
 
@@ -136,9 +137,9 @@ public class Rogue99 extends ApplicationAdapter {
 
 		levels = new ArrayList<>();
 
-		showMainMenu = true;
-		mainMenu();
-		//init_single_player();
+		//showMainMenu = true;
+		//mainMenu();
+		init_single_player();
 		//init_multiplayer();
 	}
 	private void mainMenu() {
@@ -353,23 +354,27 @@ public class Rogue99 extends ApplicationAdapter {
 		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthScroll){
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("HEALTH SCROLL SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.CYAN);
 			sprite.setPosition(x,y);
 			sprite.draw(batch);
 		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof ArmorScroll) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("ARMOR SCROLL SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.GOLDENROD);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
 		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthPotion) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.CYAN);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
 		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof DamagePotion) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.RED);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
@@ -520,10 +525,10 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.setViewport(viewport);
 		generateGuiElements();
 		mapGenerated = true;
-		Packets.Packet003Movement movement = new Packets.Packet003Movement();
-		movement.xPos = hero.getPosX();
-		movement.yPos = hero.getPosY();
-		client.client.sendTCP(movement);
+		//Packets.Packet003Movement movement = new Packets.Packet003Movement();
+		//movement.xPos = hero.getPosX();
+		//movement.yPos = hero.getPosY();
+		//client.client.sendTCP(movement);
 	}
 
 

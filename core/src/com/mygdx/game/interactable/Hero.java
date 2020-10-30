@@ -128,10 +128,10 @@ public class Hero extends Character{
                 game.level.getMap()[x][y].getEntities().push(this);
                 game.setAttacking(false);
             }
-            Packets.Packet003Movement movement = new Packets.Packet003Movement();
-            movement.xPos = x;
-            movement.yPos = y;
-            game.client.client.sendTCP(movement);
+            //Packets.Packet003Movement movement = new Packets.Packet003Movement();
+            //movement.xPos = x;
+            //movement.yPos = y;
+            //game.client.client.sendTCP(movement);
             game.level.moveEnemies();
         }
     }

@@ -397,15 +397,15 @@ public class Level implements Serializable {
                 itemC = rand.nextInt(c);
                 //TODO flesh out item chances once potion classes are finished
                 if(itemC < 20){
-                    generateItemUtil(new HealthPotion(20, "potion", 10), z);
+                    generateItemUtil(new HealthPotion(20, "potion_health", 10), z);
                 } else if(20 <= itemC && itemC < 40){
-                    generateItemUtil(new DamagePotion(20, "potion", 10), z);
+                    generateItemUtil(new DamagePotion(20, "potion_damage", 10), z);
                 } else if(40 <= itemC && itemC < 60){
-                    generateItemUtil(new HealthScroll(20, "scroll", 10), z);
+                    generateItemUtil(new HealthScroll(20, "scroll_health", 10), z);
                 } else if(60 <= itemC && itemC < 70){
-                    generateItemUtil(new StrengthScroll(20, "scroll", 10), z);
+                    generateItemUtil(new StrengthScroll(20, "scroll_strength", 10), z);
                 } else if(70 <= itemC && itemC < 80){
-                    generateItemUtil(new ArmorScroll(20, "scroll", 10), z);
+                    generateItemUtil(new ArmorScroll(20, "scroll_armor", 10), z);
                 } else if(80 <= itemC && itemC < 100){
                     System.out.println("weapon generated!");
                     generateItemUtil(new Weapon(20, "tile261", 10), z);
