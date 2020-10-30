@@ -138,8 +138,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 //		showMainMenu = true;
 //		mainMenu();
-		//init_single_player();
-		init_multiplayer();
+		init_single_player();
+		//init_multiplayer();
 	}
 	private void mainMenu() {
 		WIDTH = Gdx.graphics.getWidth();
@@ -432,6 +432,13 @@ public class Rogue99 extends ApplicationAdapter {
 		for(HUDProgressBar bar : barList){
 			if(bar.getName() == barName){
 				bar.setValue(newValue);
+			}
+			if(multiplayer){
+				Packets.Packet005Stats stats = new Packets.Packet005Stats();
+				stats.name = hero.getName();
+				stats.health = hero.getCurrHP();
+				stats.armor = hero.getArmor();
+				client.client.sendTCP(stats);
 			}
 		}
 		for(HUDProgressBar bar : enemyBarList){

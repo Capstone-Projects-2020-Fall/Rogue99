@@ -56,7 +56,12 @@ public class ClientNetworkListener extends Listener {
                 game.getHero().setCurrHP(0);
             }
         } else if(o instanceof Packets.Packet005Stats){
-            //TODO receives stats of other player
+            for(Hero player : game.players){
+                if(player.getName() == ((Packets.Packet005Stats) o).name){
+                    player.setCurrHP(((Packets.Packet005Stats) o).health);
+                    player.setArmor(((Packets.Packet005Stats) o).armor);
+                }
+            }
         }
     }
 }

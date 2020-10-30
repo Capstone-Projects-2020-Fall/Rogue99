@@ -57,7 +57,6 @@ public class ServerNetworkListener  extends Listener {
             System.out.println("Gameserver seeds size: " + gameServer.seeds.size());
             System.out.println("Server: depth requested: " + ((Packets.Packet006RequestSeed) object).depth);
             if(((Packets.Packet006RequestSeed) object).depth == gameServer.seeds.size()){
-                //TODO call generateFloorplan to get working seed
                 Level level = new Level(null, ((Packets.Packet006RequestSeed) object).depth, null);
                 level.generateFloorPlan();
 
@@ -83,6 +82,8 @@ public class ServerNetworkListener  extends Listener {
                 i = rand.nextInt() % connectionList.length;
             }
             connectionList[i].sendTCP(object);
+        } else {
+            server.sendToAllExceptTCP(connection.getID(), object);
         }
     }
 }
