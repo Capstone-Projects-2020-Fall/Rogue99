@@ -300,6 +300,7 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	private void drawHeroes(){
+		//System.out.println("Drawing hero");
 		for(Hero player : players) {
 			if(player.depth == hero.depth){
 				Sprite sprite = sprites.get("players");
@@ -452,6 +453,7 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	public void addPlayer(Hero player){
+		System.out.println("Player Added");
 		players.add(player);
 	}
 }

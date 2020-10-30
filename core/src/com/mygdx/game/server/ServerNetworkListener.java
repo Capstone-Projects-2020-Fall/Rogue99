@@ -53,6 +53,7 @@ public class ServerNetworkListener  extends Listener {
         else if(object instanceof Packets.Packet006RequestSeed){
             //if level seed is not in list, generate a new seed and add to list
             //then send seed at index=depth
+            System.out.println("Depth: " + ((Packets.Packet006RequestSeed) object).depth);
             if(((Packets.Packet006RequestSeed) object).depth >= gameServer.seeds.size()){
                 gameServer.seeds.add(String.valueOf(System.currentTimeMillis()));
             }
@@ -60,6 +61,8 @@ public class ServerNetworkListener  extends Listener {
             mapAnswer.seed = gameServer.seeds.get(((Packets.Packet006RequestSeed) object).depth);
             mapAnswer.depth = ((Packets.Packet006RequestSeed) object).depth;
             connection.sendTCP(mapAnswer);
+        } else if(object instanceof Packets.Packet003Movement){
+            server.sendToAllExceptTCP(connection.getID(), object);
         }
     }
 

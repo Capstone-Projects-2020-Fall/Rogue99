@@ -44,6 +44,7 @@ public class ClientNetworkListener extends Listener {
             game.setSeed(((Packets.Packet002Map) o).seed);
         } else if(o instanceof Packets.Packet003Movement){
             //TODO receives player name and position, updates map
+            System.out.println("x: " + ((Packets.Packet003Movement) o).xPos + " y: " + ((Packets.Packet003Movement) o).yPos);
             game.players.get(0).setPosX(((Packets.Packet003Movement) o).xPos);
             game.players.get(0).setPosY(((Packets.Packet003Movement) o).yPos);
         } else if(o instanceof Packets.Packet004Potion){
