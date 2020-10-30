@@ -39,16 +39,21 @@ public class ClientNetworkListener extends Listener {
             game.addPlayer(new Hero(game, "players"));
         } else if(o instanceof Packets.Packet002Map){
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
-            //receives seed, sets seed of level at specified depth
-            //game.levels.get(((Packets.Packet002Map) o).depth).setSeed(((Packets.Packet002Map) o).seed);
-            game.setSeed(((Packets.Packet002Map) o).seed);
+            //receives seed, sets seed of level at specified depth, generates level
+            //game.generateLevel(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
+            game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
             //TODO receives player name and position, updates map
             System.out.println("x: " + ((Packets.Packet003Movement) o).xPos + " y: " + ((Packets.Packet003Movement) o).yPos);
             game.players.get(0).setPosX(((Packets.Packet003Movement) o).xPos);
             game.players.get(0).setPosY(((Packets.Packet003Movement) o).yPos);
         } else if(o instanceof Packets.Packet004Potion){
-            //TODO receives potion, uses
+            if(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
+                game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);
+            }
+            else {
+                game.getHero().setCurrHP(0);
+            }
         } else if(o instanceof Packets.Packet005Stats){
             //TODO receives stats of other player
         }

@@ -2,11 +2,11 @@ package com.mygdx.game.item;
 
 import com.mygdx.game.interactable.Character;
 
-public class Potion extends Item{
+public class HealthPotion extends Item{
     private int healAmt;
     private String sprite;
 
-    public Potion(int rarity, String sprite, int heal) {
+    public HealthPotion(int rarity, String sprite, int heal) {
         super.rarity = rarity;
         this.sprite = sprite;
         healAmt = heal;
@@ -31,7 +31,7 @@ public class Potion extends Item{
 
     @Override
     public int getId() {
-        return Item.POTION;
+        return Item.HEALTHPOTION;
     }
 
     @Override

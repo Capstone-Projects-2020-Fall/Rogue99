@@ -38,8 +38,28 @@ public class Rogue99 extends ApplicationAdapter {
 	public final String HEALTHBAR = "Health";
 	public final String ARMOURBAR = "Armour";
 
+	private Texture bg;
+	private Texture play;
+	private Texture play_hover;
+	private Texture multi;
+	private Texture multi_hover;
+	private Texture setting;
+	private Texture setting_hover;
+	private Texture exit;
+	private Texture exit_hover;
+	private Texture Title;
 
-	Hero hero;
+	private Sprite sp;
+	public static int WIDTH;
+	public static int HEIGHT;
+
+
+
+
+
+
+
+	public Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
 	public MPClient client;
 	ExtendViewport viewport;
@@ -78,17 +98,19 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean attacking;
 	boolean mapGenerated;
 	boolean seedReceived;
-	boolean multiplayer;
+	boolean showMainMenu;
+	public boolean multiplayer;
 
 	Item EquippedWeapon;
-	String seed;
+	String serverSeed;
+	int serverDepth;
 
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		players = new ArrayList<>();
 
+		players = new ArrayList<>();
 
 		//initialize camera and viewport
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -114,16 +136,33 @@ public class Rogue99 extends ApplicationAdapter {
 
 		levels = new ArrayList<>();
 
+		showMainMenu = true;
+		mainMenu();
 		//init_single_player();
-		init_multiplayer();
-
+		//init_multiplayer();
 	}
-
+	private void mainMenu() {
+		WIDTH = Gdx.graphics.getWidth();
+		HEIGHT = Gdx.graphics.getHeight();
+		camera = new OrthographicCamera(WIDTH, HEIGHT);
+		camera.translate(WIDTH/2, HEIGHT/2);
+		camera.update();
+		bg = new Texture("spritesheets/cave.png");
+		sp = new Sprite(bg);
+		play = new Texture("spritesheets/play.png");
+		play_hover = new Texture("spritesheets/play_hover.png");
+		multi = new Texture("spritesheets/multiplay.png");
+		multi_hover = new Texture("spritesheets/mutliplay_hover.png");
+		setting = new Texture("spritesheets/setting.png");
+		setting_hover = new Texture("spritesheets/setting_hover.png");
+		exit = new Texture("spritesheets/exit.png");
+		exit_hover = new Texture("spritesheets/exit_hover.png");
+		Title = new Texture("spritesheets/title.png");
+	}
 	private void init_single_player(){
-
-		generateLevel(String.valueOf(System.currentTimeMillis()), 0);
-
-
+		Level tempLevel = new Level(null, 0, null);
+		tempLevel.generateFloorPlan();
+		generateLevel(tempLevel.getSeed(), 0);
 
 		control = new Control(hero, this);
 
@@ -131,13 +170,15 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	private void init_multiplayer() {
+		multiplayer = true;
 		//initialize client
 		client = new MPClient(this);
 
-
 		//get seed from server
-		client.client.sendTCP(new Packets.Packet006RequestSeed().depth);
-
+		Packets.Packet006RequestSeed seedRequest = new Packets.Packet006RequestSeed();
+		seedRequest.depth = 0;
+		System.out.println("Sending seed request for level 0");
+		client.client.sendTCP(seedRequest);
 
 		control = new Control(hero, this);
 		Gdx.input.setInputProcessor(control);
@@ -151,28 +192,38 @@ public class Rogue99 extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
+		if (showMainMenu) {
+			sp.draw(batch);
+			batch.draw(play, WIDTH/2 - 100 / 2, 350, 100, 100);
+			batch.draw(multi, WIDTH/2 - 170/2, 290, 170, 100);
+			batch.draw(setting, WIDTH/2 - 170/2, 230, 170, 100);
+			batch.draw(exit, WIDTH/2 - 100/2, 170, 100, 100);
+			batch.draw(Title, WIDTH/2 - 500/2, 600, 500, 400);
 
-		// only draw map and ui elements if the map is actually generated
-		if (mapGenerated) {
-			drawMap(level);
-			stage.act();
-			if (isShowInventory()) {
-				Gdx.input.setInputProcessor(stage);
-				inventoryGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
-				hudGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 + HEIGHT_PAD);
-				enemyHud.setPosition(Gdx.graphics.getWidth(), 0);
-				stage.draw();
-				stage.addListener(new InputListener() {
-					@Override
-					public boolean keyUp(InputEvent event, int keycode) {
-						if (keycode == Input.Keys.I) {
-							setShowInventory(false);
-						}
-						return super.keyDown(event, keycode);
-					}
-				});
-			} else {
-				Gdx.input.setInputProcessor(control);
+			if (Gdx.input.getX() < WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 -100/2 && HEIGHT - Gdx.input.getY() <
+					350 + 100 && HEIGHT - Gdx.input.getY() > 350) { //cuts screen to make active when in tha zone
+				batch.draw(play_hover,WIDTH/2 - 100 / 2, 350, 100, 100);
+				if(Gdx.input.isTouched()) {
+					init_single_player();
+					showMainMenu = false;
+				}
+
+			} else if (Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
+					290 + 100 && HEIGHT - Gdx.input.getY() > 290) {
+				batch.draw(multi_hover, WIDTH/2 - 170/2, 290, 170, 100);
+				if(Gdx.input.isTouched()) {
+					init_multiplayer();
+					showMainMenu = false;
+				}
+			} else if(Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
+					230 + 100 && HEIGHT - Gdx.input.getY() > 230) {
+				batch.draw(setting_hover, WIDTH/2 - 170/2, 230, 170, 100);
+			} else if(Gdx.input.getX() <WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 - 100/2 && HEIGHT - Gdx.input.getY() <
+					170 + 100 && HEIGHT - Gdx.input.getY() > 170) {
+				batch.draw(exit_hover, WIDTH/2 - 100/2, 170, 100, 100);
+				if(Gdx.input.isTouched()) {
+					Gdx.app.exit();
+				}
 			}
 
 			if(!players.isEmpty()){
@@ -185,19 +236,50 @@ public class Rogue99 extends ApplicationAdapter {
 				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
 				stage.draw();
 			}
+
 		}
+		else{
+			if (mapGenerated) {
+				drawMap(level);
+				stage.act();
+				if (isShowInventory()) {
+					Gdx.input.setInputProcessor(stage);
+					inventoryGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
+					hudGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 + HEIGHT_PAD);
+					enemyHud.setPosition(Gdx.graphics.getWidth(), 0);
+					stage.draw();
+					stage.addListener(new InputListener() {
+						@Override
+						public boolean keyUp(InputEvent event, int keycode) {
+							if (keycode == Input.Keys.I) {
+								setShowInventory(false);
+							}
+							return super.keyDown(event, keycode);
+						}
+					});
+				} else {
+					Gdx.input.setInputProcessor(control);
+				}
 
-		// Only Main thread has access to OpenGL so it needs to be the one generating the map
-		// MPClient or its network listeners can't just use generateLevel because they are on a different thread.
-		if (seedReceived) {
-			generateLevel(seed, 1);
-			seedReceived = false;
+				if (isAttacking()) {
+					inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+					hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
+					enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
+					stage.draw();
+				}
+			}
+
+			// Only Main thread has access to OpenGL so it needs to be the one generating the map
+			// MPClient or its network listeners can't just use generateLevel because they are on a different thread.
+			if (seedReceived) {
+				generateLevel(serverSeed, serverDepth);
+				seedReceived = false;
+			}
+
+			camera.position.lerp(hero.pos3, 0.1f);
+			camera.update();
+
 		}
-
-		camera.position.lerp(hero.pos3, 0.1f);
-		camera.update();
-
-
 		batch.end();
 	}
 
@@ -279,7 +361,13 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
-		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Potion) {
+		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthPotion) {
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
+		}
+		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof DamagePotion) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
 			sprite.setPosition(x, y);
@@ -365,12 +453,20 @@ public class Rogue99 extends ApplicationAdapter {
 			inventoryGui.addItemToInventory(item);
 		} else {
 			item.use(hero);
-			if(item.getId() == Item.POTION){
+			if(item.getId() == Item.HEALTHPOTION){
 				changeBarValue(HEALTHBAR, hero.getCurrHP());
 				hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
 				System.out.println(hudGui.getHudBars().get(1).getValue());
 				System.out.println(hero.getCurrHP());
-			} else if(item.getId() == Item.ARMORSCROLL){
+			}
+			else if(item.getId() == Item.DAMAGEPOTION){
+				Packets.Packet004Potion potion = new Packets.Packet004Potion();
+				potion.ID = Item.DAMAGEPOTION;
+				potion.value = ( (DamagePotion) item).getDmgAmt();
+
+				client.client.sendTCP(potion);
+			}
+			else if(item.getId() == Item.ARMORSCROLL){
 				changeBarValue(ARMOURBAR, hero.getArmor());
 				hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
 			} else if(item.getId() == Item.HEALTHSCROLL) {
@@ -401,7 +497,7 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	public void setAttacking(boolean attacking) {
-		System.out.println(attacking);
+		//System.out.println(attacking);
 		this.attacking = attacking;
 	}
 
@@ -411,10 +507,10 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 	// generate the level and level stage
-	private void generateLevel(String seed, int depth){
-		//initialize first level
-		System.out.println(seed);
-		level = new Level(this,depth, hero);
+	public void generateLevel(String seed, int depth){
+		//initialize level
+		System.out.println("generateLevel seed: " + seed);
+		level = new Level(this, depth, hero);
 		levels.add(level);
 		level.setSeed(seed);
 		level.generate();
@@ -432,8 +528,9 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 	// Get the seed from server
-	public void setSeed (String seed){
-		this.seed = seed;
+	public void setSeed (String seed, int depth){
+		this.serverSeed = seed;
+		this.serverDepth = depth;
 		seedReceived = true;
 	}
 
@@ -446,10 +543,20 @@ public class Rogue99 extends ApplicationAdapter {
   }
 
 	public void newLevel(int depth){
-		if(multiplayer)
-		client.client.sendTCP(new Packets.Packet006RequestSeed().depth = depth++);
-		// single player option
-		else generateLevel(level.generateSeed(), depth++);
+		if(multiplayer) {
+			Packets.Packet006RequestSeed request = new Packets.Packet006RequestSeed();
+			request.depth = depth;
+			System.out.println("Client: depth requested: " + request.depth);
+			client.client.sendTCP(request);
+		}
+		else {			// single player option
+			level.generateFloorPlan();
+			generateLevel(level.getSeed(), depth++);
+		}
+	}
+
+	public Hero getHero() {
+		return hero;
 	}
 
 	public void addPlayer(Hero player){
