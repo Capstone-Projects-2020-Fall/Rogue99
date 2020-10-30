@@ -41,7 +41,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	Hero hero;
 	SpriteBatch batch;	public OrthographicCamera camera;
-	MPClient client;
+	public MPClient client;
 	ExtendViewport viewport;
 
 	Texture img;
@@ -114,8 +114,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 		levels = new ArrayList<>();
 
-		init_single_player();
-		//init_multiplayer();
+		//init_single_player();
+		init_multiplayer();
 
 	}
 
@@ -423,7 +423,10 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.setViewport(viewport);
 		generateGuiElements();
 		mapGenerated = true;
-
+		Packets.Packet003Movement movement = new Packets.Packet003Movement();
+		movement.xPos = hero.getPosX();
+		movement.yPos = hero.getPosY();
+		client.client.sendTCP(movement);
 	}
 
 
