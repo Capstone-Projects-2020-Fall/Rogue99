@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.Item;
 import com.mygdx.game.item.HealthPotion;
+import com.mygdx.game.item.SummonScroll;
 
 import java.util.ArrayList;
 
@@ -145,6 +146,9 @@ public class Hero extends Character{
         if(enemy.getCurrHP() > 0){
             game.level.getMap()[x][y].getEntities().push(enemy);
             enemy.attack(this);
+        }
+        else {
+            game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll", enemy.getDifficulty()) );
         }
     }
 

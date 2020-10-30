@@ -430,4 +430,7 @@ public class Level implements Serializable {
         return seed;
     }
 
+    public int getHeight() { return height; }
+
+    public int getWidth() { return width; }
 }

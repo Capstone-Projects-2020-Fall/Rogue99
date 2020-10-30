@@ -440,8 +440,16 @@ public class Rogue99 extends ApplicationAdapter {
 				hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
 			} else if(item.getId() == Item.HEALTHSCROLL) {
 				// write code here for visual changes if wanted //
-			} else if(item.getId() == Item.STRENGTHSCROLL){
+			} else if(item.getId() == Item.STRENGTHSCROLL) {
 				// write code here for visual changes if wanted //
+			} else if(item.getId() == Item.BANESCROLL) {
+
+			} else if(item.getId() == Item.SUMMONSCROLL) {
+				Packets.Packet004Potion scroll = new Packets.Packet004Potion();
+				scroll.ID = Item.SUMMONSCROLL;
+				scroll.value = ( (SummonScroll) item).getDifficulty();
+
+				client.client.sendTCP(scroll);
 			} else if(item.getId() == Item.WEAPON){
 					item.setEquipped(true);
 					System.out.println("Weapon used: " + item.use(hero));
