@@ -6,10 +6,6 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Hero;
-import com.mygdx.game.map.Level;
-import com.mygdx.game.map.Tile;
-
-import java.nio.ByteBuffer;
 
 public class ClientNetworkListener extends Listener {
     private Client client;
@@ -35,9 +31,9 @@ public class ClientNetworkListener extends Listener {
         if(o instanceof Packets.Packet000ConnectionAnswer){
             //TODO if o is false, return client to main menu and show message, close connection
         } else if(o instanceof Packets.Packet001Connection){
-            //TODO set player name in hero
             Hero player = new Hero(game, "players");
             player.depth = 0;
+            player.setName(((Packets.Packet001Connection) o).name);
             game.addPlayer(player);
         } else if(o instanceof Packets.Packet002Map){
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
@@ -45,10 +41,13 @@ public class ClientNetworkListener extends Listener {
             //game.generateLevel(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
             game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
-            //TODO receives player name and position, updates map
             System.out.println("x: " + ((Packets.Packet003Movement) o).xPos + " y: " + ((Packets.Packet003Movement) o).yPos);
-            game.players.get(0).setPosX(((Packets.Packet003Movement) o).xPos);
-            game.players.get(0).setPosY(((Packets.Packet003Movement) o).yPos);
+            for(Hero player : game.players){
+                if(player.getName() == ((Packets.Packet003Movement) o).name){
+                    player.setPosX(((Packets.Packet003Movement) o).xPos);
+                    player.setPosY(((Packets.Packet003Movement) o).yPos);
+                }
+            }
         } else if(o instanceof Packets.Packet004Potion){
             if(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
                 game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);

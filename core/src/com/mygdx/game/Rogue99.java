@@ -516,10 +516,12 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.setViewport(viewport);
 		generateGuiElements();
 		mapGenerated = true;
-		Packets.Packet003Movement movement = new Packets.Packet003Movement();
-		movement.xPos = hero.getPosX();
-		movement.yPos = hero.getPosY();
-		client.client.sendTCP(movement);
+		if(multiplayer) {
+			Packets.Packet003Movement movement = new Packets.Packet003Movement();
+			movement.xPos = hero.getPosX();
+			movement.yPos = hero.getPosY();
+			client.client.sendTCP(movement);
+		}
 	}
 
 
