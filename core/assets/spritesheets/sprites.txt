@@ -990,7 +990,14 @@ tile140
   orig: 39, 39
   offset: 2, 0
   index: -1
-potion
+potion_health
+  rotate: false
+  xy: 196, 391
+  size: 37, 37
+  orig: 39, 39
+  offset: 2, 0
+  index: -1
+potion_damage
   rotate: false
   xy: 196, 391
   size: 37, 37
@@ -1187,6 +1194,13 @@ tile168
   offset: 2, 0
   index: -1
 tile169
+  rotate: false
+  xy: 196, 469
+  size: 37, 37
+  orig: 39, 39
+  offset: 2, 0
+  index: -1
+players
   rotate: false
   xy: 196, 469
   size: 37, 37
@@ -2656,7 +2670,21 @@ tile378
   orig: 39, 39
   offset: 2, 0
   index: -1
-scroll
+scroll_armor
+  rotate: false
+  xy: 235, 976
+  size: 37, 37
+  orig: 39, 39
+  offset: 2, 0
+  index: -1
+scroll_health
+  rotate: false
+  xy: 235, 976
+  size: 37, 37
+  orig: 39, 39
+  offset: 2, 0
+  index: -1
+scroll_strength
   rotate: false
   xy: 235, 976
   size: 37, 37
