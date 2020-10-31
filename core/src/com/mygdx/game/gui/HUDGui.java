@@ -23,9 +23,10 @@ public class HUDGui extends Window {
     public ArrayList<HUDProgressBar> hudBars;
     public ArrayList<TextField> statsNumTexts;
 
-    public HUDGui(Skin skin, Map<String, Integer> bars){
+    public HUDGui(String HUDName,Skin skin, Map<String, Integer> bars){
         super("Stats", skin);
         patch = skin.getPatch("default-round");
+        this.setName(HUDName);
         this.setResizable(false);
         this.setMovable(false);
         this.align(Align.center);

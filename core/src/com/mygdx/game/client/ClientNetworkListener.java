@@ -6,10 +6,6 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Hero;
-import com.mygdx.game.map.Level;
-import com.mygdx.game.map.Tile;
-
-import java.nio.ByteBuffer;
 
 public class ClientNetworkListener extends Listener {
     private Client client;
@@ -35,18 +31,28 @@ public class ClientNetworkListener extends Listener {
         if(o instanceof Packets.Packet000ConnectionAnswer){
             //TODO if o is false, return client to main menu and show message, close connection
         } else if(o instanceof Packets.Packet001Connection){
-            //TODO set player name in hero
-            game.addPlayer(new Hero(game, "players"));
+            if(((Packets.Packet001Connection) o).name.equals(game.hero.getName())){
+                // do not add yourself to the players list.
+            } else {
+                Hero player = new Hero(game, "players");
+                player.depth = 0;
+                player.setName(((Packets.Packet001Connection) o).name);
+                game.addPlayer(player);
+            }
         } else if(o instanceof Packets.Packet002Map){
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
             //receives seed, sets seed of level at specified depth, generates level
-            //game.generateLevel(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
             game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
-            //TODO receives player name and position, updates map
-            System.out.println("x: " + ((Packets.Packet003Movement) o).xPos + " y: " + ((Packets.Packet003Movement) o).yPos);
-            game.players.get(0).setPosX(((Packets.Packet003Movement) o).xPos);
-            game.players.get(0).setPosY(((Packets.Packet003Movement) o).yPos);
+            for(Hero player : game.players){
+                System.out.println("player in list: " + player.getName() + " received name: " + ((Packets.Packet003Movement) o).name);
+                if(player.getName().equals(((Packets.Packet003Movement) o).name)){
+                    player.setPosX(((Packets.Packet003Movement) o).xPos);
+                    player.setPosY(((Packets.Packet003Movement) o).yPos);
+                    player.depth = ((Packets.Packet003Movement) o).depth;
+                    System.out.println("player in list depth: " + player.depth + " received depth: " + ((Packets.Packet003Movement) o).depth);
+                }
+            }
         } else if(o instanceof Packets.Packet004Potion){
             if(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
                 game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);
@@ -55,7 +61,12 @@ public class ClientNetworkListener extends Listener {
                 game.getHero().setCurrHP(0);
             }
         } else if(o instanceof Packets.Packet005Stats){
-            //TODO receives stats of other player
+            for(Hero player : game.players){
+                if(player.getName() == ((Packets.Packet005Stats) o).name){
+                    player.setCurrHP(((Packets.Packet005Stats) o).health);
+                    player.setArmor(((Packets.Packet005Stats) o).armor);
+                }
+            }
         }
     }
 }

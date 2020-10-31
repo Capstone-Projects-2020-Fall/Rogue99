@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -19,13 +20,13 @@ import com.mygdx.game.client.MPClient;
 import com.mygdx.game.gui.HUDGui;
 import com.mygdx.game.gui.HUDProgressBar;
 import com.mygdx.game.gui.InventoryGui;
+import com.mygdx.game.gui.MessageWindow;
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.item.*;
 import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.sun.java.swing.action.AlignRightAction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,6 +107,8 @@ public class Rogue99 extends ApplicationAdapter {
 	String serverSeed;
 	int serverDepth;
 
+	MessageWindow gameLostWindow;
+
 
 	@Override
 	public void create () {
@@ -136,6 +139,9 @@ public class Rogue99 extends ApplicationAdapter {
 		hero = new Hero(this, "tile169");
 
 		levels = new ArrayList<>();
+
+
+		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been killed.");
 
 		//showMainMenu = true;
 		//mainMenu();
@@ -227,17 +233,6 @@ public class Rogue99 extends ApplicationAdapter {
 				}
 			}
 
-			if(!players.isEmpty()){
-				drawHeroes();
-			}
-
-			if (isAttacking()) {
-				inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
-				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
-				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
-				stage.draw();
-			}
-
 		}
 		else{
 			if (mapGenerated) {
@@ -245,6 +240,8 @@ public class Rogue99 extends ApplicationAdapter {
 				stage.act();
 				if (isShowInventory()) {
 					Gdx.input.setInputProcessor(stage);
+					addActor(inventoryGui);
+					addActor(hudGui);
 					inventoryGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
 					hudGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 + HEIGHT_PAD);
 					enemyHud.setPosition(Gdx.graphics.getWidth(), 0);
@@ -260,10 +257,17 @@ public class Rogue99 extends ApplicationAdapter {
 					});
 				} else {
 					Gdx.input.setInputProcessor(control);
+					removeActor(inventoryGui);
+					removeActor(hudGui);
 				}
 
+				//if(!players.isEmpty()){
+				drawHeroes();
+				//}
+
 				if (isAttacking()) {
-					inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+					addActor(hudGui);
+					addActor(enemyHud);
 					hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
 					enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
 					stage.draw();
@@ -275,6 +279,16 @@ public class Rogue99 extends ApplicationAdapter {
 			if (seedReceived) {
 				generateLevel(serverSeed, serverDepth);
 				seedReceived = false;
+			}
+
+			if(hero.getCurrHP() <= 0) {
+				attacking = false;
+				stage.draw();
+				gameLostWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
+				Gdx.input.setInputProcessor(stage);
+				removeActor(hudGui);
+				removeActor(enemyHud);
+				addActor(gameLostWindow);
 			}
 
 			camera.position.lerp(hero.pos3, 0.1f);
@@ -410,10 +424,9 @@ public class Rogue99 extends ApplicationAdapter {
 		Map<String,Integer> bars = new HashMap<>();
 		bars.put(HEALTHBAR, 100);
 		bars.put(ARMOURBAR, 0);
-		hudGui = new HUDGui(skin, bars);
+		hudGui = new HUDGui("OwnStats",skin, bars);
 		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
 		hudGui.getColor().a = .8f;
-		stage.addActor(hudGui);
 		barList = hudGui.getHudBars();
 	}
 
@@ -421,11 +434,10 @@ public class Rogue99 extends ApplicationAdapter {
 		Map<String, Integer> bars = new HashMap<>();
 		bars.put("EnemyHP", 0);
 		bars.put("EnemyAR", 0);
-		enemyHud = new HUDGui(skin, bars);
+		enemyHud = new HUDGui("EnemyStats",skin, bars);
 		enemyBarList = enemyHud.getHudBars();
 		enemyHud.getColor().a = .8f;
 		enemyHud.setSize(26*3+40,26*(enemyBarList.size() + 1) + 80);
-		stage.addActor(enemyHud);
 	}
 
 	//creates Inventory GUI
@@ -433,7 +445,6 @@ public class Rogue99 extends ApplicationAdapter {
 		inventoryGui = new InventoryGui(skin, hero, this);
 		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
 		inventoryGui.getColor().a = .8f;
-		stage.addActor(inventoryGui);
 	}
 
 	//adjust stats bars
@@ -441,6 +452,13 @@ public class Rogue99 extends ApplicationAdapter {
 		for(HUDProgressBar bar : barList){
 			if(bar.getName() == barName){
 				bar.setValue(newValue);
+			}
+			if(multiplayer){
+				Packets.Packet005Stats stats = new Packets.Packet005Stats();
+				stats.name = hero.getName();
+				stats.health = hero.getCurrHP();
+				stats.armor = hero.getArmor();
+				client.client.sendTCP(stats);
 			}
 		}
 		for(HUDProgressBar bar : enemyBarList){
@@ -519,16 +537,17 @@ public class Rogue99 extends ApplicationAdapter {
 		levels.add(level);
 		level.setSeed(seed);
 		level.generate();
-
 		stage = new LevelStage(level);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 		generateGuiElements();
 		mapGenerated = true;
-		//Packets.Packet003Movement movement = new Packets.Packet003Movement();
-		//movement.xPos = hero.getPosX();
-		//movement.yPos = hero.getPosY();
-		//client.client.sendTCP(movement);
+		if(multiplayer) {
+			Packets.Packet003Movement movement = new Packets.Packet003Movement();
+			movement.xPos = hero.getPosX();
+			movement.yPos = hero.getPosY();
+			client.client.sendTCP(movement);
+		}
 	}
 
 
@@ -567,5 +586,20 @@ public class Rogue99 extends ApplicationAdapter {
 	public void addPlayer(Hero player){
 		System.out.println("Player Added");
 		players.add(player);
+	}
+
+	public void addActor(Actor actor){
+		stage.addActor(actor);
+	}
+
+	public void removeActor(Actor actor){
+		for(Actor a : stage.getActors()){
+			if(a.getName() == actor.getName()){
+				if(a.getName() == "You Lost!"){
+					Gdx.app.exit();
+				}
+				a.remove();
+			}
+		}
 	}
 }
