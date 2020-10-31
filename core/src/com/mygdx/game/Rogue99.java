@@ -385,6 +385,12 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
+		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof SummonScroll){
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.RED);
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
+		}
 		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof DamagePotion) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
@@ -470,8 +476,6 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//a function that is called when a player clicks on an item from inventory to use
 	public void usedItem(Item item){
-		System.out.println("Player used x item");
-		System.out.println(hero.getMaxHP());
 		if(!item.use(hero)){
 			inventoryGui.addItemToInventory(item);
 		} else {
@@ -604,6 +608,9 @@ public class Rogue99 extends ApplicationAdapter {
 		for(Actor a : stage.getActors()){
 			if(a.getName() == actor.getName()){
 				if(a.getName() == "You Lost!"){
+					if(multiplayer){
+						client.client.close();
+					}
 					Gdx.app.exit();
 				}
 				a.remove();
