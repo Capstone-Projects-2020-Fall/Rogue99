@@ -403,10 +403,7 @@ public class Rogue99 extends ApplicationAdapter {
 	private void drawHeroes(){
 		//System.out.println("Drawing hero");
 		for(Hero player : players) {
-			System.out.println("Hero depth: " + hero.depth);
-			System.out.println("player depth: " + player.depth);
 			if(player.depth == hero.depth){
-				System.out.println("same depth");
 				Sprite sprite = sprites.get("players");
 				sprite.setPosition(player.getPosX()*36, player.getPosY()*36);
 				sprite.setColor(Color.CORAL);

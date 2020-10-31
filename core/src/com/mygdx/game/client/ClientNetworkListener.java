@@ -31,21 +31,26 @@ public class ClientNetworkListener extends Listener {
         if(o instanceof Packets.Packet000ConnectionAnswer){
             //TODO if o is false, return client to main menu and show message, close connection
         } else if(o instanceof Packets.Packet001Connection){
-            Hero player = new Hero(game, "players");
-            player.depth = 0;
-            player.setName(((Packets.Packet001Connection) o).name);
-            game.addPlayer(player);
+            if(((Packets.Packet001Connection) o).name.equals(game.hero.getName())){
+                // do not add yourself to the players list.
+            } else {
+                Hero player = new Hero(game, "players");
+                player.depth = 0;
+                player.setName(((Packets.Packet001Connection) o).name);
+                game.addPlayer(player);
+            }
         } else if(o instanceof Packets.Packet002Map){
             System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
             //receives seed, sets seed of level at specified depth, generates level
-            //game.generateLevel(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
             game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
-            System.out.println("x: " + ((Packets.Packet003Movement) o).xPos + " y: " + ((Packets.Packet003Movement) o).yPos);
             for(Hero player : game.players){
-                if(player.getName() == ((Packets.Packet003Movement) o).name){
+                System.out.println("player in list: " + player.getName() + " received name: " + ((Packets.Packet003Movement) o).name);
+                if(player.getName().equals(((Packets.Packet003Movement) o).name)){
                     player.setPosX(((Packets.Packet003Movement) o).xPos);
                     player.setPosY(((Packets.Packet003Movement) o).yPos);
+                    player.depth = ((Packets.Packet003Movement) o).depth;
+                    System.out.println("player in list depth: " + player.depth + " received depth: " + ((Packets.Packet003Movement) o).depth);
                 }
             }
         } else if(o instanceof Packets.Packet004Potion){

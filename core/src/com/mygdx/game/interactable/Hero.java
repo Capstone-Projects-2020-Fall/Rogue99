@@ -100,6 +100,7 @@ public class Hero extends Character{
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
             } else if (game.level.getMap()[x][y].getType().equals("stair_down")){
+                depth++;
                 game.newLevel(depth);
             }  else {
                 // move to new position
@@ -113,6 +114,8 @@ public class Hero extends Character{
                 Packets.Packet003Movement movement = new Packets.Packet003Movement();
                 movement.xPos = x;
                 movement.yPos = y;
+                movement.name = getName();
+                movement.depth = depth;
                 game.client.client.sendTCP(movement);
             }
             game.level.moveEnemies();
