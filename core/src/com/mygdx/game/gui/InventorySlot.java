@@ -1,5 +1,6 @@
 package com.mygdx.game.gui;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -36,9 +37,18 @@ public class InventorySlot extends Widget {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.setColor(1,1,1,parentAlpha);
+        batch.setColor(Color.GRAY);
         patch.draw(batch,this.getX(),this.getY(),this.getWidth(),this.getHeight());
         if(!isEmpty){
+            if(item.getId() == Item.HEALTHSCROLL){
+                batch.setColor(Color.CYAN);
+            } else if(item.getId() == Item.ARMORSCROLL){
+                batch.setColor(Color.GOLDENROD);
+            } else if(item.getId() == Item.HEALTHPOTION){
+                batch.setColor(Color.CYAN);
+            } else if(item.getId() == Item.DAMAGEPOTION){
+                batch.setColor(Color.RED);
+            }
             batch.draw(itemIcon, this.getX() + OFFSET, this.getY() + OFFSET, this.getWidth() - OFFSET * 2, this.getHeight() - OFFSET * 2);
             batch.setColor(0,0,0,0);
         }

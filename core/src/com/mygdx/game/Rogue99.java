@@ -31,6 +31,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Rogue99 extends ApplicationAdapter {
 
@@ -139,10 +140,11 @@ public class Rogue99 extends ApplicationAdapter {
 
 		levels = new ArrayList<>();
 
+
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been killed.");
 
-//		showMainMenu = true;
-//		mainMenu();
+		//showMainMenu = true;
+		//mainMenu();
 		init_single_player();
 		//init_multiplayer();
 	}
@@ -366,23 +368,27 @@ public class Rogue99 extends ApplicationAdapter {
 		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthScroll){
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("HEALTH SCROLL SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.CYAN);
 			sprite.setPosition(x,y);
 			sprite.draw(batch);
 		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof ArmorScroll) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("ARMOR SCROLL SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.GOLDENROD);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
 		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthPotion) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.CYAN);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
 		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof DamagePotion) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.RED);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
