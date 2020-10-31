@@ -73,15 +73,15 @@ public class ServerNetworkListener  extends Listener {
         else if(object instanceof Packets.Packet004Potion){
             Connection[] connectionList = server.getConnections();
             if (connectionList.length < 2) {
-                connection.sendTCP(object);
+                // do nothing? no other player is connected.
+            } else {
+                Random rand = new Random();
+                int i = rand.nextInt(connectionList.length);
+                while (connectionList[i].equals(connection) || !connectionList[i].isConnected()) {
+                    i = rand.nextInt(connectionList.length);
+                }
+                connectionList[i].sendTCP(object);
             }
-
-            Random rand = new Random();
-            int i = rand.nextInt() % connectionList.length;
-            while (connectionList[i] == connection && connectionList.length < 2) {
-                i = rand.nextInt() % connectionList.length;
-            }
-            connectionList[i].sendTCP(object);
         } else {
             server.sendToAllExceptTCP(connection.getID(), object);
         }

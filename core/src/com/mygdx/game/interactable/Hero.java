@@ -138,12 +138,11 @@ public class Hero extends Character{
         if(enemy.getCurrHP() > 0){
             game.level.getMap()[x][y].getEntities().push(enemy);
             enemy.attack(this);
-        } else {
-            game.removeActor(game.enemyHud);
-            game.removeActor(game.hudGui);
         }
         else {
             game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll", enemy.getDifficulty()) );
+            game.removeActor(game.enemyHud);
+            game.removeActor(game.hudGui);
         }
     }
 

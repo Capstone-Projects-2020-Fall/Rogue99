@@ -48,6 +48,8 @@ public class InventorySlot extends Widget {
                 batch.setColor(Color.CYAN);
             } else if(item.getId() == Item.DAMAGEPOTION){
                 batch.setColor(Color.RED);
+            } else if(item.getId() == Item.SUMMONSCROLL){
+                batch.setColor(Color.RED);
             }
             batch.draw(itemIcon, this.getX() + OFFSET, this.getY() + OFFSET, this.getWidth() - OFFSET * 2, this.getHeight() - OFFSET * 2);
             batch.setColor(0,0,0,0);

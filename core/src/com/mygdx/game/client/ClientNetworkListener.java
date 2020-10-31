@@ -64,6 +64,8 @@ public class ClientNetworkListener extends Listener {
             if(((Packets.Packet004Potion) o).ID == Item.DAMAGEPOTION) {
                 if (game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
                     game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);
+                    game.changeBarValue(game.HEALTHBAR, game.hero.getCurrHP());
+                    game.hudGui.statsNumTexts.get(1).setText(String.valueOf(game.hero.getCurrHP()));
                 } else {
                     game.getHero().setCurrHP(0);
                 }
@@ -73,13 +75,13 @@ public class ClientNetworkListener extends Listener {
                 boolean summoned = false;
                 Random rand = new Random();
                 do {
-                    x = rand.nextInt() % game.level.getWidth();
-                    y = rand.nextInt() % game.level.getHeight();
-                    if ( game.level.getMap()[x][y].getType() == "floor" && game.level.getMap()[x][y].getEntities().isEmpty() ) {
+                    x = rand.nextInt(5);
+                    y = rand.nextInt(5);
+                    if ( game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getType() == "floor" && game.level.getMap()[game.hero.getPosX() +x][game.hero.getPosY() + y].getEntities().isEmpty() ) {
                         Enemy enemy = new Enemy( ((Packets.Packet004Potion) o).ID, "wasp", game.level.getMap()[x][y], game);
                         //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
                         game.level.enemies.add(enemy);
-                        game.level.getMap()[x][y].getEntities().push(enemy);
+                        game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getEntities().push(enemy);
                         summoned = true;
                     }
                 } while ( !summoned );
