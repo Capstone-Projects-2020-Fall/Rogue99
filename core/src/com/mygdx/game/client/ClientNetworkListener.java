@@ -5,6 +5,13 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
+import com.mygdx.game.interactable.Enemy;
+import com.mygdx.game.item.Item;
+import com.mygdx.game.map.Level;
+import com.mygdx.game.map.Tile;
+
+import java.nio.ByteBuffer;
+import java.util.Random;
 import com.mygdx.game.interactable.Hero;
 
 public class ClientNetworkListener extends Listener {
@@ -54,11 +61,28 @@ public class ClientNetworkListener extends Listener {
                 }
             }
         } else if(o instanceof Packets.Packet004Potion){
-            if(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
-                game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);
+            if(((Packets.Packet004Potion) o).ID == Item.DAMAGEPOTION) {
+                if (game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
+                    game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);
+                } else {
+                    game.getHero().setCurrHP(0);
+                }
             }
-            else {
-                game.getHero().setCurrHP(0);
+            else if(((Packets.Packet004Potion) o).ID == Item.SUMMONSCROLL) {
+                int x,y;
+                boolean summoned = false;
+                Random rand = new Random();
+                do {
+                    x = rand.nextInt() % game.level.getWidth();
+                    y = rand.nextInt() % game.level.getHeight();
+                    if ( game.level.getMap()[x][y].getType() == "floor" && game.level.getMap()[x][y].getEntities().isEmpty() ) {
+                        Enemy enemy = new Enemy( ((Packets.Packet004Potion) o).ID, "wasp", game.level.getMap()[x][y], game);
+                        //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
+                        game.level.enemies.add(enemy);
+                        game.level.getMap()[x][y].getEntities().push(enemy);
+                        summoned = true;
+                    }
+                } while ( !summoned );
             }
         } else if(o instanceof Packets.Packet005Stats){
             for(Hero player : game.players){
