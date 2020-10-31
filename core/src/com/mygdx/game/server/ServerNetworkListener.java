@@ -76,9 +76,9 @@ public class ServerNetworkListener  extends Listener {
                 // do nothing? no other player is connected.
             } else {
                 Random rand = new Random();
-                int i = rand.nextInt() % connectionList.length;
-                while (connectionList[i] == connection && connectionList.length < 2) {
-                    i = rand.nextInt() % connectionList.length;
+                int i = rand.nextInt(connectionList.length);
+                while (connectionList[i].equals(connection) || !connectionList[i].isConnected()) {
+                    i = rand.nextInt(connectionList.length);
                 }
                 connectionList[i].sendTCP(object);
             }
