@@ -89,6 +89,7 @@ public class ServerNetworkListener  extends Listener {
             Packets.Packet008ServerMessage serverMessage = new Packets.Packet008ServerMessage();
             serverMessage.sentBy = tempName;
             serverMessage.receivedBy = ((Packets.Packet007PlayerAffected) object).playerName;
+            server.sendToAllTCP(serverMessage);
         } else {
             server.sendToAllExceptTCP(connection.getID(), object);
         }
