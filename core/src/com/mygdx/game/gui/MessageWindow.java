@@ -11,8 +11,8 @@ import com.mygdx.game.Rogue99;
 
 public class MessageWindow extends Window {
 
-    private final int WINDOW_WIDTH = 72;
-    private final int WINDOW_HEIGHT = 36;
+    public final int WINDOW_WIDTH = 132;
+    public final int WINDOW_HEIGHT = 42;
 
     public MessageWindow(final Rogue99 game, final String title, Skin skin, String message) {
         super(title, skin);

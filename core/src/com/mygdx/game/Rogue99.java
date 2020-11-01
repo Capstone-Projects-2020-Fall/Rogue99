@@ -28,7 +28,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class Rogue99 extends ApplicationAdapter {
 
@@ -113,6 +112,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	Stage popUpStage;
 	MessageWindow popUpWindow;
+	long lastPopUp;
 
 
 	@Override
@@ -145,6 +145,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 		levels = new ArrayList<>();
 		lastTime = System.currentTimeMillis();
+
 
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been defeated.");
 
@@ -296,9 +297,11 @@ public class Rogue99 extends ApplicationAdapter {
 					level.moveEnemies();
 					lastTime = System.currentTimeMillis();
 				}
-				if (System.currentTimeMillis() - lastTime > 2000) {
-					popUpStage.getActors().get(0).remove();
-					lastTime = System.currentTimeMillis();
+				if (System.currentTimeMillis() - lastPopUp > 2000) {
+					if(popUpStage.getActors().size>0){
+						popUpStage.getActors().get(0).remove();
+					}
+					lastPopUp = System.currentTimeMillis();
 				}
 			}
 
@@ -677,5 +680,6 @@ public class Rogue99 extends ApplicationAdapter {
 		popUpWindow.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
 		popUpWindow.getColor().a = .5f;
 		popUpStage.addActor(popUpWindow);
+		lastPopUp = System.currentTimeMillis();
 	}
 }
