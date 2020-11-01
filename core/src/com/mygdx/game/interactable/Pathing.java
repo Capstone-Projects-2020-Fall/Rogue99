@@ -46,6 +46,7 @@ class Pathing {
         }
     }
 
+    //Constructor
     Pathing(int[][] maze, int xstart, int ystart, boolean diag) {
         this.open = new ArrayList<Node>();
         this.closed = new ArrayList<Node>();
@@ -57,13 +58,7 @@ class Pathing {
         this.diag = diag;
     }
 
-    /*
-     ** Finds path to xend/yend or returns null
-     **
-     ** @param (int) xend coordinates of the target position
-     ** @param (int) yend
-     ** @return (List<Node> | null) the path
-     */
+    //Finds path to xend/yend or returns null
     public List<Node> findPathTo(int xend, int yend) {
         this.xend = xend;
         this.yend = yend;
@@ -86,11 +81,7 @@ class Pathing {
         return this.path;
     }
 
-    /*
-     ** Looks in a given List<> for a node
-     **
-     ** @return (bool) NeightborInListFound
-     */
+    //Finds Node in List if it exists
     private static boolean findNeighborInList(List<Node> array, Node node) {
         for (Node n: array) {
             if (n.x == node.x && n.y == node.y) {
@@ -111,6 +102,7 @@ class Pathing {
         }
     }
 
+    //Add neighbor to open list
     private void addNeigborsToOpenList() {
         Node node;
         for (int x = -1; x <= 1; x++) {
