@@ -43,12 +43,14 @@ public class Enemy extends Character {
             }
             Pathing.Node n = path.get(0);
             System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
-            n = path.get(1);
-            System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
-            if( map[n.x][n.y].getEntities().isEmpty() ) {
-                tile.getEntities().pop();
-                tile = map[n.x][n.y];
-                tile.getEntities().push(this);
+            if (path.size() > 2) {
+                n = path.get(1);
+                System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
+                if( map[n.x][n.y].getEntities().isEmpty() && !(tile.getEntities().isEmpty())) {
+                    tile.getEntities().pop();
+                    tile = map[n.x][n.y];
+                    tile.getEntities().push(this);
+                }
             }
         }
     }

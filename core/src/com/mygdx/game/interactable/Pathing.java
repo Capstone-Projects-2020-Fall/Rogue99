@@ -63,7 +63,7 @@ class Pathing {
         this.xend = xend;
         this.yend = yend;
         this.closed.add(this.now);
-        addNeigborsToOpenList();
+        addNeighborsToOpenList();
         while (this.now.x != this.xend || this.now.y != this.yend) {
             if (this.open.isEmpty()) { // Nothing to examine
                 return null;
@@ -71,7 +71,7 @@ class Pathing {
             this.now = this.open.get(0); // get first node (lowest f score)
             this.open.remove(0); // remove it
             this.closed.add(this.now); // and add to the closed
-            addNeigborsToOpenList();
+            addNeighborsToOpenList();
         }
         this.path.add(0, this.now);
         while (this.now.x != this.xstart || this.now.y != this.ystart) {
@@ -103,7 +103,7 @@ class Pathing {
     }
 
     //Add neighbor to open list
-    private void addNeigborsToOpenList() {
+    private void addNeighborsToOpenList() {
         Node node;
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
