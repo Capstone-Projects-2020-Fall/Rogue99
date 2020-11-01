@@ -1,22 +1,26 @@
 package com.mygdx.game.interactable;
 
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.Item;
-import com.mygdx.game.item.Potion;
+import com.mygdx.game.item.HealthPotion;
+import com.mygdx.game.item.SummonScroll;
 
 import java.util.ArrayList;
 
 public class Hero extends Character{
 
-    //TODO Weapon object
-    // private Weapon weapon;
+
     private ArrayList<Item> inventory;
     Rogue99 game;
     String sprite;
+    public int depth;
     public Vector3 pos3 = new Vector3();
+    private String name;
 
     public Hero(Rogue99 game, String sprite) {
+        depth = 0;
         this.game = game;
         this.sprite = sprite;
         inventory = new ArrayList<>();
@@ -37,36 +41,18 @@ public class Hero extends Character{
         pos3.y = getPosY()*36;
     }
 
-    public void setInventory(ArrayList<Item> inventory) {
-        this.inventory = inventory;
-    }
 
     public ArrayList<Item> getInventory() {
         return inventory;
     }
 
-    public void pickup(Item item){
-
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void drop(Item item){
-
+    public String getName() {
+        return name;
     }
-
-    public void useItem(Item item){
-
-    }
-
-    public void usePotion(Potion potion){
-
-    }
-
-    //TODO implement Weapon Object
-    public void useWeapon(/*Weapon weapon*/){
-
-    }
-
-    public void useScroll(){}
 
     @Override
     public void setSprite(String sprite) {
@@ -98,7 +84,7 @@ public class Hero extends Character{
     }
 
     private void move(int x, int y){
-        //System.out.println(x + " " + y);
+        System.out.println("Hero Position: [" + x + "][" + y + "]");
         if(!game.level.getMap()[x][y].getType().equals("wall")){
             if(!game.level.getMap()[x][y].getEntities().isEmpty() && game.level.getMap()[x][y].getEntities().peek() instanceof Enemy){
                 // attack
@@ -115,7 +101,10 @@ public class Hero extends Character{
                 setPosX(x);
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
-            } else {
+            } else if (game.level.getMap()[x][y].getType().equals("stair_down")){
+                depth++;
+                game.newLevel(depth);
+            }  else {
                 // move to new position
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 setPosX(x);
@@ -123,7 +112,14 @@ public class Hero extends Character{
                 game.level.getMap()[x][y].getEntities().push(this);
                 game.setAttacking(false);
             }
-            game.level.moveEnemies();
+            if(game.multiplayer){
+                Packets.Packet003Movement movement = new Packets.Packet003Movement();
+                movement.xPos = x;
+                movement.yPos = y;
+                movement.name = getName();
+                movement.depth = depth;
+                game.client.client.sendTCP(movement);
+            }
         }
     }
 
@@ -141,6 +137,11 @@ public class Hero extends Character{
         if(enemy.getCurrHP() > 0){
             game.level.getMap()[x][y].getEntities().push(enemy);
             enemy.attack(this);
+        }
+        else {
+            game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll", enemy.getDifficulty()) );
+            game.removeActor(game.enemyHud);
+            game.removeActor(game.hudGui);
         }
     }
 

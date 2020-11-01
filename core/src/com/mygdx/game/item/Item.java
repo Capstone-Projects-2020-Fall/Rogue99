@@ -4,11 +4,14 @@ import com.mygdx.game.interactable.Character;
 import com.mygdx.game.interactable.Interactable;
 
 public abstract class Item extends Interactable {
-    public static final int POTION = 1;
-    public static final int ARMORSCROLL = 2;
-    public static final int HEALTHSCROLL = 3;
-    public static final int STRENGTHSCROLL = 4;
-    public static final int WEAPON = 5;
+    public static final int HEALTHPOTION = 1;
+    public static final int DAMAGEPOTION = 2;
+    public static final int ARMORSCROLL = 3;
+    public static final int HEALTHSCROLL = 4;
+    public static final int STRENGTHSCROLL = 5;
+    public static final int WEAPON = 6;
+    public static final int SUMMONSCROLL = 7;
+    public static final int BANESCROLL = 8;
 
     protected int rarity;
     protected String sprite;
