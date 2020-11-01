@@ -110,7 +110,19 @@ public class Enemy extends Character {
                     path.push(c);
                     c = c.parent;
                     if(path.size() >= 15){
-                        return null;
+                        if(target.getPosX() > c.parent.getPosX())
+                            c.parent.setPosX(c.parent.getPosX()+1);
+                        else
+                            c.parent.setPosX(c.parent.getPosX()-1);
+
+                        if(target.getPosY() > c.parent.getPosY())
+                            c.parent.setPosY(c.parent.getPosY()+1);
+                        else
+                            c.parent.setPosY(c.parent.getPosY()-1);
+
+                        path.push(c);
+
+                        return path;
                     }
                 }
                 //System.out.println("Shortest path found");
