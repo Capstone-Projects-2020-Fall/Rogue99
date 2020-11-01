@@ -114,10 +114,10 @@ class Pathing {
                 if ((x != 0 || y != 0) // not this.now
                         && this.now.x + x > 0 && this.now.x + x < 60 // check maze boundaries
                         && this.now.y + y >= 0 && this.now.y + y < 60
-                        && this.maze[this.now.y + y][this.now.x + x] != -1 // check if square is walkable
+                        && this.maze[this.now.x + x][this.now.y + y] != -1 // check if square is walkable
                         && !findNeighborInList(this.open, node) && !findNeighborInList(this.closed, node)) { // if not already done
                     node.g = node.parent.g + 1.; // Horizontal/vertical cost = 1.0
-                    node.g += maze[this.now.y + y][this.now.x + x]; // add movement cost for this square
+                    node.g += maze[this.now.x + x][this.now.y + y]; // add movement cost for this square
 
                     // diagonal cost = sqrt(hor_cost² + vert_cost²)
                     // in this example the cost would be 12.2 instead of 11

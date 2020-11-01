@@ -84,7 +84,7 @@ public class Hero extends Character{
     }
 
     private void move(int x, int y){
-        //System.out.println(x + " " + y);
+        System.out.println("Hero Position: [" + x + "][" + y + "]");
         if(!game.level.getMap()[x][y].getType().equals("wall")){
             if(!game.level.getMap()[x][y].getEntities().isEmpty() && game.level.getMap()[x][y].getEntities().peek() instanceof Enemy){
                 // attack
