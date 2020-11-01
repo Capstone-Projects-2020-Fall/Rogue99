@@ -51,6 +51,8 @@ public class Enemy extends Character {
                     tile = map[n.x][n.y];
                     tile.getEntities().push(this);
                 }
+            } else{
+                this.attack(hero);
             }
         }
     }
