@@ -120,7 +120,6 @@ public class Hero extends Character{
                 movement.depth = depth;
                 game.client.client.sendTCP(movement);
             }
-            game.level.moveEnemies();
         }
     }
 

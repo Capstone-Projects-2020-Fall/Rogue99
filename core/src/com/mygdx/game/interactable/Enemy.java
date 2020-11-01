@@ -35,7 +35,7 @@ public class Enemy extends Character {
     }
 
     public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {
-        Pathing aStar = new Pathing(intMap, tile.getPosX(), tile.getPosY(), false);
+        Pathing aStar = new Pathing(intMap, tile.getPosX(), tile.getPosY(), true);
         List<Pathing.Node> path = aStar.findPathTo(hero.getPosX(), hero.getPosY());
         if (path != null) {
             for (Pathing.Node n : path) {
