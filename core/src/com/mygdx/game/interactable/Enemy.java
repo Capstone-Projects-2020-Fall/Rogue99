@@ -35,20 +35,22 @@ public class Enemy extends Character {
     }
 
     public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {
-        Pathing aStar = new Pathing(intMap, tile.getPosX(), tile.getPosY(), true);
+        Pathing aStar = new Pathing(intMap, tile.getPosX(), tile.getPosY(), false);
         List<Pathing.Node> path = aStar.findPathTo(hero.getPosX(), hero.getPosY());
         if (path != null) {
             for (Pathing.Node n : path) {
                 System.out.print("[" + n.x + ", " + n.y + "] ");
             }
+            Pathing.Node n = path.get(0);
+            System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
+            n = path.get(1);
+            System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
+            if( map[n.x][n.y].getEntities().isEmpty() ) {
+                tile.getEntities().pop();
+                tile = map[n.x][n.y];
+                tile.getEntities().push(this);
+            }
         }
-        Pathing.Node n = path.get(0);
-        System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
-        n = path.get(1);
-        System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
-        tile.getEntities().pop();
-        tile = map[n.x][n.y];
-        tile.getEntities().push(this);
     }
 
     public void setDifficulty(int difficulty) {
