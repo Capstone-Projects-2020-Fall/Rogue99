@@ -88,6 +88,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//list of other players
 	public ArrayList<Hero> players;
+	long lastTime;
 
 	Stage stage;
 	Control control;
@@ -140,7 +141,7 @@ public class Rogue99 extends ApplicationAdapter {
 		hero = new Hero(this, "tile169");
 
 		levels = new ArrayList<>();
-
+		lastTime = System.currentTimeMillis();
 
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been killed.");
 
@@ -299,6 +300,11 @@ public class Rogue99 extends ApplicationAdapter {
 				removeActor(hudGui);
 				removeActor(enemyHud);
 				addActor(gameLostWindow);
+			}
+
+			if (System.currentTimeMillis() - lastTime > 1000) {
+				level.moveEnemies();
+				lastTime = System.currentTimeMillis();
 			}
 
 			camera.position.lerp(hero.pos3, 0.1f);

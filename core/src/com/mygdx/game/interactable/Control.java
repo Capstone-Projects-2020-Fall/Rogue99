@@ -17,22 +17,21 @@ public class Control extends InputAdapter implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
         switch (keycode) {
             case Input.Keys.DOWN:
+            case Input.Keys.S:
                 hero.update(hero.DOWN);
                 break;
             case Input.Keys.UP:
+            case Input.Keys.W:
                 hero.update(hero.UP);
                 break;
             case Input.Keys.LEFT:
+            case Input.Keys.A:
                 hero.update(hero.LEFT);
                 break;
             case Input.Keys.RIGHT:
+            case Input.Keys.D:
                 hero.update(hero.RIGHT);
                 break;
             case Input.Keys.I:
@@ -43,6 +42,11 @@ public class Control extends InputAdapter implements InputProcessor {
                 }
                 break;
         }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
         return false;
     }
 
