@@ -263,7 +263,7 @@ public class Rogue99 extends ApplicationAdapter {
 							if (keycode == Input.Keys.I) {
 								setShowInventory(false);
 							}
-							return super.keyDown(event, keycode);
+							return super.keyUp(event, keycode);
 						}
 					});
 				} else {
