@@ -17,10 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.game.client.MPClient;
-import com.mygdx.game.gui.HUDGui;
-import com.mygdx.game.gui.HUDProgressBar;
-import com.mygdx.game.gui.InventoryGui;
-import com.mygdx.game.gui.MessageWindow;
+import com.mygdx.game.gui.*;
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.item.*;
 import com.mygdx.game.interactable.Control;
@@ -109,6 +106,10 @@ public class Rogue99 extends ApplicationAdapter {
 
 	MessageWindow gameLostWindow;
 
+	MainMenu mainMenu;
+	Stage mainMenuStage;
+	NameInputWindow nameInputWindow;
+
 
 	@Override
 	public void create () {
@@ -143,28 +144,35 @@ public class Rogue99 extends ApplicationAdapter {
 
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been killed.");
 
-		//showMainMenu = true;
-		//mainMenu();
-		init_single_player();
+		 mainMenuStage = new Stage();
+		 mainMenuStage.getViewport().setCamera(camera);
+		 mainMenuStage.setViewport(viewport);
+
+		showMainMenu = true;
+		mainMenu();
+		//init_single_player();
 		//init_multiplayer();
 	}
 	private void mainMenu() {
-		WIDTH = Gdx.graphics.getWidth();
-		HEIGHT = Gdx.graphics.getHeight();
-		camera = new OrthographicCamera(WIDTH, HEIGHT);
-		camera.translate(WIDTH/2, HEIGHT/2);
-		camera.update();
-		bg = new Texture("spritesheets/cave.png");
-		sp = new Sprite(bg);
-		play = new Texture("spritesheets/play.png");
-		play_hover = new Texture("spritesheets/play_hover.png");
-		multi = new Texture("spritesheets/multiplay.png");
-		multi_hover = new Texture("spritesheets/mutliplay_hover.png");
-		setting = new Texture("spritesheets/setting.png");
-		setting_hover = new Texture("spritesheets/setting_hover.png");
-		exit = new Texture("spritesheets/exit.png");
-		exit_hover = new Texture("spritesheets/exit_hover.png");
-		Title = new Texture("spritesheets/title.png");
+//		WIDTH = Gdx.graphics.getWidth();
+//		HEIGHT = Gdx.graphics.getHeight();
+//		camera = new OrthographicCamera(WIDTH, HEIGHT);
+//		camera.translate(WIDTH/2, HEIGHT/2);
+//		camera.update();
+//		bg = new Texture("spritesheets/cave.png");
+//		sp = new Sprite(bg);
+//		play = new Texture("spritesheets/play.png");
+//		play_hover = new Texture("spritesheets/play_hover.png");
+//		multi = new Texture("spritesheets/multiplay.png");
+//		multi_hover = new Texture("spritesheets/mutliplay_hover.png");
+//		setting = new Texture("spritesheets/setting.png");
+//		setting_hover = new Texture("spritesheets/setting_hover.png");
+//		exit = new Texture("spritesheets/exit.png");
+//		exit_hover = new Texture("spritesheets/exit_hover.png");
+//		Title = new Texture("spritesheets/title.png");
+		mainMenu = new MainMenu(this,"", skin);
+		mainMenuStage.addActor(mainMenu);
+		Gdx.input.setInputProcessor(mainMenuStage);
 	}
 	private void init_single_player(){
 		Level tempLevel = new Level(null, 0, null);
@@ -200,38 +208,40 @@ public class Rogue99 extends ApplicationAdapter {
 
 		batch.begin();
 		if (showMainMenu) {
-			sp.draw(batch);
-			batch.draw(play, WIDTH/2 - 100 / 2, 350, 100, 100);
-			batch.draw(multi, WIDTH/2 - 170/2, 290, 170, 100);
-			batch.draw(setting, WIDTH/2 - 170/2, 230, 170, 100);
-			batch.draw(exit, WIDTH/2 - 100/2, 170, 100, 100);
-			batch.draw(Title, WIDTH/2 - 500/2, 600, 500, 400);
-
-			if (Gdx.input.getX() < WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 -100/2 && HEIGHT - Gdx.input.getY() <
-					350 + 100 && HEIGHT - Gdx.input.getY() > 350) { //cuts screen to make active when in tha zone
-				batch.draw(play_hover,WIDTH/2 - 100 / 2, 350, 100, 100);
-				if(Gdx.input.isTouched()) {
-					init_single_player();
-					showMainMenu = false;
-				}
-
-			} else if (Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
-					290 + 100 && HEIGHT - Gdx.input.getY() > 290) {
-				batch.draw(multi_hover, WIDTH/2 - 170/2, 290, 170, 100);
-				if(Gdx.input.isTouched()) {
-					init_multiplayer();
-					showMainMenu = false;
-				}
-			} else if(Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
-					230 + 100 && HEIGHT - Gdx.input.getY() > 230) {
-				batch.draw(setting_hover, WIDTH/2 - 170/2, 230, 170, 100);
-			} else if(Gdx.input.getX() <WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 - 100/2 && HEIGHT - Gdx.input.getY() <
-					170 + 100 && HEIGHT - Gdx.input.getY() > 170) {
-				batch.draw(exit_hover, WIDTH/2 - 100/2, 170, 100, 100);
-				if(Gdx.input.isTouched()) {
-					Gdx.app.exit();
-				}
-			}
+//			sp.draw(batch);
+//			batch.draw(play, WIDTH/2 - 100 / 2, 350, 100, 100);
+//			batch.draw(multi, WIDTH/2 - 170/2, 290, 170, 100);
+//			batch.draw(setting, WIDTH/2 - 170/2, 230, 170, 100);
+//			batch.draw(exit, WIDTH/2 - 100/2, 170, 100, 100);
+//			batch.draw(Title, WIDTH/2 - 500/2, 600, 500, 400);
+//
+//			if (Gdx.input.getX() < WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 -100/2 && HEIGHT - Gdx.input.getY() <
+//					350 + 100 && HEIGHT - Gdx.input.getY() > 350) { //cuts screen to make active when in tha zone
+//				batch.draw(play_hover,WIDTH/2 - 100 / 2, 350, 100, 100);
+//				if(Gdx.input.isTouched()) {
+//					init_single_player();
+//					showMainMenu = false;
+//				}
+//
+//			} else if (Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
+//					290 + 100 && HEIGHT - Gdx.input.getY() > 290) {
+//				batch.draw(multi_hover, WIDTH/2 - 170/2, 290, 170, 100);
+//				if(Gdx.input.isTouched()) {
+//					init_multiplayer();
+//					showMainMenu = false;
+//				}
+//			} else if(Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
+//					230 + 100 && HEIGHT - Gdx.input.getY() > 230) {
+//				batch.draw(setting_hover, WIDTH/2 - 170/2, 230, 170, 100);
+//			} else if(Gdx.input.getX() <WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 - 100/2 && HEIGHT - Gdx.input.getY() <
+//					170 + 100 && HEIGHT - Gdx.input.getY() > 170) {
+//				batch.draw(exit_hover, WIDTH/2 - 100/2, 170, 100, 100);
+//				if(Gdx.input.isTouched()) {
+//					Gdx.app.exit();
+//				}
+//			}
+			mainMenuStage.act();
+			mainMenuStage.draw();
 
 		}
 		else{
@@ -616,5 +626,24 @@ public class Rogue99 extends ApplicationAdapter {
 				a.remove();
 			}
 		}
+	}
+
+	public void menuButtonClicked(String buttonName){
+		if(buttonName.equals("Single Player")){
+			init_single_player();
+			showMainMenu = false;
+		} else if(buttonName.equals("Multiplayer")){
+			nameInputWindow.setPosition(mainMenuStage.getWidth()/2, mainMenuStage.getHeight()/2);
+			mainMenuStage.addActor(nameInputWindow);
+		} else {
+			Gdx.app.exit();
+		}
+	}
+
+	public void setUserName(String userName){
+		hero.setName(userName);
+		System.out.println(hero.getName());
+		init_multiplayer();
+		showMainMenu = false;
 	}
 }
