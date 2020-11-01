@@ -111,6 +111,9 @@ public class Rogue99 extends ApplicationAdapter {
 	Stage mainMenuStage;
 	NameInputWindow nameInputWindow;
 
+	Stage popUpStage;
+	MessageWindow popUpWindow;
+
 
 	@Override
 	public void create () {
@@ -143,11 +146,14 @@ public class Rogue99 extends ApplicationAdapter {
 		levels = new ArrayList<>();
 		lastTime = System.currentTimeMillis();
 
-		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been killed.");
+		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been defeated.");
 
 		 mainMenuStage = new Stage();
 		 mainMenuStage.getViewport().setCamera(camera);
 		 mainMenuStage.setViewport(viewport);
+		 popUpStage = new Stage();
+		 popUpStage.getViewport().setCamera(camera);
+		 popUpStage.setViewport(viewport);
 
 		showMainMenu = true;
 		mainMenu();
@@ -176,16 +182,18 @@ public class Rogue99 extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(mainMenuStage);
 	}
 	private void init_single_player(){
+		hero.setCurrHP(100);
 		Level tempLevel = new Level(null, 0, null);
 		tempLevel.generateFloorPlan();
 		generateLevel(tempLevel.getSeed(), 0);
-
+		
 		control = new Control(hero, this);
 
 		Gdx.input.setInputProcessor(control);
 	}
 
 	private void init_multiplayer() {
+		hero.setCurrHP(100);
 		multiplayer = true;
 		//initialize client
 		client = new MPClient(this);
@@ -241,6 +249,7 @@ public class Rogue99 extends ApplicationAdapter {
 //					Gdx.app.exit();
 //				}
 //			}
+			Gdx.input.setInputProcessor(mainMenuStage);
 			mainMenuStage.act();
 			mainMenuStage.draw();
 
@@ -287,6 +296,10 @@ public class Rogue99 extends ApplicationAdapter {
 					level.moveEnemies();
 					lastTime = System.currentTimeMillis();
 				}
+				if (System.currentTimeMillis() - lastTime > 2000) {
+					popUpStage.getActors().get(0).remove();
+					lastTime = System.currentTimeMillis();
+				}
 			}
 
 			// Only Main thread has access to OpenGL so it needs to be the one generating the map
@@ -311,6 +324,8 @@ public class Rogue99 extends ApplicationAdapter {
 			camera.update();
 
 		}
+		popUpStage.act();
+		popUpStage.draw();
 		batch.end();
 	}
 
@@ -522,6 +537,7 @@ public class Rogue99 extends ApplicationAdapter {
 				Packets.Packet004Potion scroll = new Packets.Packet004Potion();
 				scroll.ID = Item.SUMMONSCROLL;
 				scroll.value = ( (SummonScroll) item).getDifficulty();
+				scroll.playerName = hero.getName();
 
 				client.client.sendTCP(scroll);
 			} else if(item.getId() == Item.WEAPON){
@@ -627,7 +643,9 @@ public class Rogue99 extends ApplicationAdapter {
 					if(multiplayer){
 						client.client.close();
 					}
-					Gdx.app.exit();
+					viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+					batch.setProjectionMatrix(camera.combined);
+					showMainMenu = true;
 				}
 				a.remove();
 			}
@@ -652,5 +670,12 @@ public class Rogue99 extends ApplicationAdapter {
 		System.out.println(hero.getName());
 		init_multiplayer();
 		showMainMenu = false;
+	}
+
+	public void popUpWindow(String sentBy, String receivedBy){
+		popUpWindow = new MessageWindow(this,"Summon Scroll", skin,"Player " + sentBy + " summoned an enemy in " + receivedBy + " game!");
+		popUpWindow.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
+		popUpWindow.getColor().a = .5f;
+		popUpStage.addActor(popUpWindow);
 	}
 }

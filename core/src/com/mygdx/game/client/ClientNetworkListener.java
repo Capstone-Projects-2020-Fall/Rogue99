@@ -68,6 +68,9 @@ public class ClientNetworkListener extends Listener {
                 }
             }
             else if(((Packets.Packet004Potion) o).ID == Item.SUMMONSCROLL) {
+                Packets.Packet007PlayerAffected playerAffected = new Packets.Packet007PlayerAffected();
+                playerAffected.playerName = game.hero.getName();
+                c.sendTCP(playerAffected);
                 int x,y;
                 boolean summoned = false;
                 Random rand = new Random();
@@ -75,7 +78,7 @@ public class ClientNetworkListener extends Listener {
                     x = rand.nextInt(5);
                     y = rand.nextInt(5);
                     if ( game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getType() == "floor" && game.level.getMap()[game.hero.getPosX() +x][game.hero.getPosY() + y].getEntities().isEmpty() ) {
-                        Enemy enemy = new Enemy( ((Packets.Packet004Potion) o).ID, "wasp", game.level.getMap()[x][y], game);
+                        Enemy enemy = new Enemy( game.hero.depth, "wasp", game.level.getMap()[x][y], game);
                         //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
                         game.level.enemies.add(enemy);
                         game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getEntities().push(enemy);
@@ -90,6 +93,8 @@ public class ClientNetworkListener extends Listener {
                     player.setArmor(((Packets.Packet005Stats) o).armor);
                 }
             }
+        } else if (o instanceof Packets.Packet008ServerMessage){
+            game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
         }
     }
 }
