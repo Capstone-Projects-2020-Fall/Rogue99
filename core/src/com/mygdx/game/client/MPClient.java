@@ -10,7 +10,7 @@ public class MPClient {
     private Rogue99 game;
 
     int portSocket = 5000;
-    String ipAddress = "localhost";
+    String ipAddress = "hfarrash.ddns.net";
 
     public Client client;
     private ClientNetworkListener cnl;

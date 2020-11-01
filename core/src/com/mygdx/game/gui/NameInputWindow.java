@@ -1,6 +1,5 @@
 package com.mygdx.game.gui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -14,11 +13,11 @@ import com.mygdx.game.Rogue99;
 public class NameInputWindow extends Window {
     public NameInputWindow(final Rogue99 game, String title, Skin skin) {
         super(title, skin);
-        this.setResizable(false);
+        this.setResizable(true);
         this.setMovable(true);
         this.setName(title);
         this.align(Align.center);
-        this.setSize(Gdx.graphics.getWidth()/6, Gdx.graphics.getHeight()/10);
+        this.setSize(game.mainMenu.getWidth()/4, game.mainMenu.getHeight()/6);
         TextField textField = new TextField("Input a Name", skin);
         textField.setAlignment(Align.center);
         textField.setDisabled(true);

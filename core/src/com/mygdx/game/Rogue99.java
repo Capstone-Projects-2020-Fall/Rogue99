@@ -107,7 +107,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	MessageWindow gameLostWindow;
 
-	MainMenu mainMenu;
+	public MainMenu mainMenu;
 	Stage mainMenuStage;
 	NameInputWindow nameInputWindow;
 
@@ -283,6 +283,10 @@ public class Rogue99 extends ApplicationAdapter {
 					enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
 					stage.draw();
 				}
+				if (System.currentTimeMillis() - lastTime > 1000) {
+					level.moveEnemies();
+					lastTime = System.currentTimeMillis();
+				}
 			}
 
 			// Only Main thread has access to OpenGL so it needs to be the one generating the map
@@ -302,10 +306,6 @@ public class Rogue99 extends ApplicationAdapter {
 				addActor(gameLostWindow);
 			}
 
-			if (System.currentTimeMillis() - lastTime > 1000) {
-				level.moveEnemies();
-				lastTime = System.currentTimeMillis();
-			}
 
 			camera.position.lerp(hero.pos3, 0.1f);
 			camera.update();
@@ -639,6 +639,7 @@ public class Rogue99 extends ApplicationAdapter {
 			init_single_player();
 			showMainMenu = false;
 		} else if(buttonName.equals("Multiplayer")){
+			nameInputWindow = new NameInputWindow(this,"Set Username", skin);
 			nameInputWindow.setPosition(mainMenuStage.getWidth()/2, mainMenuStage.getHeight()/2);
 			mainMenuStage.addActor(nameInputWindow);
 		} else {

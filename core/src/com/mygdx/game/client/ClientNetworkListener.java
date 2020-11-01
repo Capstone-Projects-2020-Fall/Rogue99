@@ -6,13 +6,10 @@ import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Enemy;
-import com.mygdx.game.item.Item;
-import com.mygdx.game.map.Level;
-import com.mygdx.game.map.Tile;
-
-import java.nio.ByteBuffer;
-import java.util.Random;
 import com.mygdx.game.interactable.Hero;
+import com.mygdx.game.item.Item;
+
+import java.util.Random;
 
 public class ClientNetworkListener extends Listener {
     private Client client;
@@ -25,7 +22,7 @@ public class ClientNetworkListener extends Listener {
 
     public void connected(Connection c){
         Packets.Packet001Connection a = new Packets.Packet001Connection();
-        a.name = "test client";
+        a.name = game.hero.getName();
         c.sendTCP(a);
     }
 
