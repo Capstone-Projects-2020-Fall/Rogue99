@@ -97,6 +97,9 @@ public class ClientNetworkListener extends Listener {
             game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
         } else if (o instanceof Packets.Packet009Disconnect){
             game.removePLayer(((Packets.Packet009Disconnect) o).name);
+        } else if (o instanceof Packets.Packet010StartGame){
+            System.out.println("game started: " + ((Packets.Packet010StartGame) o).start);
+            game.setGameStarted(((Packets.Packet010StartGame) o).start);
         }
     }
 }

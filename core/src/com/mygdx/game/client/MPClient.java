@@ -48,6 +48,7 @@ public class MPClient {
         kryo.register(Packets.Packet007PlayerAffected.class);
         kryo.register(Packets.Packet008ServerMessage.class);
         kryo.register(Packets.Packet009Disconnect.class);
+        kryo.register(Packets.Packet010StartGame.class);
     }
 
     public Rogue99 getGame(){

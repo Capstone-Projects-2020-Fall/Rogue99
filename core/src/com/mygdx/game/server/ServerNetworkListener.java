@@ -21,6 +21,7 @@ public class ServerNetworkListener  extends Listener {
     ArrayList<Object> connectionsInfo;
     HashMap<Connection, Object> connectionInfoMap;
     String tempName;
+    boolean gameStarted;
 
     public ServerNetworkListener(Server server, GameServer gameServer, Kryo kryo){
         this.server = server;
@@ -28,6 +29,7 @@ public class ServerNetworkListener  extends Listener {
         this.kryo = kryo;
         connectionsInfo = new ArrayList<>();
         connectionInfoMap = new HashMap<>();
+        gameStarted = false;
     }
 
     @Override
@@ -51,17 +53,20 @@ public class ServerNetworkListener  extends Listener {
     @Override
     public void received(Connection connection, Object object) {
         if(object instanceof Packets.Packet001Connection){
-            //TODO connection handling
             Packets.Packet000ConnectionAnswer connectionAnswer = new Packets.Packet000ConnectionAnswer();
-            connectionAnswer.answer = true;
-            connection.sendTCP(connectionAnswer);
-            server.sendToAllExceptTCP(connection.getID(), object);
-            if(!connectionInfoMap.isEmpty()){
-                for(Connection c : connectionInfoMap.keySet()){
-                    connection.sendTCP(connectionInfoMap.get(c));
+            if(gameStarted){
+                connectionAnswer.answer = false;
+            } else {
+                connectionAnswer.answer = true;
+                server.sendToAllExceptTCP(connection.getID(), object);
+                if (!connectionInfoMap.isEmpty()) {
+                    for (Connection c : connectionInfoMap.keySet()) {
+                        connection.sendTCP(connectionInfoMap.get(c));
+                    }
                 }
+                connectionInfoMap.put(connection, object);
             }
-            connectionInfoMap.put(connection, object);
+            connection.sendTCP(connectionAnswer);
         }
 
         //server receives map request, sends seed
@@ -102,6 +107,9 @@ public class ServerNetworkListener  extends Listener {
             serverMessage.sentBy = tempName;
             serverMessage.receivedBy = ((Packets.Packet007PlayerAffected) object).playerName;
             server.sendToAllTCP(serverMessage);
+        } else if(object instanceof Packets.Packet010StartGame){
+            gameStarted = true;
+            server.sendToAllTCP(object);
         } else {
             server.sendToAllExceptTCP(connection.getID(), object);
         }

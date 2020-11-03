@@ -99,6 +99,7 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean seedReceived;
 	boolean showMainMenu;
 	public boolean multiplayer;
+	boolean gameStarted;
 
 	Item EquippedWeapon;
 	String serverSeed;
@@ -134,6 +135,7 @@ public class Rogue99 extends ApplicationAdapter {
 		attacking = false;
 		mapGenerated = false;
 		seedReceived = false;
+		gameStarted = false;
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -182,7 +184,7 @@ public class Rogue99 extends ApplicationAdapter {
 //		Title = new Texture("spritesheets/title.png");
 		mainMenu = new MainMenu(this,"", skin);
 		mainMenuStage.addActor(mainMenu);
-		gameLobbyGui = new GameLobbyGui("",skin);
+		gameLobbyGui = new GameLobbyGui(this,"",skin);
 		Gdx.input.setInputProcessor(mainMenuStage);
 	}
 	private void init_single_player(){
@@ -606,6 +608,11 @@ public class Rogue99 extends ApplicationAdapter {
 		this.serverSeed = seed;
 		this.serverDepth = depth;
 		seedReceived = true;
+	}
+
+	public void setGameStarted(boolean gameStarted) {
+		this.gameStarted = gameStarted;
+		showMainMenu = false;
 	}
 
 	// Generate GUI Elements
