@@ -95,6 +95,8 @@ public class ClientNetworkListener extends Listener {
             }
         } else if (o instanceof Packets.Packet008ServerMessage){
             game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
+        } else if (o instanceof Packets.Packet009Disconnect){
+            game.removePLayer(((Packets.Packet009Disconnect) o).name);
         }
     }
 }

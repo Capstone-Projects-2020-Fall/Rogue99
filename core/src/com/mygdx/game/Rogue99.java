@@ -110,6 +110,8 @@ public class Rogue99 extends ApplicationAdapter {
 	Stage mainMenuStage;
 	NameInputWindow nameInputWindow;
 
+	public GameLobbyGui gameLobbyGui;
+
 	Stage popUpStage;
 	MessageWindow popUpWindow;
 	long lastPopUp;
@@ -180,6 +182,7 @@ public class Rogue99 extends ApplicationAdapter {
 //		Title = new Texture("spritesheets/title.png");
 		mainMenu = new MainMenu(this,"", skin);
 		mainMenuStage.addActor(mainMenu);
+		gameLobbyGui = new GameLobbyGui("",skin);
 		Gdx.input.setInputProcessor(mainMenuStage);
 	}
 	private void init_single_player(){
@@ -633,6 +636,17 @@ public class Rogue99 extends ApplicationAdapter {
 	public void addPlayer(Hero player){
 		System.out.println("Player Added");
 		players.add(player);
+		gameLobbyGui.addPlayer(player);
+	}
+
+	public void removePLayer(String playerName){
+		for(Hero player : players){
+			if(player.getName().equals(playerName)){
+				gameLobbyGui.removePlayer(player);
+				players.remove(player);
+				return;
+			}
+		}
 	}
 
 	public void addActor(Actor actor){
@@ -672,7 +686,9 @@ public class Rogue99 extends ApplicationAdapter {
 		hero.setName(userName);
 		System.out.println(hero.getName());
 		init_multiplayer();
-		showMainMenu = false;
+		//showMainMenu = false;
+		mainMenuStage.addActor(gameLobbyGui);
+		gameLobbyGui.addPlayer(hero);
 	}
 
 	public void popUpWindow(String sentBy, String receivedBy){

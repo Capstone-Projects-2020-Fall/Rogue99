@@ -52,6 +52,7 @@ public class GameServer extends Server {
         kryo.register(Packets.Packet006RequestSeed.class);
         kryo.register(Packets.Packet007PlayerAffected.class);
         kryo.register(Packets.Packet008ServerMessage.class);
+        kryo.register(Packets.Packet009Disconnect.class);
     }
 
     public static void main(String[] args) {

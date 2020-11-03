@@ -8,6 +8,7 @@ import com.mygdx.game.Packets;
 import com.mygdx.game.item.Item;
 import com.mygdx.game.map.Level;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class ServerNetworkListener  extends Listener {
     GameServer gameServer;
     Kryo kryo;
     ArrayList<Object> connectionsInfo;
+    HashMap<Connection, Object> connectionInfoMap;
     String tempName;
 
     public ServerNetworkListener(Server server, GameServer gameServer, Kryo kryo){
@@ -25,6 +27,7 @@ public class ServerNetworkListener  extends Listener {
         this.gameServer = gameServer;
         this.kryo = kryo;
         connectionsInfo = new ArrayList<>();
+        connectionInfoMap = new HashMap<>();
     }
 
     @Override
@@ -34,6 +37,15 @@ public class ServerNetworkListener  extends Listener {
 
     @Override
     public void disconnected(Connection connection) {
+        for(Connection c : connectionInfoMap.keySet()){
+            if(connection.equals(c)){
+                Packets.Packet009Disconnect disconnect = new Packets.Packet009Disconnect();
+                disconnect.name =((Packets.Packet001Connection)connectionInfoMap.get(c)).name;
+                server.sendToAllExceptTCP(connection.getID(), disconnect);
+                connectionInfoMap.remove(c);
+                return;
+            }
+        }
     }
 
     @Override
@@ -44,12 +56,12 @@ public class ServerNetworkListener  extends Listener {
             connectionAnswer.answer = true;
             connection.sendTCP(connectionAnswer);
             server.sendToAllExceptTCP(connection.getID(), object);
-            if(connectionsInfo.size() > 0){
-                for(Object o : connectionsInfo){
-                    connection.sendTCP(o);
+            if(!connectionInfoMap.isEmpty()){
+                for(Connection c : connectionInfoMap.keySet()){
+                    connection.sendTCP(connectionInfoMap.get(c));
                 }
             }
-            connectionsInfo.add(object);
+            connectionInfoMap.put(connection, object);
         }
 
         //server receives map request, sends seed

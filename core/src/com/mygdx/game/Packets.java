@@ -12,4 +12,5 @@ public class Packets {
     public static class Packet006RequestSeed{public int depth;}
     public static class Packet007PlayerAffected{public String playerName;}
     public static class Packet008ServerMessage{public String sentBy; public String receivedBy;}
+    public static class Packet009Disconnect{public String name;}
 }
