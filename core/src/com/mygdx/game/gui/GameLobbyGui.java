@@ -65,8 +65,7 @@ public class GameLobbyGui extends Window {
                 game.client.client.sendTCP(startGame);
             }
         });
-        // TODO figure out how to center this button in the screen.
-        this.add(textButton).size(TEXT_WIDTH - 100, TEXT_HEIGHT).pad(10);
+        this.add(textButton).size(TEXT_WIDTH - 100, TEXT_HEIGHT).pad(10).colspan(4);
     }
 
     public void addPlayer(Hero player){
