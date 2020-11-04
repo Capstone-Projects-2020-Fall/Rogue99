@@ -661,17 +661,25 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	public void removeActor(Actor actor){
-		for(Actor a : stage.getActors()){
-			if(a.getName() == actor.getName()){
-				if(a.getName() == "You Lost!"){
-					if(multiplayer){
-						client.client.close();
-					}
-					viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-					batch.setProjectionMatrix(camera.combined);
-					showMainMenu = true;
+		if(showMainMenu){
+			for(Actor a : mainMenuStage.getActors()){
+				if(a.getName() == actor.getName()){
+					a.remove();
 				}
-				a.remove();
+			}
+		} else {
+			for (Actor a : stage.getActors()) {
+				if (a.getName() == actor.getName()) {
+					if (a.getName() == "You Lost!") {
+						if (multiplayer) {
+							client.client.close();
+						}
+						viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+						batch.setProjectionMatrix(camera.combined);
+						showMainMenu = true;
+					}
+					a.remove();
+				}
 			}
 		}
 	}
@@ -694,8 +702,6 @@ public class Rogue99 extends ApplicationAdapter {
 		System.out.println(hero.getName());
 		init_multiplayer();
 		//showMainMenu = false;
-		mainMenuStage.addActor(gameLobbyGui);
-		gameLobbyGui.addPlayer(hero);
 	}
 
 	public void popUpWindow(String sentBy, String receivedBy){
@@ -704,5 +710,17 @@ public class Rogue99 extends ApplicationAdapter {
 		popUpWindow.getColor().a = .5f;
 		popUpStage.addActor(popUpWindow);
 		lastPopUp = System.currentTimeMillis();
+	}
+
+	public void connectionRejected(String message){
+		MessageWindow messageWindow = new MessageWindow(this,"Connection Rejected", skin,message);
+		messageWindow.setPosition(mainMenuStage.getHeight()/2, mainMenuStage.getHeight()/2);
+		messageWindow.setMovable(true);
+		mainMenuStage.addActor(messageWindow);
+	}
+
+	public void connectionAccepted(){
+		mainMenuStage.addActor(gameLobbyGui);
+		gameLobbyGui.addPlayer(hero);
 	}
 }

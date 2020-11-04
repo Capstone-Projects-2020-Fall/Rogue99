@@ -33,6 +33,7 @@ public class MPClient {
             client.connect(5000, ipAddress, portSocket);
         } catch(Exception e){
             e.printStackTrace();
+            game.connectionRejected("Unable to Connect To Server!");
         }
     }
 

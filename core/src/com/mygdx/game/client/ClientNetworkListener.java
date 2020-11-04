@@ -33,7 +33,12 @@ public class ClientNetworkListener extends Listener {
     public void received(Connection c, Object o){
         //System.out.println("RECEIVED");
         if(o instanceof Packets.Packet000ConnectionAnswer){
-            //TODO if o is false, return client to main menu and show message, close connection
+            if(((Packets.Packet000ConnectionAnswer) o).answer == false){
+                game.connectionRejected("Game in Progress!");
+                client.close();
+            } else {
+                game.connectionAccepted();
+            }
         } else if(o instanceof Packets.Packet001Connection){
             if(((Packets.Packet001Connection) o).name.equals(game.hero.getName())){
                 // do not add yourself to the players list.
