@@ -72,6 +72,11 @@ public class GameLobbyGui extends Window {
         for(int i = 0; i < NUM_PLAYERS; i++){
             if(textFields.get(i).getText().equals("")){
                 textFields.get(i).setText(player.getName());
+                if(!player.getName().equals(game.hero.getName())){
+                    Color color = new Color(player.getSpriteColor());
+                    color.a = 1;
+                    textFields.get(i).setColor(color);
+                }
                 return;
             }
         }
@@ -81,6 +86,7 @@ public class GameLobbyGui extends Window {
         for(int i = 0; i < NUM_PLAYERS; i++){
             if(textFields.get(i).getText().equals(player.getName())){
                 textFields.get(i).setText("");
+                textFields.get(i).setColor(Color.GRAY);
                 return;
             }
         }

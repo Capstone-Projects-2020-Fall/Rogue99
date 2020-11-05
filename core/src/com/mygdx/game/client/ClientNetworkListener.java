@@ -46,6 +46,7 @@ public class ClientNetworkListener extends Listener {
                 Hero player = new Hero(game, "players");
                 player.depth = 0;
                 player.setName(((Packets.Packet001Connection) o).name);
+                player.setSpriteColor(((Packets.Packet001Connection) o).spriteColor);
                 game.addPlayer(player);
             }
         } else if(o instanceof Packets.Packet002Map){

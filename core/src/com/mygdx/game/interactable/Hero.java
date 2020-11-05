@@ -15,6 +15,7 @@ public class Hero extends Character{
     private ArrayList<Item> inventory;
     Rogue99 game;
     String sprite;
+    int spriteColor;
     public int depth;
     public Vector3 pos3 = new Vector3();
     private String name;
@@ -52,6 +53,14 @@ public class Hero extends Character{
 
     public String getName() {
         return name;
+    }
+
+    public void setSpriteColor(int spriteColor) {
+        this.spriteColor = spriteColor;
+    }
+
+    public int getSpriteColor() {
+        return spriteColor;
     }
 
     @Override

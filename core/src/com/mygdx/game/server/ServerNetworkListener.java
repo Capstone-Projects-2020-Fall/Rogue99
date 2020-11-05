@@ -1,35 +1,33 @@
 package com.mygdx.game.server;
 
+import com.badlogic.gdx.graphics.Color;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
-import com.mygdx.game.item.Item;
 import com.mygdx.game.map.Level;
 
 import java.util.HashMap;
 import java.util.Random;
-
-import java.util.ArrayList;
 
 public class ServerNetworkListener  extends Listener {
 
     Server server;
     GameServer gameServer;
     Kryo kryo;
-    ArrayList<Object> connectionsInfo;
     HashMap<Connection, Object> connectionInfoMap;
     String tempName;
     boolean gameStarted;
+    Random rand;
 
     public ServerNetworkListener(Server server, GameServer gameServer, Kryo kryo){
         this.server = server;
         this.gameServer = gameServer;
         this.kryo = kryo;
-        connectionsInfo = new ArrayList<>();
         connectionInfoMap = new HashMap<>();
         gameStarted = false;
+        rand = new Random();
     }
 
     @Override
@@ -58,13 +56,16 @@ public class ServerNetworkListener  extends Listener {
                 connectionAnswer.answer = false;
             } else {
                 connectionAnswer.answer = true;
-                server.sendToAllExceptTCP(connection.getID(), object);
+                Packets.Packet001Connection connectionPacket = new Packets.Packet001Connection();
+                connectionPacket.name = ((Packets.Packet001Connection) object).name;
+                connectionPacket.spriteColor = Color.argb8888(256, rand.nextInt(256),rand.nextInt(256), rand.nextInt(256));
+                server.sendToAllExceptTCP(connection.getID(), connectionPacket);
                 if (!connectionInfoMap.isEmpty()) {
                     for (Connection c : connectionInfoMap.keySet()) {
                         connection.sendTCP(connectionInfoMap.get(c));
                     }
                 }
-                connectionInfoMap.put(connection, object);
+                connectionInfoMap.put(connection, connectionPacket);
             }
             connection.sendTCP(connectionAnswer);
         }
