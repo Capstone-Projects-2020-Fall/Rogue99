@@ -34,6 +34,18 @@ public class Control extends InputAdapter implements InputProcessor {
             case Input.Keys.D:
                 hero.update(hero.RIGHT);
                 break;
+            case Input.Keys.Q:
+                hero.update(hero.NUMPAD_7);
+                break;
+            case Input.Keys.E:
+                hero.update(hero.NUMPAD_9);
+                break;
+            case Input.Keys.Z:
+                hero.update(hero.NUMPAD_1);
+                break;
+            case Input.Keys.C:
+                hero.update(hero.NUMPAD_3);
+                break;
         }
         return false;
     }
