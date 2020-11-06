@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class Rogue99 extends ApplicationAdapter {
@@ -84,6 +85,7 @@ public class Rogue99 extends ApplicationAdapter {
 	//level list contains all levels generated so far
 	public Level level;
 	public ArrayList<Level> levels;
+	int levelNum;
 
 	//list of other players
 	public ArrayList<Hero> players;
@@ -118,8 +120,9 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-
+		levels = new ArrayList<>();
 		players = new ArrayList<>();
+
 
 		//initialize camera and viewport
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -143,7 +146,7 @@ public class Rogue99 extends ApplicationAdapter {
 		//create player's hero
 		hero = new Hero(this, "tile169");
 
-		levels = new ArrayList<>();
+
 		lastTime = System.currentTimeMillis();
 
 
@@ -581,9 +584,9 @@ public class Rogue99 extends ApplicationAdapter {
 		//initialize level
 		System.out.println("generateLevel seed: " + seed);
 		level = new Level(this, depth, hero);
-		levels.add(level);
 		level.setSeed(seed);
 		level.generate();
+		levels.add(level);
 		stage = new LevelStage(level);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
@@ -596,7 +599,13 @@ public class Rogue99 extends ApplicationAdapter {
 			client.client.sendTCP(movement);
 		}
 	}
+	public void nextLevel(int depth){
+		level = levels.get(depth+1);
+	}
 
+	public void prevLevel(){
+		level = levels.get(level.getDepth()-1);
+	}
 
 	// Get the seed from server
 	public void setSeed (String seed, int depth){
@@ -614,15 +623,17 @@ public class Rogue99 extends ApplicationAdapter {
   }
 
 	public void newLevel(int depth){
+
 		if(multiplayer) {
 			Packets.Packet006RequestSeed request = new Packets.Packet006RequestSeed();
 			request.depth = depth;
 			System.out.println("Client: depth requested: " + request.depth);
 			client.client.sendTCP(request);
 		}
-		else {			// single player option
-			level.generateFloorPlan();
-			generateLevel(level.getSeed(), depth++);
+		else {
+			Level temp = new Level(this, depth++, null);// single player option
+			temp.generateFloorPlan();
+			generateLevel(temp.getSeed(), depth);
 		}
 	}
 

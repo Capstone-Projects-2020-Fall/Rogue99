@@ -102,9 +102,32 @@ public class Hero extends Character{
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
             } else if (game.level.getMap()[x][y].getType().equals("stair_down")){
+                game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
+                if(game.levels.size() > depth+1) {
+                    game.nextLevel(depth);
+                    setPosX(game.level.entrance.getPosX());
+                    setPosY(game.level.entrance.getPosY());
+                    game.level.getMap()[getPosX()][getPosY()].getEntities().push(this);
+                }
+                else
+                    game.newLevel(depth);
                 depth++;
-                game.newLevel(depth);
-            }  else {
+            } else if (game.level.getMap()[x][y].getType().equals("stair_up")){
+                if(depth == 0) {
+                    game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
+                    setPosX(x);
+                    setPosY(y);
+                    game.level.getMap()[x][y].getEntities().push(this);
+                    game.setAttacking(false);
+                }else{
+                    game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
+                    game.prevLevel();
+                    depth--;
+                    setPosX(game.level.exit.getPosX());
+                    setPosY(game.level.exit.getPosY());
+                    game.level.getMap()[getPosX()][getPosY()].getEntities().push(this);
+                }
+            } else {
                 // move to new position
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 setPosX(x);
