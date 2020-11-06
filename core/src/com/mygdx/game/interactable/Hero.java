@@ -80,6 +80,18 @@ public class Hero extends Character{
             case RIGHT:
                 move(x + 1, y);
                 break;
+            case NUMPAD_7:
+                move(x - 1, y + 1);
+                break;
+            case NUMPAD_9:
+                move(x + 1, y + 1);
+                break;
+            case NUMPAD_1:
+                move(x - 1, y - 1);
+                break;
+            case NUMPAD_3:
+                move(x + 1, y - 1);
+                break;
         }
     }
 
