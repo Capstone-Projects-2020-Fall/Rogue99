@@ -17,10 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.game.client.MPClient;
-import com.mygdx.game.gui.HUDGui;
-import com.mygdx.game.gui.HUDProgressBar;
-import com.mygdx.game.gui.InventoryGui;
-import com.mygdx.game.gui.MessageWindow;
+import com.mygdx.game.gui.*;
 import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.item.*;
 import com.mygdx.game.interactable.Control;
@@ -31,7 +28,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class Rogue99 extends ApplicationAdapter {
 
@@ -110,6 +106,14 @@ public class Rogue99 extends ApplicationAdapter {
 
 	MessageWindow gameLostWindow;
 
+	public MainMenu mainMenu;
+	Stage mainMenuStage;
+	NameInputWindow nameInputWindow;
+
+	Stage popUpStage;
+	MessageWindow popUpWindow;
+	long lastPopUp;
+
 
 	@Override
 	public void create () {
@@ -142,42 +146,55 @@ public class Rogue99 extends ApplicationAdapter {
 		levels = new ArrayList<>();
 		lastTime = System.currentTimeMillis();
 
-		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been killed.");
 
-		//showMainMenu = true;
-		//mainMenu();
-		init_single_player();
+		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been defeated.");
+
+		 mainMenuStage = new Stage();
+		 mainMenuStage.getViewport().setCamera(camera);
+		 mainMenuStage.setViewport(viewport);
+		 popUpStage = new Stage();
+		 popUpStage.getViewport().setCamera(camera);
+		 popUpStage.setViewport(viewport);
+
+		showMainMenu = true;
+		mainMenu();
+		//init_single_player();
 		//init_multiplayer();
 	}
 	private void mainMenu() {
-		WIDTH = Gdx.graphics.getWidth();
-		HEIGHT = Gdx.graphics.getHeight();
-		camera = new OrthographicCamera(WIDTH, HEIGHT);
-		camera.translate(WIDTH/2, HEIGHT/2);
-		camera.update();
-		bg = new Texture("spritesheets/cave.png");
-		sp = new Sprite(bg);
-		play = new Texture("spritesheets/play.png");
-		play_hover = new Texture("spritesheets/play_hover.png");
-		multi = new Texture("spritesheets/multiplay.png");
-		multi_hover = new Texture("spritesheets/mutliplay_hover.png");
-		setting = new Texture("spritesheets/setting.png");
-		setting_hover = new Texture("spritesheets/setting_hover.png");
-		exit = new Texture("spritesheets/exit.png");
-		exit_hover = new Texture("spritesheets/exit_hover.png");
-		Title = new Texture("spritesheets/title.png");
+//		WIDTH = Gdx.graphics.getWidth();
+//		HEIGHT = Gdx.graphics.getHeight();
+//		camera = new OrthographicCamera(WIDTH, HEIGHT);
+//		camera.translate(WIDTH/2, HEIGHT/2);
+//		camera.update();
+//		bg = new Texture("spritesheets/cave.png");
+//		sp = new Sprite(bg);
+//		play = new Texture("spritesheets/play.png");
+//		play_hover = new Texture("spritesheets/play_hover.png");
+//		multi = new Texture("spritesheets/multiplay.png");
+//		multi_hover = new Texture("spritesheets/mutliplay_hover.png");
+//		setting = new Texture("spritesheets/setting.png");
+//		setting_hover = new Texture("spritesheets/setting_hover.png");
+//		exit = new Texture("spritesheets/exit.png");
+//		exit_hover = new Texture("spritesheets/exit_hover.png");
+//		Title = new Texture("spritesheets/title.png");
+		mainMenu = new MainMenu(this,"", skin);
+		mainMenuStage.addActor(mainMenu);
+		Gdx.input.setInputProcessor(mainMenuStage);
 	}
 	private void init_single_player(){
+		hero.setCurrHP(100);
 		Level tempLevel = new Level(null, 0, null);
 		tempLevel.generateFloorPlan();
 		generateLevel(tempLevel.getSeed(), 0);
-
+		
 		control = new Control(hero, this);
 
 		Gdx.input.setInputProcessor(control);
 	}
 
 	private void init_multiplayer() {
+		hero.setCurrHP(100);
 		multiplayer = true;
 		//initialize client
 		client = new MPClient(this);
@@ -201,38 +218,41 @@ public class Rogue99 extends ApplicationAdapter {
 
 		batch.begin();
 		if (showMainMenu) {
-			sp.draw(batch);
-			batch.draw(play, WIDTH/2 - 100 / 2, 350, 100, 100);
-			batch.draw(multi, WIDTH/2 - 170/2, 290, 170, 100);
-			batch.draw(setting, WIDTH/2 - 170/2, 230, 170, 100);
-			batch.draw(exit, WIDTH/2 - 100/2, 170, 100, 100);
-			batch.draw(Title, WIDTH/2 - 500/2, 600, 500, 400);
-
-			if (Gdx.input.getX() < WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 -100/2 && HEIGHT - Gdx.input.getY() <
-					350 + 100 && HEIGHT - Gdx.input.getY() > 350) { //cuts screen to make active when in tha zone
-				batch.draw(play_hover,WIDTH/2 - 100 / 2, 350, 100, 100);
-				if(Gdx.input.isTouched()) {
-					init_single_player();
-					showMainMenu = false;
-				}
-
-			} else if (Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
-					290 + 100 && HEIGHT - Gdx.input.getY() > 290) {
-				batch.draw(multi_hover, WIDTH/2 - 170/2, 290, 170, 100);
-				if(Gdx.input.isTouched()) {
-					init_multiplayer();
-					showMainMenu = false;
-				}
-			} else if(Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
-					230 + 100 && HEIGHT - Gdx.input.getY() > 230) {
-				batch.draw(setting_hover, WIDTH/2 - 170/2, 230, 170, 100);
-			} else if(Gdx.input.getX() <WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 - 100/2 && HEIGHT - Gdx.input.getY() <
-					170 + 100 && HEIGHT - Gdx.input.getY() > 170) {
-				batch.draw(exit_hover, WIDTH/2 - 100/2, 170, 100, 100);
-				if(Gdx.input.isTouched()) {
-					Gdx.app.exit();
-				}
-			}
+//			sp.draw(batch);
+//			batch.draw(play, WIDTH/2 - 100 / 2, 350, 100, 100);
+//			batch.draw(multi, WIDTH/2 - 170/2, 290, 170, 100);
+//			batch.draw(setting, WIDTH/2 - 170/2, 230, 170, 100);
+//			batch.draw(exit, WIDTH/2 - 100/2, 170, 100, 100);
+//			batch.draw(Title, WIDTH/2 - 500/2, 600, 500, 400);
+//
+//			if (Gdx.input.getX() < WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 -100/2 && HEIGHT - Gdx.input.getY() <
+//					350 + 100 && HEIGHT - Gdx.input.getY() > 350) { //cuts screen to make active when in tha zone
+//				batch.draw(play_hover,WIDTH/2 - 100 / 2, 350, 100, 100);
+//				if(Gdx.input.isTouched()) {
+//					init_single_player();
+//					showMainMenu = false;
+//				}
+//
+//			} else if (Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
+//					290 + 100 && HEIGHT - Gdx.input.getY() > 290) {
+//				batch.draw(multi_hover, WIDTH/2 - 170/2, 290, 170, 100);
+//				if(Gdx.input.isTouched()) {
+//					init_multiplayer();
+//					showMainMenu = false;
+//				}
+//			} else if(Gdx.input.getX() < WIDTH/2 - 170/2 + 170 && Gdx.input.getX() > WIDTH/2 - 170/2 && HEIGHT - Gdx.input.getY() <
+//					230 + 100 && HEIGHT - Gdx.input.getY() > 230) {
+//				batch.draw(setting_hover, WIDTH/2 - 170/2, 230, 170, 100);
+//			} else if(Gdx.input.getX() <WIDTH/2 - 100/2 + 100 && Gdx.input.getX() > WIDTH/2 - 100/2 && HEIGHT - Gdx.input.getY() <
+//					170 + 100 && HEIGHT - Gdx.input.getY() > 170) {
+//				batch.draw(exit_hover, WIDTH/2 - 100/2, 170, 100, 100);
+//				if(Gdx.input.isTouched()) {
+//					Gdx.app.exit();
+//				}
+//			}
+			Gdx.input.setInputProcessor(mainMenuStage);
+			mainMenuStage.act();
+			mainMenuStage.draw();
 
 		}
 		else{
@@ -253,7 +273,7 @@ public class Rogue99 extends ApplicationAdapter {
 							if (keycode == Input.Keys.I) {
 								setShowInventory(false);
 							}
-							return super.keyDown(event, keycode);
+							return super.keyUp(event, keycode);
 						}
 					});
 				} else {
@@ -272,6 +292,16 @@ public class Rogue99 extends ApplicationAdapter {
 					hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
 					enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
 					stage.draw();
+				}
+				if (System.currentTimeMillis() - lastTime > 1000) {
+					level.moveEnemies();
+					lastTime = System.currentTimeMillis();
+				}
+				if (System.currentTimeMillis() - lastPopUp > 2000) {
+					if(popUpStage.getActors().size>0){
+						popUpStage.getActors().get(0).remove();
+					}
+					lastPopUp = System.currentTimeMillis();
 				}
 			}
 
@@ -292,15 +322,13 @@ public class Rogue99 extends ApplicationAdapter {
 				addActor(gameLostWindow);
 			}
 
-			if (System.currentTimeMillis() - lastTime > 1000) {
-				level.moveEnemies();
-				lastTime = System.currentTimeMillis();
-			}
 
 			camera.position.lerp(hero.pos3, 0.1f);
 			camera.update();
 
 		}
+		popUpStage.act();
+		popUpStage.draw();
 		batch.end();
 	}
 
@@ -512,6 +540,7 @@ public class Rogue99 extends ApplicationAdapter {
 				Packets.Packet004Potion scroll = new Packets.Packet004Potion();
 				scroll.ID = Item.SUMMONSCROLL;
 				scroll.value = ( (SummonScroll) item).getDifficulty();
+				scroll.playerName = hero.getName();
 
 				client.client.sendTCP(scroll);
 			} else if(item.getId() == Item.WEAPON){
@@ -617,10 +646,40 @@ public class Rogue99 extends ApplicationAdapter {
 					if(multiplayer){
 						client.client.close();
 					}
-					Gdx.app.exit();
+					viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+					batch.setProjectionMatrix(camera.combined);
+					showMainMenu = true;
 				}
 				a.remove();
 			}
 		}
+	}
+
+	public void menuButtonClicked(String buttonName){
+		if(buttonName.equals("Single Player")){
+			init_single_player();
+			showMainMenu = false;
+		} else if(buttonName.equals("Multiplayer")){
+			nameInputWindow = new NameInputWindow(this,"Set Username", skin);
+			nameInputWindow.setPosition(mainMenuStage.getWidth()/2, mainMenuStage.getHeight()/2);
+			mainMenuStage.addActor(nameInputWindow);
+		} else {
+			Gdx.app.exit();
+		}
+	}
+
+	public void setUserName(String userName){
+		hero.setName(userName);
+		System.out.println(hero.getName());
+		init_multiplayer();
+		showMainMenu = false;
+	}
+
+	public void popUpWindow(String sentBy, String receivedBy){
+		popUpWindow = new MessageWindow(this,"Summon Scroll", skin,"Player " + sentBy + " summoned an enemy in " + receivedBy + " game!");
+		popUpWindow.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
+		popUpWindow.getColor().a = .5f;
+		popUpStage.addActor(popUpWindow);
+		lastPopUp = System.currentTimeMillis();
 	}
 }

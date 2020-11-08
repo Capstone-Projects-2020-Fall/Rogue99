@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
+import com.mygdx.game.item.Item;
 import com.mygdx.game.map.Level;
 
 import java.util.Random;
@@ -17,6 +18,7 @@ public class ServerNetworkListener  extends Listener {
     GameServer gameServer;
     Kryo kryo;
     ArrayList<Object> connectionsInfo;
+    String tempName;
 
     public ServerNetworkListener(Server server, GameServer gameServer, Kryo kryo){
         this.server = server;
@@ -81,7 +83,13 @@ public class ServerNetworkListener  extends Listener {
                     i = rand.nextInt(connectionList.length);
                 }
                 connectionList[i].sendTCP(object);
+                tempName = ((Packets.Packet004Potion) object).playerName;
             }
+        } else if(object instanceof Packets.Packet007PlayerAffected){
+            Packets.Packet008ServerMessage serverMessage = new Packets.Packet008ServerMessage();
+            serverMessage.sentBy = tempName;
+            serverMessage.receivedBy = ((Packets.Packet007PlayerAffected) object).playerName;
+            server.sendToAllTCP(serverMessage);
         } else {
             server.sendToAllExceptTCP(connection.getID(), object);
         }

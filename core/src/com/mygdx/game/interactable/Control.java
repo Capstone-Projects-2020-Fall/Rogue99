@@ -34,6 +34,13 @@ public class Control extends InputAdapter implements InputProcessor {
             case Input.Keys.D:
                 hero.update(hero.RIGHT);
                 break;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        switch (keycode){
             case Input.Keys.I:
                 if(game.isShowInventory()){
                     game.setShowInventory(false);
@@ -42,11 +49,6 @@ public class Control extends InputAdapter implements InputProcessor {
                 }
                 break;
         }
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
         return false;
     }
 
