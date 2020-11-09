@@ -5,9 +5,9 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
-import com.mygdx.game.interactable.*;
+import com.mygdx.game.interactable.Enemy;
+import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.item.Item;
-import com.mygdx.game.map.Tile;
 
 import java.util.Random;
 
@@ -33,7 +33,12 @@ public class ClientNetworkListener extends Listener {
     public void received(Connection c, Object o){
         //System.out.println("RECEIVED");
         if(o instanceof Packets.Packet000ConnectionAnswer){
-            //TODO if o is false, return client to main menu and show message, close connection
+            if(((Packets.Packet000ConnectionAnswer) o).answer == false){
+                game.connectionRejected("Game in Progress!");
+                client.close();
+            } else {
+                game.connectionAccepted();
+            }
         } else if(o instanceof Packets.Packet001Connection){
             if(((Packets.Packet001Connection) o).name.equals(game.hero.getName())){
                 // do not add yourself to the players list.
@@ -41,6 +46,7 @@ public class ClientNetworkListener extends Listener {
                 Hero player = new Hero(game, "players");
                 player.depth = 0;
                 player.setName(((Packets.Packet001Connection) o).name);
+                player.setSpriteColor(((Packets.Packet001Connection) o).spriteColor);
                 game.addPlayer(player);
             }
         } else if(o instanceof Packets.Packet002Map){
@@ -105,6 +111,20 @@ public class ClientNetworkListener extends Listener {
             }
             game.level.enemies.add(enemy);
             game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getEntities().push(enemy);
+        } else if(o instanceof Packets.Packet005Stats){
+            for(Hero player : game.players){
+                if(player.getName() == ((Packets.Packet005Stats) o).name){
+                    player.setCurrHP(((Packets.Packet005Stats) o).health);
+                    player.setArmor(((Packets.Packet005Stats) o).armor);
+                }
+            }
+        } else if (o instanceof Packets.Packet008ServerMessage){
+            game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
+        } else if (o instanceof Packets.Packet009Disconnect){
+            game.removePLayer(((Packets.Packet009Disconnect) o).name);
+        } else if (o instanceof Packets.Packet010StartGame){
+            System.out.println("game started: " + ((Packets.Packet010StartGame) o).start);
+            game.setGameStarted(((Packets.Packet010StartGame) o).start);
         }
     }
 }

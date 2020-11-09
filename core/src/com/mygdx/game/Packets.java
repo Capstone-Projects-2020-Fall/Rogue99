@@ -13,4 +13,6 @@ public class Packets {
     public static class Packet007PlayerAffected{public String playerName;}
     public static class Packet008ServerMessage{public String sentBy; public String receivedBy;}
     public static class Packet009Scroll{public int ID; public String type; public String playerName;}
+    public static class Packet009Disconnect{public String name;}
+    public static class Packet010StartGame{public boolean start;}
 }
