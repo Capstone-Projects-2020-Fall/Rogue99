@@ -7,7 +7,7 @@ import java.util.List;
 
 //moves through walls
 public class Ghost extends Enemy {
-    public Ghost(Tile tile, Rogue99 game){ super(14, 1, 3, 40, 5, "ghost", tile, game);}
+    public Ghost(Tile tile, Rogue99 game){ super(14, 0.5, 1, 3, 40, 5, "ghost", tile, game);}
 
     @Override
     public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {

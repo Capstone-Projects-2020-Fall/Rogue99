@@ -11,7 +11,7 @@ import java.util.Random;
 public class Wasp extends Enemy{
 
     public Wasp(Tile tile, Rogue99 game){
-        super(13, 2,1, 20, 3, "wasp", tile, game);
+        super(13, 0.6, 2,1, 20, 3, "wasp", tile, game);
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.util.Random;
 public class Slime extends Enemy {
 
     public Slime(Tile tile, Rogue99 game){
-        super(8, 1, 2, 40, 3, "slime", tile, game);
+        super(8, 0.45, 1, 2, 40, 3, "slime", tile, game);
     }
 
     @Override

@@ -23,14 +23,14 @@ public class Enemy extends Character {
 
     public Enemy(){}
 
-    public Enemy(int visRange, int moveDistance, int difficulty, int baseHp, int baseStr, String sprite, Tile tile, Rogue99 game) {
+    public Enemy(int visRange, double hitChance, int moveDistance, int difficulty, int baseHp, int baseStr, String sprite, Tile tile, Rogue99 game) {
         this.visRange = visRange;
         this.moveDistance = moveDistance;
         this.difficulty = difficulty;
         diffMod = 0;
         super.setMaxHP(baseHp);
         super.setStr(baseStr);
-        super.setHitChance(0.6);
+        super.setHitChance(hitChance);
         this.setCurrHP(getMaxHP());
         this.sprite = sprite;
         this.tile = tile;
