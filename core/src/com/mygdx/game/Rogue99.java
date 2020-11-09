@@ -101,6 +101,7 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean seedReceived;
 	boolean showMainMenu;
 	public boolean multiplayer;
+	boolean gameStarted;
 
 	Item EquippedWeapon;
 	String serverSeed;
@@ -111,6 +112,8 @@ public class Rogue99 extends ApplicationAdapter {
 	public MainMenu mainMenu;
 	Stage mainMenuStage;
 	NameInputWindow nameInputWindow;
+
+	public GameLobbyGui gameLobbyGui;
 
 	Stage popUpStage;
 	MessageWindow popUpWindow;
@@ -135,6 +138,7 @@ public class Rogue99 extends ApplicationAdapter {
 		attacking = false;
 		mapGenerated = false;
 		seedReceived = false;
+		gameStarted = false;
 
 		//load sprites and add to hash map
 		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -183,6 +187,7 @@ public class Rogue99 extends ApplicationAdapter {
 //		Title = new Texture("spritesheets/title.png");
 		mainMenu = new MainMenu(this,"", skin);
 		mainMenuStage.addActor(mainMenu);
+		gameLobbyGui = new GameLobbyGui(this,"",skin);
 		Gdx.input.setInputProcessor(mainMenuStage);
 	}
 	private void init_single_player(){
@@ -614,6 +619,11 @@ public class Rogue99 extends ApplicationAdapter {
 		seedReceived = true;
 	}
 
+	public void setGameStarted(boolean gameStarted) {
+		this.gameStarted = gameStarted;
+		showMainMenu = false;
+	}
+
 	// Generate GUI Elements
 	private void generateGuiElements(){
 		//initialize Inventory & HUD gui
@@ -644,6 +654,17 @@ public class Rogue99 extends ApplicationAdapter {
 	public void addPlayer(Hero player){
 		System.out.println("Player Added");
 		players.add(player);
+		gameLobbyGui.addPlayer(player);
+	}
+
+	public void removePLayer(String playerName){
+		for(Hero player : players){
+			if(player.getName().equals(playerName)){
+				gameLobbyGui.removePlayer(player);
+				players.remove(player);
+				return;
+			}
+		}
 	}
 
 	public void addActor(Actor actor){
@@ -651,17 +672,25 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	public void removeActor(Actor actor){
-		for(Actor a : stage.getActors()){
-			if(a.getName() == actor.getName()){
-				if(a.getName() == "You Lost!"){
-					if(multiplayer){
-						client.client.close();
-					}
-					viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-					batch.setProjectionMatrix(camera.combined);
-					showMainMenu = true;
+		if(showMainMenu){
+			for(Actor a : mainMenuStage.getActors()){
+				if(a.getName() == actor.getName()){
+					a.remove();
 				}
-				a.remove();
+			}
+		} else {
+			for (Actor a : stage.getActors()) {
+				if (a.getName() == actor.getName()) {
+					if (a.getName() == "You Lost!") {
+						if (multiplayer) {
+							client.client.close();
+						}
+						viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+						batch.setProjectionMatrix(camera.combined);
+						showMainMenu = true;
+					}
+					a.remove();
+				}
 			}
 		}
 	}
@@ -683,7 +712,7 @@ public class Rogue99 extends ApplicationAdapter {
 		hero.setName(userName);
 		System.out.println(hero.getName());
 		init_multiplayer();
-		showMainMenu = false;
+		//showMainMenu = false;
 	}
 
 	public void popUpWindow(String sentBy, String receivedBy){
@@ -692,5 +721,17 @@ public class Rogue99 extends ApplicationAdapter {
 		popUpWindow.getColor().a = .5f;
 		popUpStage.addActor(popUpWindow);
 		lastPopUp = System.currentTimeMillis();
+	}
+
+	public void connectionRejected(String message){
+		MessageWindow messageWindow = new MessageWindow(this,"Connection Rejected", skin,message);
+		messageWindow.setPosition(mainMenuStage.getHeight()/2, mainMenuStage.getHeight()/2);
+		messageWindow.setMovable(true);
+		mainMenuStage.addActor(messageWindow);
+	}
+
+	public void connectionAccepted(){
+		mainMenuStage.addActor(gameLobbyGui);
+		gameLobbyGui.addPlayer(hero);
 	}
 }

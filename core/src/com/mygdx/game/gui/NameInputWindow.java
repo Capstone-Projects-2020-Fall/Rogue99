@@ -16,7 +16,6 @@ public class NameInputWindow extends Window {
         this.setResizable(true);
         this.setMovable(true);
         this.setName(title);
-        this.align(Align.center);
         this.setSize(game.mainMenu.getWidth()/4, game.mainMenu.getHeight()/6);
         TextField textField = new TextField("Input a Name", skin);
         textField.setAlignment(Align.center);
@@ -34,10 +33,22 @@ public class NameInputWindow extends Window {
                 game.setUserName(inputField.getText());
             }
         });
-        this.add(textField).size(this.getWidth() - 100, this.getHeight()/4).pad(6);
+        TextButton closeButton = new TextButton("Close", skin);
+        closeButton.setColor(Color.DARK_GRAY);
+        closeButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.removeActor(NameInputWindow.this);
+            }
+        });
+        this.add(textField).size(this.getWidth() - 100, this.getHeight()/4).pad(2);
         this.row();
-        this.add(inputField).size(this.getWidth() - 100, this.getHeight()/4).pad(6);
+        this.add(inputField).size(this.getWidth() - 100, this.getHeight()/4).pad(2);
         this.row();
-        this.add(button).size(this.getWidth()/6, this.getHeight()/10);
+        this.add(button).size(this.getWidth()/6, this.getHeight()/10).pad(2);
+        this.row();
+        this.add(closeButton).size(this.getWidth()/6, this.getHeight()/10);
+
     }
 }

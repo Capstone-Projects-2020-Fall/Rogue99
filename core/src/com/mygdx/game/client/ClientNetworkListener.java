@@ -33,7 +33,12 @@ public class ClientNetworkListener extends Listener {
     public void received(Connection c, Object o){
         //System.out.println("RECEIVED");
         if(o instanceof Packets.Packet000ConnectionAnswer){
-            //TODO if o is false, return client to main menu and show message, close connection
+            if(((Packets.Packet000ConnectionAnswer) o).answer == false){
+                game.connectionRejected("Game in Progress!");
+                client.close();
+            } else {
+                game.connectionAccepted();
+            }
         } else if(o instanceof Packets.Packet001Connection){
             if(((Packets.Packet001Connection) o).name.equals(game.hero.getName())){
                 // do not add yourself to the players list.
@@ -41,6 +46,7 @@ public class ClientNetworkListener extends Listener {
                 Hero player = new Hero(game, "players");
                 player.depth = 0;
                 player.setName(((Packets.Packet001Connection) o).name);
+                player.setSpriteColor(((Packets.Packet001Connection) o).spriteColor);
                 game.addPlayer(player);
             }
         } else if(o instanceof Packets.Packet002Map){
@@ -95,6 +101,11 @@ public class ClientNetworkListener extends Listener {
             }
         } else if (o instanceof Packets.Packet008ServerMessage){
             game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
+        } else if (o instanceof Packets.Packet009Disconnect){
+            game.removePLayer(((Packets.Packet009Disconnect) o).name);
+        } else if (o instanceof Packets.Packet010StartGame){
+            System.out.println("game started: " + ((Packets.Packet010StartGame) o).start);
+            game.setGameStarted(((Packets.Packet010StartGame) o).start);
         }
     }
 }
