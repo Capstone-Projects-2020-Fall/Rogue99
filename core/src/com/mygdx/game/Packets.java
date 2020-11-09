@@ -2,7 +2,7 @@ package com.mygdx.game;
 
 public class Packets {
     public static class Packet000ConnectionAnswer{public boolean answer;}
-    public static class Packet001Connection{public String name;}
+    public static class Packet001Connection{public String name; public int spriteColor;}
     public static class Packet002Map{public int depth; public String seed;}
     public static class Packet003Movement{public String name; public int xPos; public int yPos; public int depth;}
     public static class Packet004Potion{public int ID; public int value; public String playerName;}

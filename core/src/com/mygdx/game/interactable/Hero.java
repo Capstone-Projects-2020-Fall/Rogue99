@@ -113,10 +113,6 @@ public class Hero extends Character{
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
             } else if (game.level.getMap()[x][y].getType().equals("downstair")){
-                depth++;
-                game.newLevel(depth);
-            }  else {
-            } else if (game.level.getMap()[x][y].getType().equals("stair_down")){
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 if(game.levels.size() > depth+1) {
                     game.nextLevel(depth);
@@ -127,7 +123,7 @@ public class Hero extends Character{
                 else
                     game.newLevel(depth);
                 depth++;
-            } else if (game.level.getMap()[x][y].getType().equals("stair_up")){
+            } else if (game.level.getMap()[x][y].getType().equals("upstair")){
                 if(depth == 0) {
                     game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                     setPosX(x);

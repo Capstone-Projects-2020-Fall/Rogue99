@@ -5,8 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
-import com.mygdx.game.interactable.Enemy;
-import com.mygdx.game.interactable.Hero;
+import com.mygdx.game.interactable.*;
 import com.mygdx.game.item.Item;
 
 import java.util.Random;
@@ -108,6 +107,10 @@ public class ClientNetworkListener extends Listener {
                 enemy = new Wasp(game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y], game);
             } else if(((Packets.Packet009Scroll) o).type.equals("slime")){
                 enemy = new Slime(game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y], game);
+            } else if(((Packets.Packet009Scroll) o).type.equals("ghost")){
+                enemy = new Ghost(game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y], game);
+            } else if(((Packets.Packet009Scroll) o).type.equals("zombie")){
+                enemy = new Zombie(game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y], game);
             }
             game.level.enemies.add(enemy);
             game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getEntities().push(enemy);
