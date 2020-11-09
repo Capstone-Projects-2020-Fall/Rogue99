@@ -1,5 +1,6 @@
 package com.mygdx.game.gui;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -68,4 +69,19 @@ public class HUDGui extends Window {
     public ArrayList<HUDProgressBar> getHudBars() {
         return hudBars;
     }
+
+//    @Override
+//    public void draw(Batch batch, float parentAlpha) {
+//        super.draw(batch, parentAlpha);
+//        int row = 0;
+//        int column = 12;
+//        for(int i = 0; i < statsNumTexts.size(); i++){
+//            statsNumTexts.get(i).setPosition(this.getX() + column + 5, this.getY() + row + 20);
+//            row = row + 30;
+//            statsNumTexts.get(i).draw(batch, parentAlpha);
+//            hudBars.get(i).setPosition(this.getX() + column, this.getY() + row + 20);
+//            row = row + 30;
+//            hudBars.get(i).draw(batch,parentAlpha);
+//        }
+//    }
 }

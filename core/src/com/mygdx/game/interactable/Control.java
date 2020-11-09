@@ -64,6 +64,8 @@ public class Control extends InputAdapter implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        System.out.println(screenX + " " + screenY);
+        System.out.println("inventory " + game.inventoryGui.getX() + " " + game.inventoryGui.getY());
         return false;
     }
 
