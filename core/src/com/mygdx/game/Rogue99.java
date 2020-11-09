@@ -63,7 +63,8 @@ public class Rogue99 extends ApplicationAdapter {
 	public MPClient client;
 	ExtendViewport viewport;
 
-	Texture img;
+	//map of enemy types per difficulty
+	public HashMap<Integer, ArrayList<String>> enemyMap = new HashMap<>();
 
 	//Skin for inventory gui
 	Skin skin;
@@ -101,6 +102,7 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean seedReceived;
 	boolean showMainMenu;
 	public boolean multiplayer;
+	public int timerCount = 0;
 	boolean gameStarted;
 
 	Item EquippedWeapon;
@@ -125,6 +127,8 @@ public class Rogue99 extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		levels = new ArrayList<>();
 		players = new ArrayList<>();
+		//establish enemy difficulty map
+		setEnemyMap();
 
 
 		//initialize camera and viewport
@@ -141,14 +145,15 @@ public class Rogue99 extends ApplicationAdapter {
 		gameStarted = false;
 
 		//load sprites and add to hash map
-		textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
+		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
+		textureAtlas = new TextureAtlas("spritesheets/fantasysprites.txt");
 		addSprites();
 
 		//load skin for Inventory & HUD
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 		//create player's hero
-		hero = new Hero(this, "tile169");
+		hero = new Hero(this, "hero");
 
 
 		lastTime = System.currentTimeMillis();
@@ -301,10 +306,10 @@ public class Rogue99 extends ApplicationAdapter {
 					enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
 					stage.draw();
 				}
-				if (System.currentTimeMillis() - lastTime > 1000) {
-					level.moveEnemies();
-					lastTime = System.currentTimeMillis();
-				}
+//				if (System.currentTimeMillis() - lastTime > 1000) {
+//					level.moveEnemies();
+//					lastTime = System.currentTimeMillis();
+//				}
 				if (System.currentTimeMillis() - lastPopUp > 2000) {
 					if(popUpStage.getActors().size>0){
 						popUpStage.getActors().get(0).remove();
@@ -330,6 +335,12 @@ public class Rogue99 extends ApplicationAdapter {
 				addActor(gameLostWindow);
 			}
 
+			if(timerCount == 60){
+				level.moveEnemies();
+				timerCount = 0;
+			} else{
+				timerCount++;
+			}
 
 			camera.position.lerp(hero.pos3, 0.1f);
 			camera.update();
@@ -373,24 +384,27 @@ public class Rogue99 extends ApplicationAdapter {
 				if(k.getType().equals("floor")){
 					drawTile(k,"floor", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("wall")){
-					drawTile(k,"crackedwall", k.getPosX()*36, k.getPosY()*36);
+//					drawTile(k,"crackedwall", k.getPosX()*36, k.getPosY()*36);
+					drawTile(k,"wall", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("grass")){
-					if(Math.random() < 0.5){
-						drawTile(k,"shortgrass1", k.getPosX()*36, k.getPosY()*36);
-					} else{
-						drawTile(k,"longgrass", k.getPosX()*36, k.getPosY()*36);
-					}
-				} else if(k.getType().equals("stair_up")){
-					drawTile(k,"stair_up", k.getPosX()*36, k.getPosY()*36);
-				} else if(k.getType().equals("stair_down")) {
-					drawTile(k,"stair_down", k.getPosX() * 36, k.getPosY() * 36);
-				} else if(k.getType().equals("enemy")){
-					if(Math.random() < 0.5){
-						drawTile(k,"wasp", k.getPosX()*36, k.getPosY()*36);
-					} else{
-						drawTile(k,"crab", k.getPosX()*36, k.getPosY()*36);
-					}
+					//if(Math.random() < 0.5){
+						drawTile(k,"grass1", k.getPosX()*36, k.getPosY()*36);
+					//}
+//					else{
+//						drawTile(k,"longgrass", k.getPosX()*36, k.getPosY()*36);
+//					}
+				} else if(k.getType().equals("upstair")){
+					drawTile(k,"upstair", k.getPosX()*36, k.getPosY()*36);
+				} else if(k.getType().equals("downstair")) {
+					drawTile(k,"downstair", k.getPosX() * 36, k.getPosY() * 36);
 				}
+//				else if(k.getType().equals("enemy")){
+//					if(Math.random() < 0.5){
+//						drawTile(k,"wasp", k.getPosX()*36, k.getPosY()*36);
+//					} else{
+//						drawTile(k,"crab", k.getPosX()*36, k.getPosY()*36);
+//					}
+//				}
 			}
 		}
 	}
@@ -403,7 +417,12 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite.setPosition(x,y);
 			sprite.draw(batch);
 		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Enemy){
+			//System.out.println("Drawing" + sprites.get(tile.getEntities().peek().getSprite()));
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			if(tile.getEntities().peek().getSprite().equals("ghost")){
+				//System.out.println("ghost sprite set alpha");
+				sprite.setAlpha(0.2f);
+			}
 			//System.out.println("ENEMY SPRITE" + tile.getEntities().peek().getSprite());
 			sprite.setPosition(x,y);
 			sprite.draw(batch);
@@ -543,9 +562,9 @@ public class Rogue99 extends ApplicationAdapter {
 			} else if(item.getId() == Item.BANESCROLL) {
 
 			} else if(item.getId() == Item.SUMMONSCROLL) {
-				Packets.Packet004Potion scroll = new Packets.Packet004Potion();
+				Packets.Packet009Scroll scroll = new Packets.Packet009Scroll();
 				scroll.ID = Item.SUMMONSCROLL;
-				scroll.value = ( (SummonScroll) item).getDifficulty();
+				scroll.type = ( (SummonScroll) item).getEnemyType();
 				scroll.playerName = hero.getName();
 
 				client.client.sendTCP(scroll);
@@ -719,6 +738,20 @@ public class Rogue99 extends ApplicationAdapter {
 		popUpWindow.getColor().a = .5f;
 		popUpStage.addActor(popUpWindow);
 		lastPopUp = System.currentTimeMillis();
+	}
+
+	private void setEnemyMap(){
+		enemyMap.put(0, new ArrayList<String>());
+		enemyMap.get(0).add("rat");
+		enemyMap.get(0).add("zombie");
+
+		enemyMap.put(1, new ArrayList<String>());
+		enemyMap.get(1).add("wasp");
+		//enemyMap.get(1).add("skeleton");
+
+		enemyMap.put(2, new ArrayList<String>());
+		enemyMap.get(2).add("slime");
+		enemyMap.get(2).add("ghost");
 	}
 
 	public void connectionRejected(String message){

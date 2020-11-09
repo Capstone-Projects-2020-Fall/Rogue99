@@ -27,7 +27,8 @@ public class Hero extends Character{
         inventory = new ArrayList<>();
         this.setMaxHP(100);
         this.setCurrHP(100);
-        this.setStr(15);
+        this.setStr(10);
+        super.setHitChance(0.7);
     }
 
     @Override
@@ -41,6 +42,7 @@ public class Hero extends Character{
         super.setPosY(posY);
         pos3.y = getPosY()*36;
     }
+
 
 
     public ArrayList<Item> getInventory() {
@@ -110,7 +112,7 @@ public class Hero extends Character{
                 setPosX(x);
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
-            } else if (game.level.getMap()[x][y].getType().equals("stair_down")){
+            } else if (game.level.getMap()[x][y].getType().equals("downstair")){
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 if(game.levels.size() > depth+1) {
                     game.nextLevel(depth);
@@ -121,7 +123,7 @@ public class Hero extends Character{
                 else
                     game.newLevel(depth);
                 depth++;
-            } else if (game.level.getMap()[x][y].getType().equals("stair_up")){
+            } else if (game.level.getMap()[x][y].getType().equals("upstair")){
                 if(depth == 0) {
                     game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                     setPosX(x);
@@ -152,14 +154,22 @@ public class Hero extends Character{
                 movement.depth = depth;
                 game.client.client.sendTCP(movement);
             }
+            game.timerCount = 0;
+            game.level.moveEnemies();
         }
     }
 
     public void attack(int x, int y){
-        Enemy enemy = (Enemy) game.level.getMap()[x][y].getEntities().pop();
+        Enemy enemy = (Enemy) game.level.getMap()[x][y].getEntities().peek();
         System.out.println("enemy health: " + enemy.getCurrHP() + " enemy armor: " + enemy.getArmor());
-        if (getStr() > enemy.getArmor()) {
-            enemy.setCurrHP(enemy.getCurrHP() + enemy.getArmor() - getStr());
+//        if (getStr() > enemy.getArmor()) {
+//            enemy.setCurrHP(enemy.getCurrHP() + enemy.getArmor() - getStr());
+//        }
+        if(Math.random() < getHitChance()){
+            System.out.println("HIT SUCCESSFUL");
+            enemy.setCurrHP(enemy.getCurrHP() - this.getStr());
+        } else{
+            System.out.println("HIT MISSED");
         }
         System.out.println("enemy health after attack: " + enemy.getCurrHP());
         game.changeBarValue("EnemyHP", enemy.getCurrHP());
@@ -167,12 +177,22 @@ public class Hero extends Character{
         game.enemyHud.statsNumTexts.get(0).setText(String.valueOf(enemy.getCurrHP()));
         game.enemyHud.statsNumTexts.get(1).setText(String.valueOf(enemy.getArmor()));
         if(enemy.getCurrHP() > 0){
-            game.level.getMap()[x][y].getEntities().push(enemy);
+            //game.level.getMap()[x][y].getEntities().push(enemy);
             enemy.attack(this);
-        }
-        else {
-            if(game.multiplayer)
-                game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll", enemy.getDifficulty()) );
+            //hit() performs an action that the enemy performs when hit, such as slimes splitting or wasps moving away
+            if(enemy.getSprite().equals("wasp")){
+                Wasp wasp = (Wasp) enemy;
+                wasp.hit();
+            } else if(enemy.getSprite().equals("slime")){
+                Slime slime = (Slime) enemy;
+                slime.hit();
+            }
+        }else {
+            enemy.tile.getEntities().pop();
+            game.level.enemies.remove(enemy);
+            if(Math.random() < 0.4 && game.multiplayer){
+                game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
+            }
             game.removeActor(game.enemyHud);
             game.removeActor(game.hudGui);
         }
