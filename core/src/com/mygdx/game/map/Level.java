@@ -410,7 +410,7 @@ public class Level implements Serializable {
                 //TODO flesh out item chances once potion classes are finished
                 if(itemC < 20){
                     generateItemUtil(new HealthPotion(20, "potion_health", 10), z);
-                } else if(20 <= itemC && itemC < 40){
+                } else if(20 <= itemC && itemC < 40 && game.multiplayer){
                     generateItemUtil(new DamagePotion(20, "potion_damage", 10), z);
                 } else if(40 <= itemC && itemC < 60){
                     generateItemUtil(new HealthScroll(20, "scroll_health", 10), z);

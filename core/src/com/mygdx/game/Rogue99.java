@@ -445,13 +445,11 @@ public class Rogue99 extends ApplicationAdapter {
 			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
-		}
-			else {
+		} else {
 			sprite = sprites.get(name);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
-
 	}
 
 	private void drawHeroes(){

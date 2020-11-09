@@ -171,7 +171,8 @@ public class Hero extends Character{
             enemy.attack(this);
         }
         else {
-            game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll", enemy.getDifficulty()) );
+            if(game.multiplayer)
+                game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll", enemy.getDifficulty()) );
             game.removeActor(game.enemyHud);
             game.removeActor(game.hudGui);
         }
