@@ -11,18 +11,26 @@ import static java.lang.StrictMath.abs;
 
 public class Enemy extends Character {
 
-    private int difficulty;
-    private String sprite;
-    private Tile tile;
-    private Rogue99 game;
+    public int visRange;
+    public int moveDistance;
+    public int difficulty;
+    public int diffMod; //modifier set when generated, dependent on level it's generated on
+    public int baseHp;
+    public int baseStr;
+    public String sprite;
+    public Tile tile;
+    public Rogue99 game;
 
-    public Enemy(int difficulty, String sprite, Tile tile, Rogue99 game) {
+    public Enemy(){}
+
+    public Enemy(int visRange, int moveDistance, int difficulty, int baseHp, int baseStr, String sprite, Tile tile, Rogue99 game) {
+        this.visRange = visRange;
+        this.moveDistance = moveDistance;
         this.difficulty = difficulty;
-        for (int i = 0; i < difficulty; i++) {
-            super.setMaxHP(getMaxHP() + 10);
-            super.setArmor(getArmor() + 5);
-            super.setStr(getStr() + 2);
-        }
+        diffMod = 0;
+        super.setMaxHP(baseHp);
+        super.setStr(baseStr);
+        super.setHitChance(0.6);
         this.setCurrHP(getMaxHP());
         this.sprite = sprite;
         this.tile = tile;
@@ -34,24 +42,36 @@ public class Enemy extends Character {
         return this.sprite;
     }
 
+    public void scaleStats(){
+        for (int i = 0; i < diffMod; i++) {
+            super.setMaxHP(getMaxHP() + 5);
+            //super.setArmor(getArmor() + 2);
+            super.setStr(getStr() + 1);
+        }
+    }
+
     public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {
         Pathing aStar = new Pathing(intMap, tile.getPosX(), tile.getPosY(), true);
         List<Pathing.Node> path = aStar.findPathTo(hero.getPosX(), hero.getPosY());
         if (path != null) {
             for (Pathing.Node n : path) {
-                System.out.print("[" + n.x + ", " + n.y + "] ");
+                //System.out.print("[" + n.x + ", " + n.y + "] ");
             }
             Pathing.Node n = path.get(0);
-            System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
-            if (path.size() > 2) {
-                n = path.get(1);
-                System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
+            //System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
+            if (path.size() > 2 && path.size() <= visRange) {
+                if(path.size() == 3){
+                    n = path.get(1);
+                } else{
+                    n = path.get(moveDistance);
+                }
+                //System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
                 if( map[n.x][n.y].getEntities().isEmpty() && !(tile.getEntities().isEmpty())) {
                     tile.getEntities().pop();
                     tile = map[n.x][n.y];
                     tile.getEntities().push(this);
                 }
-            } else{
+            } else if(path.size() <= 2){
                 this.attack(hero);
             }
         }
@@ -66,13 +86,21 @@ public class Enemy extends Character {
     }
 
     public void attack(Hero hero){
-        if (getStr() > hero.getArmor()) {
+        if(Math.random() < getHitChance()){
+            System.out.println(this.sprite + " HIT SUCCESSFUL");
             hero.setCurrHP(hero.getCurrHP() + hero.getArmor() - getStr());
+        } else{
+            System.out.println(this.sprite + " HIT MISSED");
         }
+//        if (getStr() > hero.getArmor()) {
+//            hero.setCurrHP(hero.getCurrHP() + hero.getArmor() - getStr());
+//        }
         System.out.println("enemy health after attack: " + hero.getCurrHP());
         game.changeBarValue(game.HEALTHBAR, hero.getCurrHP());
         game.changeBarValue(game.ARMOURBAR, hero.getArmor());
         game.hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
         game.hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
     }
+
+    public void hit(){    }
 }

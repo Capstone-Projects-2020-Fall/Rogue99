@@ -4,13 +4,13 @@ import com.mygdx.game.interactable.Character;
 
 //Summons an enemy on a random player's map
 public class SummonScroll extends Item{
-    private int difficulty;
+    private String enemyType;
 
-    public SummonScroll(int rarity, String sprite, int difficulty) {
+    public SummonScroll(int rarity, String sprite, String type) {
         super.rarity = rarity;
         super.sprite = sprite;
 
-        this.difficulty = difficulty;
+        this.enemyType = type;
     }
 
     @Override
@@ -33,5 +33,7 @@ public class SummonScroll extends Item{
         return 0;
     }
 
-    public int getDifficulty() { return difficulty; }
+    public String getEnemyType(){
+        return this.enemyType;
+    }
 }

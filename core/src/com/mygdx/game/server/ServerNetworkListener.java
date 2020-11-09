@@ -72,7 +72,7 @@ public class ServerNetworkListener  extends Listener {
         } else if(object instanceof Packets.Packet003Movement){
             server.sendToAllExceptTCP(connection.getID(), object);
         }
-        else if(object instanceof Packets.Packet004Potion){
+        else if(object instanceof Packets.Packet004Potion || object instanceof Packets.Packet009Scroll){
             Connection[] connectionList = server.getConnections();
             if (connectionList.length < 2) {
                 // do nothing? no other player is connected.
