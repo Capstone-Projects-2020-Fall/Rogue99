@@ -43,8 +43,12 @@ public class ServerNetworkListener  extends Listener {
                 disconnect.name =((Packets.Packet001Connection)connectionInfoMap.get(c)).name;
                 server.sendToAllExceptTCP(connection.getID(), disconnect);
                 connectionInfoMap.remove(c);
-                return;
             }
+        }
+        System.out.println("SIZE: " + connectionInfoMap.size());
+        if(connectionInfoMap.size() <= 1){
+            connectionInfoMap.clear();
+            gameStarted = false;
         }
     }
 
