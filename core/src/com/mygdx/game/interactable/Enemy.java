@@ -96,11 +96,13 @@ public class Enemy extends Character {
 //            hero.setCurrHP(hero.getCurrHP() + hero.getArmor() - getStr());
 //        }
         System.out.println("enemy health after attack: " + hero.getCurrHP());
-        game.setAttacking(true);
-        game.changeBarValue(game.HEALTHBAR, hero.getCurrHP());
-        game.changeBarValue(game.ARMOURBAR, hero.getArmor());
-        game.hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
-        game.hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
+        if(hero.getCurrHP() > 0){
+            game.setAttacking(true);
+            game.changeBarValue(game.HEALTHBAR, hero.getCurrHP());
+            game.changeBarValue(game.ARMOURBAR, hero.getArmor());
+            game.hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
+            game.hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
+        }
     }
 
     public void hit(){    }

@@ -32,30 +32,9 @@ import java.util.Map;
 
 public class Rogue99 extends ApplicationAdapter {
 
-	public final int PAD = 340;
 	public final int HEIGHT_PAD = 132;
 	public final String HEALTHBAR = "Health";
 	public final String ARMOURBAR = "Armour";
-
-	private Texture bg;
-	private Texture play;
-	private Texture play_hover;
-	private Texture multi;
-	private Texture multi_hover;
-	private Texture setting;
-	private Texture setting_hover;
-	private Texture exit;
-	private Texture exit_hover;
-	private Texture Title;
-
-	private Sprite sp;
-	public static int WIDTH;
-	public static int HEIGHT;
-
-
-
-
-
 
 
 	public Hero hero;
@@ -217,10 +196,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 		/* MAIN MENU STAGE DOES NOT NEED TO BE OUTSIDE THE BATCH SINCE THEY DON'T OVERLAP */
 		if (showMainMenu) {
-			Gdx.input.setInputProcessor(mainMenuStage);
-			mainMenuStage.act();
-			mainMenuStage.draw();
-
+			/* SKIP TO STAGE DRAWING */
+			;
 		} else{
 			if (mapGenerated) {
 				drawMap(level);
@@ -242,16 +219,6 @@ public class Rogue99 extends ApplicationAdapter {
 				seedReceived = false;
 			}
 
-			if(hero.getCurrHP() <= 0) {
-				attacking = false;
-				stage.draw();
-				gameLostWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
-				Gdx.input.setInputProcessor(stage);
-				removeActor(hudGui);
-				removeActor(enemyHud);
-				addActor(gameLostWindow);
-			}
-
 			if(timerCount == 60){
 				level.moveEnemies();
 				timerCount = 0;
@@ -267,8 +234,13 @@ public class Rogue99 extends ApplicationAdapter {
 		/* BATCH REDNERING ENDS */
 
 		/* STAGE RENDERING BEGINS */
-		if(mapGenerated) {
+		if (showMainMenu) {
+			Gdx.input.setInputProcessor(mainMenuStage);
+			mainMenuStage.act();
+			mainMenuStage.draw();
+		} else if(mapGenerated) {
 			stage.act();
+
 			if (isShowInventory()) {
 				Gdx.input.setInputProcessor(stage);
 				addActor(inventoryGui);
@@ -286,17 +258,24 @@ public class Rogue99 extends ApplicationAdapter {
 						return super.keyUp(event, keycode);
 					}
 				});
-			} else {
-				Gdx.input.setInputProcessor(control);
-				removeActor(inventoryGui);
-				removeActor(hudGui);
-			}
-			if (isAttacking()) {
+			} else if (isAttacking()) {
 				addActor(hudGui);
 				addActor(enemyHud);
 				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
 				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
 				stage.draw();
+			} else if(hero.getCurrHP() <= 0) {
+				attacking = false;
+				stage.draw();
+				gameLostWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
+				Gdx.input.setInputProcessor(stage);
+				removeActor(hudGui);
+				removeActor(enemyHud);
+				addActor(gameLostWindow);
+			} else {
+				Gdx.input.setInputProcessor(control);
+				removeActor(inventoryGui);
+				removeActor(hudGui);
 			}
 		}
 		popUpStage.act();
@@ -661,6 +640,8 @@ public class Rogue99 extends ApplicationAdapter {
 						viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 						batch.setProjectionMatrix(camera.combined);
 						showMainMenu = true;
+						mapGenerated = false;
+						mainMenuStage.getActors().get(mainMenuStage.getActors().size -1).remove();
 					}
 					a.remove();
 				}
@@ -719,6 +700,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public void connectionAccepted(){
 		mainMenuStage.addActor(gameLobbyGui);
+		gameLobbyGui.removePlayer(hero);
 		gameLobbyGui.addPlayer(hero);
 	}
 }

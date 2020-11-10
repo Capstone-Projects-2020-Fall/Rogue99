@@ -76,6 +76,8 @@ public class GameLobbyGui extends Window {
                     Color color = new Color(player.getSpriteColor());
                     color.a = 1;
                     textFields.get(i).setColor(color);
+                } else {
+                    textFields.get(i).setColor(Color.GRAY);
                 }
                 return;
             }
