@@ -643,12 +643,12 @@ public class Rogue99 extends ApplicationAdapter {
 					if (a.getName() == "You Lost!") {
 						if (multiplayer) {
 							client.client.close();
+							mainMenuStage.getActors().get(mainMenuStage.getActors().size -1).remove();
 						}
 						viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 						batch.setProjectionMatrix(camera.combined);
 						showMainMenu = true;
 						mapGenerated = false;
-						mainMenuStage.getActors().get(mainMenuStage.getActors().size -1).remove();
 					}
 					a.remove();
 				}
@@ -662,7 +662,7 @@ public class Rogue99 extends ApplicationAdapter {
 			showMainMenu = false;
 		} else if(buttonName.equals("Multiplayer")){
 			nameInputWindow = new NameInputWindow(this,"Set Username", skin);
-			nameInputWindow.setPosition(mainMenuStage.getWidth()/2, mainMenuStage.getHeight()/2);
+			nameInputWindow.setPosition(camera.viewportWidth/2 - nameInputWindow.getWidth()/2, camera.viewportHeight/2 - nameInputWindow.getHeight()/2);
 			mainMenuStage.addActor(nameInputWindow);
 		} else {
 			Gdx.app.exit();
@@ -700,7 +700,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public void connectionRejected(String message){
 		MessageWindow messageWindow = new MessageWindow(this,"Connection Rejected", skin,message);
-		messageWindow.setPosition(mainMenuStage.getHeight()/2, mainMenuStage.getHeight()/2);
+		messageWindow.setPosition(camera.viewportWidth/2 - messageWindow.getWidth()/2, camera.viewportHeight/2 - messageWindow.getHeight());
 		messageWindow.setMovable(true);
 		mainMenuStage.addActor(messageWindow);
 	}
