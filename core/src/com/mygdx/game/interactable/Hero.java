@@ -19,6 +19,7 @@ public class Hero extends Character{
     public int depth;
     public Vector3 pos3 = new Vector3();
     private String name;
+    private int frozen;
 
     public Hero(Rogue99 game, String sprite) {
         depth = 0;
@@ -78,6 +79,7 @@ public class Hero extends Character{
     public void update(int direction){
         int x = getPosX();
         int y = getPosY();
+        if(frozen > 0) { return; }
         switch (direction){
             case DOWN:
                 move(x, y - 1);
@@ -197,6 +199,20 @@ public class Hero extends Character{
             game.removeActor(game.hudGui);
         }
     }
+    public void takeDamage(int dmg) {
+        if (getCurrHP() - dmg > 0) {
+            setCurrHP( getCurrHP() - dmg );
+            game.changeBarValue(game.HEALTHBAR, getCurrHP());
+            game.hudGui.statsNumTexts.get(1).setText(String.valueOf( getCurrHP()) );
+        } else {
+            setCurrHP(0);
+        }
+    }
 
-
+    public int freezeTime(int time) {
+        if(frozen + time >= 0) {
+            frozen += time;
+        }
+        return frozen;
+    }
 }
