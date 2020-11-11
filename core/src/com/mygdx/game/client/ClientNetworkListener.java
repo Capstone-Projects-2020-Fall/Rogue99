@@ -64,13 +64,9 @@ public class ClientNetworkListener extends Listener {
             }
         } else if(o instanceof Packets.Packet004Potion){
             if(((Packets.Packet004Potion) o).ID == Item.DAMAGEPOTION) {
-                if (game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value > 0) {
-                    game.getHero().setCurrHP(game.getHero().getCurrHP() - ((Packets.Packet004Potion) o).value);
-                    game.changeBarValue(game.HEALTHBAR, game.hero.getCurrHP());
-                    game.hudGui.statsNumTexts.get(1).setText(String.valueOf(game.hero.getCurrHP()));
-                } else {
-                    game.getHero().setCurrHP(0);
-                }
+                game.getHero().takeDamage( ((Packets.Packet004Potion) o).value );
+            } else if(((Packets.Packet004Potion) o).ID == Item.FREEZEPOTION) {
+                game.getHero().freezeTime( ((Packets.Packet004Potion) o).value );
             }
         } else if(o instanceof Packets.Packet005Stats){
             for(Hero player : game.players){

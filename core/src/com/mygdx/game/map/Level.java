@@ -73,6 +73,7 @@ public class Level implements Serializable {
                 enemy.moveEnemy(map, intMap, hero);
             }
         }
+        game.timerCount = 0;
     }
 
     public void setSeed(String seed) {

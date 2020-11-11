@@ -6,7 +6,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -27,7 +26,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 public class Rogue99 extends ApplicationAdapter {
@@ -219,9 +217,13 @@ public class Rogue99 extends ApplicationAdapter {
 				seedReceived = false;
 			}
 
+			if(System.currentTimeMillis() - lastTime > 1000) {
+				hero.freezeTime(-1);
+				lastTime = System.currentTimeMillis();
+			}
+
 			if(timerCount == 60){
 				level.moveEnemies();
-				timerCount = 0;
 			} else{
 				timerCount++;
 			}
@@ -500,6 +502,13 @@ public class Rogue99 extends ApplicationAdapter {
 				scroll.playerName = hero.getName();
 
 				client.client.sendTCP(scroll);
+			} else if(item.getId() == Item.FREEZEPOTION) {
+				Packets.Packet004Potion potion = new Packets.Packet004Potion();
+				potion.ID = Item.FREEZEPOTION;
+				potion.value = ( (FreezePotion) item).getFreeze();
+				potion.playerName = hero.getName();
+
+				client.client.sendTCP(potion);
 			} else if(item.getId() == Item.WEAPON){
 					item.setEquipped(true);
 					System.out.println("Weapon used: " + item.use(hero));
