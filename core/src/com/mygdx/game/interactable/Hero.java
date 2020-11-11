@@ -93,6 +93,18 @@ public class Hero extends Character{
             case RIGHT:
                 move(x + 1, y);
                 break;
+            case UP_LEFT:
+                move(x - 1, y + 1);
+                break;
+            case UP_RIGHT:
+                move(x + 1, y + 1);
+                break;
+            case DOWN_LEFT:
+                move(x - 1, y - 1);
+                break;
+            case DOWN_RIGHT:
+                move(x + 1, y - 1);
+                break;
         }
     }
 
