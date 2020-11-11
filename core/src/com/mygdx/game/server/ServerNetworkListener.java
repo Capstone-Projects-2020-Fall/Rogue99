@@ -1,30 +1,33 @@
 package com.mygdx.game.server;
 
+import com.badlogic.gdx.graphics.Color;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
-import com.mygdx.game.item.Item;
 import com.mygdx.game.map.Level;
 
+import java.util.HashMap;
 import java.util.Random;
-
-import java.util.ArrayList;
 
 public class ServerNetworkListener  extends Listener {
 
     Server server;
     GameServer gameServer;
     Kryo kryo;
-    ArrayList<Object> connectionsInfo;
+    HashMap<Connection, Object> connectionInfoMap;
     String tempName;
+    boolean gameStarted;
+    Random rand;
 
     public ServerNetworkListener(Server server, GameServer gameServer, Kryo kryo){
         this.server = server;
         this.gameServer = gameServer;
         this.kryo = kryo;
-        connectionsInfo = new ArrayList<>();
+        connectionInfoMap = new HashMap<>();
+        gameStarted = false;
+        rand = new Random();
     }
 
     @Override
@@ -34,22 +37,41 @@ public class ServerNetworkListener  extends Listener {
 
     @Override
     public void disconnected(Connection connection) {
+        for(Connection c : connectionInfoMap.keySet()){
+            if(connection.equals(c)){
+                Packets.Packet009Disconnect disconnect = new Packets.Packet009Disconnect();
+                disconnect.name =((Packets.Packet001Connection)connectionInfoMap.get(c)).name;
+                server.sendToAllExceptTCP(connection.getID(), disconnect);
+                connectionInfoMap.remove(c);
+            }
+        }
+        System.out.println("SIZE: " + connectionInfoMap.size());
+        if(connectionInfoMap.size() <= 1){
+            connectionInfoMap.clear();
+            gameStarted = false;
+        }
     }
 
     @Override
     public void received(Connection connection, Object object) {
         if(object instanceof Packets.Packet001Connection){
-            //TODO connection handling
             Packets.Packet000ConnectionAnswer connectionAnswer = new Packets.Packet000ConnectionAnswer();
-            connectionAnswer.answer = true;
-            connection.sendTCP(connectionAnswer);
-            server.sendToAllExceptTCP(connection.getID(), object);
-            if(connectionsInfo.size() > 0){
-                for(Object o : connectionsInfo){
-                    connection.sendTCP(o);
+            if(gameStarted){
+                connectionAnswer.answer = false;
+            } else {
+                connectionAnswer.answer = true;
+                Packets.Packet001Connection connectionPacket = new Packets.Packet001Connection();
+                connectionPacket.name = ((Packets.Packet001Connection) object).name;
+                connectionPacket.spriteColor = Color.argb8888(256, rand.nextInt(256),rand.nextInt(256), rand.nextInt(256));
+                server.sendToAllExceptTCP(connection.getID(), connectionPacket);
+                if (!connectionInfoMap.isEmpty()) {
+                    for (Connection c : connectionInfoMap.keySet()) {
+                        connection.sendTCP(connectionInfoMap.get(c));
+                    }
                 }
+                connectionInfoMap.put(connection, connectionPacket);
             }
-            connectionsInfo.add(object);
+            connection.sendTCP(connectionAnswer);
         }
 
         //server receives map request, sends seed
@@ -72,7 +94,7 @@ public class ServerNetworkListener  extends Listener {
         } else if(object instanceof Packets.Packet003Movement){
             server.sendToAllExceptTCP(connection.getID(), object);
         }
-        else if(object instanceof Packets.Packet004Potion){
+        else if(object instanceof Packets.Packet004Potion || object instanceof Packets.Packet009Scroll){
             Connection[] connectionList = server.getConnections();
             if (connectionList.length < 2) {
                 // do nothing? no other player is connected.
@@ -90,6 +112,9 @@ public class ServerNetworkListener  extends Listener {
             serverMessage.sentBy = tempName;
             serverMessage.receivedBy = ((Packets.Packet007PlayerAffected) object).playerName;
             server.sendToAllTCP(serverMessage);
+        } else if(object instanceof Packets.Packet010StartGame){
+            gameStarted = true;
+            server.sendToAllTCP(object);
         } else {
             server.sendToAllExceptTCP(connection.getID(), object);
         }

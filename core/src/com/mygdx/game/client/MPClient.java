@@ -33,6 +33,7 @@ public class MPClient {
             client.connect(5000, ipAddress, portSocket);
         } catch(Exception e){
             e.printStackTrace();
+            game.connectionRejected("Unable to Connect To Server!");
         }
     }
 
@@ -47,6 +48,8 @@ public class MPClient {
         kryo.register(Packets.Packet006RequestSeed.class);
         kryo.register(Packets.Packet007PlayerAffected.class);
         kryo.register(Packets.Packet008ServerMessage.class);
+        kryo.register(Packets.Packet009Disconnect.class);
+        kryo.register(Packets.Packet010StartGame.class);
     }
 
     public Rogue99 getGame(){

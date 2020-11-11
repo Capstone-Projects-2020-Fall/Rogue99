@@ -1,5 +1,6 @@
 package com.mygdx.game.gui;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -87,5 +88,24 @@ public class InventoryGui extends Window {
             }
             // if reached here inventory is full
     }
+
+//    @Override
+//    public void draw(Batch batch, float parentAlpha) {
+//        super.draw(batch, parentAlpha);
+//        int row = 0;
+//        int column = 0;
+//        int slotNum = 0;
+//        for(InventorySlot slot : inventorySlots){
+//            slot.setPosition(this.getX() + column + 20,this.getY() + row + 20);
+//            column = column + InventorySlot.SIZE;
+//            slotNum++;
+//            if(slotNum >= 2){
+//                slotNum = 0;
+//                row = row + InventorySlot.SIZE;
+//                column = 0;
+//            }
+//            slot.draw(batch,parentAlpha);
+//        }
+//    }
 }
 
