@@ -24,6 +24,7 @@ import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import java.lang.reflect.GenericDeclaration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,6 +83,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public boolean multiplayer;
 	public int timerCount = 0;
 	boolean gameStarted;
+	boolean showPopUp;
 
 	Item EquippedWeapon;
 	String serverSeed;
@@ -112,7 +114,7 @@ public class Rogue99 extends ApplicationAdapter {
 		//initialize camera and viewport
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
-		camera.zoom = 0.4f;
+		camera.zoom = 0.6f;
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		mapDrawn = false;
@@ -121,6 +123,7 @@ public class Rogue99 extends ApplicationAdapter {
 		mapGenerated = false;
 		seedReceived = false;
 		gameStarted = false;
+		showPopUp = false;
 
 		//load sprites and add to hash map
 		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -206,6 +209,7 @@ public class Rogue99 extends ApplicationAdapter {
 				if (System.currentTimeMillis() - lastPopUp > 2000) {
 					if(popUpStage.getActors().size>0){
 						popUpStage.getActors().get(0).remove();
+						showPopUp = false;
 					}
 					lastPopUp = System.currentTimeMillis();
 				}
@@ -261,12 +265,6 @@ public class Rogue99 extends ApplicationAdapter {
 						return super.keyUp(event, keycode);
 					}
 				});
-			} else if (isAttacking()) {
-				addActor(hudGui);
-				addActor(enemyHud);
-				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
-				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
-				stage.draw();
 			} else if(hero.getCurrHP() <= 0) {
 				attacking = false;
 				stage.draw();
@@ -280,9 +278,20 @@ public class Rogue99 extends ApplicationAdapter {
 				removeActor(inventoryGui);
 				removeActor(hudGui);
 			}
+			if (isAttacking()) {
+				addActor(hudGui);
+				addActor(enemyHud);
+				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
+				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
+				stage.draw();
+			}
+			if(showPopUp) {
+				Gdx.input.setInputProcessor(control);
+				popUpWindow.setPosition(hero.getPosX() * 36 + (16 * 36) - (popUpWindow.getWidth() + 2), hero.getPosY() * 36 + (9 * 36) - popUpWindow.getHeight());
+				popUpStage.act();
+				popUpStage.draw();
+			}
 		}
-		popUpStage.act();
-		popUpStage.draw();
 		/* STAGE RENDERING ENDS */
 	}
 
@@ -680,9 +689,9 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public void popUpWindow(String sentBy, String receivedBy){
 		popUpWindow = new MessageWindow(this,"Summon Scroll", skin,"Player " + sentBy + " summoned an enemy in " + receivedBy + " game!");
-		popUpWindow.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
-		popUpWindow.getColor().a = .5f;
+		popUpWindow.setPosition(hero.getPosX() * 36 + (16*36) - (popUpWindow.getWidth() + 2), hero.getPosY() * 36 + (9*36) - popUpWindow.getHeight());
 		popUpStage.addActor(popUpWindow);
+		showPopUp = true;
 		lastPopUp = System.currentTimeMillis();
 	}
 

@@ -130,7 +130,6 @@ public class ServerNetworkListener  extends Listener {
                     i = rand.nextInt(connectionList.length);
                 }
                 connectionList[i].sendTCP(object);
-                tempName = ((Packets.Packet004Potion) object).playerName;
             }
         } else if(object instanceof Packets.Packet008ServerMessage){
             System.out.println("Player " + ((Packets.Packet008ServerMessage) object).receivedBy + " Game Has Been Affected by Player " + ((Packets.Packet008ServerMessage) object).sentBy);
