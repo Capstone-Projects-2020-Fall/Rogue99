@@ -33,6 +33,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public final int HEIGHT_PAD = 132;
 	public final String HEALTHBAR = "Health";
 	public final String ARMOURBAR = "Armour";
+	public final String SCOREBAR = "Score";
 
 
 	public Hero hero;
@@ -509,7 +510,6 @@ public class Rogue99 extends ApplicationAdapter {
 				potion.ID = Item.FREEZEPOTION;
 				potion.value = ( (FreezePotion) item).getFreeze();
 				potion.playerName = hero.getName();
-
 				client.client.sendTCP(potion);
 			} else if(item.getId() == Item.WEAPON){
 					item.setEquipped(true);
@@ -523,7 +523,7 @@ public class Rogue99 extends ApplicationAdapter {
 					hero.setStr(hero.getStr() + item.getDmgModifier());
 					EquippedWeapon = item;
 			}
-		}
+		} hero.score += (int)(Math.random()*50);
 	}
 
 	public void setShowInventory(boolean showInventory) {

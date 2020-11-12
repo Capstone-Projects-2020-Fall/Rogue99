@@ -20,9 +20,11 @@ public class Hero extends Character{
     public Vector3 pos3 = new Vector3();
     private String name;
     private int frozen;
+    public int score;
 
     public Hero(Rogue99 game, String sprite) {
         depth = 0;
+        score = 0;
         this.game = game;
         this.sprite = sprite;
         inventory = new ArrayList<>();
@@ -204,6 +206,7 @@ public class Hero extends Character{
         }else {
             enemy.tile.getEntities().pop();
             game.level.enemies.remove(enemy);
+            score += (int)((Math.random()*100)+100);
             if(Math.random() < 0.4 && game.multiplayer){
                 game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
             }
