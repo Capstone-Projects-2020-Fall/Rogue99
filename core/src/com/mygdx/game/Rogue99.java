@@ -411,7 +411,9 @@ public class Rogue99 extends ApplicationAdapter {
 			if(player.depth == hero.depth){
 				Sprite sprite = sprites.get("players");
 				sprite.setPosition(player.getPosX()*36, player.getPosY()*36);
-				sprite.setColor(Color.CORAL);
+				Color color = new Color(player.getSpriteColor());
+				color.a = 1;
+				sprite.setColor(color);
 				sprite.setAlpha(.5f);
 				sprite.draw(batch);
 			}
