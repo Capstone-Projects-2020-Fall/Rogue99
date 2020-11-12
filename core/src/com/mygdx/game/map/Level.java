@@ -59,6 +59,8 @@ public class Level implements Serializable {
         return map;
     }
 
+    public int[][] getIntMap() { return intMap; }
+
     public int getDepth() {
         return depth;
     }
@@ -142,7 +144,7 @@ public class Level implements Serializable {
         intMap = new int[width][height];
         for (int i = 0; i < width; i++) {
             for (int k = 0; k < height; k++) {
-                if( map[i][k].getType().equals("wall") ) {
+                if( map[i][k].getType().equals("wall") || !(map[i][k].getEntities().isEmpty()) ) {
                     intMap[i][k] = -1;
                 }
                 else {
@@ -504,7 +506,7 @@ public class Level implements Serializable {
                 if(itemC < 20){
                     generateItemUtil(new HealthPotion(20, "potion_health", 10), z);
                 } else if(20 <= itemC && itemC < 40 && game.multiplayer){
-                    generateItemUtil(new DamagePotion(20, "potion_damage", 10), z);
+                    generateItemUtil(new FreezePotion(20, "potion_damage", 5), z);
                 } else if(40 <= itemC && itemC < 60){
                     generateItemUtil(new HealthScroll(20, "scroll_health", 5), z);
                 } else if(60 <= itemC && itemC < 70){

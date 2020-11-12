@@ -75,6 +75,7 @@ public class Enemy extends Character {
                 this.attack(hero);
             }
         }
+
     }
 
     public void setDifficulty(int difficulty) {
