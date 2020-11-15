@@ -22,7 +22,11 @@ public class Character extends Interactable  {
     public final int UP = 1;
     public final int LEFT = 2;
     public final int RIGHT = 3;
-
+    
+    public final int UP_LEFT = 4;
+    public final int UP_RIGHT = 5;
+    public final int DOWN_LEFT = 6;
+    public final int DOWN_RIGHT = 7;
 
     @Override
     public void setPosX(int posX) {

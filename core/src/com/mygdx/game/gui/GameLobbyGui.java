@@ -47,6 +47,7 @@ public class GameLobbyGui extends Window {
             TextField textField = new TextField("", skin);
             textField.setDisabled(true);
             textField.setAlignment(Align.center);
+            textField.setColor(Color.GRAY);
             this.add(textField).size(TEXT_WIDTH, TEXT_HEIGHT).pad(10);
             textFields.add(textField);
             current_row++;
@@ -60,7 +61,7 @@ public class GameLobbyGui extends Window {
         textButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Packets.Packet010StartGame startGame = new Packets.Packet010StartGame();
+                Packets.Packet011StartGame startGame = new Packets.Packet011StartGame();
                 startGame.start = true;
                 game.client.client.sendTCP(startGame);
             }
@@ -77,7 +78,7 @@ public class GameLobbyGui extends Window {
                     color.a = 1;
                     textFields.get(i).setColor(color);
                 } else {
-                    textFields.get(i).setColor(Color.GRAY);
+                    textFields.get(i).setColor(Color.WHITE);
                 }
                 return;
             }

@@ -1,2 +1,15 @@
 /.gradle/
 /.idea/
+/core/build/
+/core/assets/hs_err_pid129629.log
+/core/assets/hs_err_pid110535.log
+/core/assets/hs_err_pid102740.log
+/core/assets/hs_err_pid95280.log
+/core/assets/hs_err_pid52403.log
+/core/assets/hs_err_pid56009.log
+/core/assets/hs_err_pid126835.log
+/core/assets/hs_err_pid98345.log
+/core/assets/hs_err_pid109795.log
+/core/assets/hs_err_pid139938.log
+/core/assets/hs_err_pid138399.log
+/desktop/build/

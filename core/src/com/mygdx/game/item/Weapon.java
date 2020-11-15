@@ -4,7 +4,7 @@ import com.mygdx.game.interactable.Character;
 
 public class Weapon extends Item{
 
-    boolean equipped;
+    public boolean equipped;
     private String sprite;
     private int dmgModifier;
 

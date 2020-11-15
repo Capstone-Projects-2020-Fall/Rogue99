@@ -1,10 +1,12 @@
 package com.mygdx.game.interactable;
 
 import com.mygdx.game.Rogue99;
+import com.mygdx.game.item.Item;
 import com.mygdx.game.map.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 import static java.lang.StrictMath.abs;
@@ -20,6 +22,14 @@ public class Enemy extends Character {
     public String sprite;
     public Tile tile;
     public Rogue99 game;
+
+    //states
+    public boolean WANDERING = true;
+    public boolean FOLLOWING = false;
+    public boolean ATTACKING = false;
+    public boolean FRIGHTENED = false;
+    public int frightened_timer = 0;
+    public boolean WAITING = false;
 
     public Enemy(){}
 
@@ -51,6 +61,10 @@ public class Enemy extends Character {
     }
 
     public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {
+        if(FRIGHTENED == true){
+            retreat(3);
+        }
+
         Pathing aStar = new Pathing(intMap, tile.getPosX(), tile.getPosY(), true);
         List<Pathing.Node> path = aStar.findPathTo(hero.getPosX(), hero.getPosY());
         if (path != null) {
@@ -59,7 +73,10 @@ public class Enemy extends Character {
             }
             Pathing.Node n = path.get(0);
             //System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
-            if (path.size() > 2 && path.size() <= visRange) {
+            if (path.size() > 2 && (path.size() <= visRange || FOLLOWING == true)) {
+                WANDERING = false;
+                ATTACKING = false;
+                FOLLOWING = true;
                 if(path.size() == 3){
                     n = path.get(1);
                 } else{
@@ -73,6 +90,28 @@ public class Enemy extends Character {
                 }
             } else if(path.size() <= 2){
                 this.attack(hero);
+                ATTACKING = true;
+            } else if(path.size() > visRange){
+                WANDERING = true;
+                FOLLOWING = false;
+                //System.out.println("Enemy location: " + tile.getPosX() + tile.getPosY());
+                ArrayList<Tile> openList = new ArrayList<>();
+                for(int i = -1; i < 2; i++){
+                    for(int k = -1; k < 2; k++){
+                        if(!map[tile.getPosX() + i][tile.getPosY() + k].getType().equals("wall") &&
+                                (!map[tile.getPosX() + i][tile.getPosY() + k].getEntities().empty() && map[tile.getPosX() + i][tile.getPosY() + k].getEntities().peek() instanceof Enemy) &&
+                                (i != 0 && k != 0)){
+                            openList.add(map[tile.getPosX() + i][tile.getPosY() + k]);
+                        }
+                    }
+                }
+                if(openList.size() != 0){
+                    System.out.println("ENEMY WANDERED");
+                    Random rand = new Random();
+                    tile.getEntities().pop();
+                    tile = openList.get(rand.nextInt(openList.size()));
+                    tile.getEntities().push(this);
+                }
             }
         }
 
@@ -93,9 +132,7 @@ public class Enemy extends Character {
         } else{
             System.out.println(this.sprite + " HIT MISSED");
         }
-//        if (getStr() > hero.getArmor()) {
-//            hero.setCurrHP(hero.getCurrHP() + hero.getArmor() - getStr());
-//        }
+
         System.out.println("enemy health after attack: " + hero.getCurrHP());
         if(hero.getCurrHP() > 0){
             game.setAttacking(true);
@@ -106,5 +143,73 @@ public class Enemy extends Character {
         }
     }
 
+    public void retreat(int retreatCount){
+        if(retreatCount == 0) {
+            FRIGHTENED = false;
+            moveEnemy(game.level.getMap(), game.level.getIntMap(), game.hero);
+            return;
+        }
+
+        Random rand = new Random();
+        System.out.println(this.sprite + " retreating");
+        int thisX = this.tile.getPosX();
+        int thisY = this.tile.getPosY();
+
+        int diffX = game.hero.getPosX()-thisX;
+        int diffY = game.hero.getPosY()-thisY;
+        Tile open;
+
+        ArrayList<Tile> openList = new ArrayList<>();
+        if(diffY >= 1){
+            //move down
+            for(int i = -1; i < 2; i++){
+                if(!this.game.level.getMap()[thisX + i][thisY - 1].getType().equals("wall") &&
+                        (this.game.level.getMap()[thisX + i][thisY - 1].getEntities().empty() ||
+                                this.game.level.getMap()[thisX + i][thisY - 1].getEntities().peek() instanceof Item)){
+                    openList.add(this.game.level.getMap()[thisX + i][thisY - 1]);
+                }
+            }
+        } else if(diffY <= -1){
+            //move up
+            for(int i = -1; i < 2; i++){
+                if(!this.game.level.getMap()[thisX + i][thisY + 1].getType().equals("wall") &&
+                        (this.game.level.getMap()[thisX + i][thisY + 1].getEntities().empty() ||
+                                this.game.level.getMap()[thisX + i][thisY + 1].getEntities().peek() instanceof Item)){
+                    openList.add(this.game.level.getMap()[thisX + i][thisY + 1]);
+                }
+            }
+        } else if(diffX >= 1){
+            //move left
+            for(int i = -1; i < 2; i++){
+                if(!this.game.level.getMap()[thisX - 1][thisY + i].getType().equals("wall") &&
+                        (this.game.level.getMap()[thisX - 1][thisY + i].getEntities().empty() ||
+                                this.game.level.getMap()[thisX - 1][thisY + i].getEntities().peek() instanceof Item)){
+                    openList.add(this.game.level.getMap()[thisX - 1][thisY + i]);
+                }
+            }
+        } else if(diffX <= -1){
+            //move right
+            for(int i = -1; i < 2; i++){
+                if(!this.game.level.getMap()[thisX + 1][thisY + i].getType().equals("wall") &&
+                        (this.game.level.getMap()[thisX + 1][thisY + i].getEntities().empty() ||
+                                this.game.level.getMap()[thisX + 1][thisY + i].getEntities().peek() instanceof Item)){
+                    openList.add(this.game.level.getMap()[thisX + 1][thisY + i]);
+                }
+            }
+        }
+
+        if(openList.size() >= 1){
+            System.out.println("RETREAT SUCCESSFUL");
+            open = openList.get(rand.nextInt(openList.size()));
+            this.tile.getEntities().pop();
+            this.tile = open;
+            this.tile.getEntities().push(this);
+        }
+
+        retreat(retreatCount--);
+    }
+
     public void hit(){    }
+
+    public void observe(String event){    }
 }

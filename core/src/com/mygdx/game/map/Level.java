@@ -28,8 +28,12 @@ public class Level implements Serializable {
 
     //active entities
     public ArrayList<Enemy> enemies = new ArrayList<>();
+    public int enemiesNum;
     public Hero hero;
     public ArrayList<Hero> players = new ArrayList<>();
+
+    public boolean doorOpen = false;
+    public Double enemiesToOpen;
 
 
     private Rogue99 game;
@@ -119,6 +123,7 @@ public class Level implements Serializable {
 
         //generate zones
         //System.out.println("Zone 0: " + zones[0].tiles.size());
+        System.out.println("Generating zones");
         int limit;
         for(int i = 1; i < 4; i++){
             limit = rand.nextInt(200)+400;
@@ -126,16 +131,23 @@ public class Level implements Serializable {
             while(zones[i].tiles.size() < 150){
                 generateZone(zones[i], limit);
             }
-            System.out.println("Zone " + i + ": " + zones[i].tiles.size());
+            //System.out.println("Zone " + i + ": " + zones[i].tiles.size());
         }
-        System.out.println("Zone 0: " + zones[0].tiles.size());
+        System.out.println("Zone generation complete");
 
-
+        System.out.println("Generating grass");
         generateGrass();
+        System.out.println("Grass generation complete");
+        System.out.println("Generating stairs");
         generateStairs();
+        System.out.println("Stair generation complete");
         //generateEnemy();
+        System.out.println("Generating enemies");
         generateEnemies();
+        System.out.println("Enemy generation complete");
+        System.out.println("Generating items");
         generateItems();
+        System.out.println("Item generation complete");
 
         this.entrance.getEntities().push(hero);
         hero.setPosX(this.entrance.getPosX());
@@ -408,12 +420,15 @@ public class Level implements Serializable {
             if(1 <= i && i < 3){    //8, 2, 0 by L3
                 diffMap[0]++;
                 diffMap[1]++;
+                diffMap[2]++;
             } else if(3 <= i && i < 6){
                 int c = 0;
                 diffMap[0]--;
                 diffMap[1]++;
-                if(i % 2 == 1) diffMap[2]++;
+                diffMap[2]++;
+                if(i % 2 == 1) diffMod++;
             } else if(6 <= i && i < 10){
+                diffMap[0]+=2;
                 diffMap[1]--;
                 diffMap[2]++;
             } else{
@@ -470,6 +485,10 @@ public class Level implements Serializable {
                 if(u > 3) u = 0;
             }
         }
+        enemiesNum = enemies.size();
+        enemiesToOpen = enemiesNum * 0.2;
+        System.out.println("ENEMIES NUM: " + enemiesNum);
+        System.out.println("ENEMIES TO OPEN: " + enemiesToOpen);
     }
 
     private void generateZone(Zone zone, int zoneLimit){
@@ -511,6 +530,7 @@ public class Level implements Serializable {
                     generateItemUtil(new HealthScroll(20, "scroll_health", 5), z);
                 } else if(60 <= itemC && itemC < 70){
                     generateItemUtil(new StrengthScroll(20, "scroll_strength", 1), z);
+                    System.out.println("STRENGTH SCROLL SPAWNED");
                 } else if(70 <= itemC && itemC < 80){
                     generateItemUtil(new ArmorScroll(20, "scroll_armor", 1), z);
                 } else if(80 <= itemC && itemC < 100){
@@ -531,6 +551,7 @@ public class Level implements Serializable {
         } while(!tile.getEntities().empty());
 
         tile.getEntities().push(item);
+        //System.out.println("STR SCROLL SPAWNED AT: " + tile.getPosX() + " " + tile.getPosY());
     }
 
     public String getSeed() {

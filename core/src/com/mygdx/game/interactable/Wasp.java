@@ -97,8 +97,8 @@ public class Wasp extends Enemy{
         }
     }
 
-    //    @Override
+//    @Override
 //    public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {
-//        super.moveEnemy(map, intMap, hero, super.moveDistance);
+//        super.moveEnemy(map, intMap, hero);
 //    }
 }

@@ -11,12 +11,16 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Rogue99;
 
 public class NameInputWindow extends Window {
+
+    public final int WINDOW_WIDTH = 132;
+    public final int WINDOW_HEIGHT = 42;
+
     public NameInputWindow(final Rogue99 game, String title, Skin skin) {
         super(title, skin);
         this.setResizable(true);
         this.setMovable(true);
         this.setName(title);
-        this.setSize(game.mainMenu.getWidth()/4, game.mainMenu.getHeight()/6);
+        this.setSize(WINDOW_WIDTH*3, WINDOW_HEIGHT*5);
         TextField textField = new TextField("Input a Name", skin);
         textField.setAlignment(Align.center);
         textField.setDisabled(true);

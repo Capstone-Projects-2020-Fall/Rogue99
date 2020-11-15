@@ -78,9 +78,10 @@ public class ClientNetworkListener extends Listener {
         } else if (o instanceof Packets.Packet008ServerMessage){
             game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
         } else if(o instanceof Packets.Packet009Scroll){
-            Packets.Packet007PlayerAffected playerAffected = new Packets.Packet007PlayerAffected();
-            playerAffected.playerName = game.hero.getName();
-            c.sendTCP(playerAffected);
+            Packets.Packet008ServerMessage message = new Packets.Packet008ServerMessage();
+            message.receivedBy = game.hero.getName();
+            message.sentBy = ((Packets.Packet009Scroll) o).playerName;
+            c.sendTCP(message);
             int x,y;
             boolean summoned = false;
             Random rand = new Random();
@@ -119,11 +120,11 @@ public class ClientNetworkListener extends Listener {
             }
         } else if (o instanceof Packets.Packet008ServerMessage){
             game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
-        } else if (o instanceof Packets.Packet009Disconnect){
-            game.removePLayer(((Packets.Packet009Disconnect) o).name);
-        } else if (o instanceof Packets.Packet010StartGame){
-            System.out.println("game started: " + ((Packets.Packet010StartGame) o).start);
-            game.setGameStarted(((Packets.Packet010StartGame) o).start);
+        } else if (o instanceof Packets.Packet010Disconnect){
+            game.removePLayer(((Packets.Packet010Disconnect) o).name);
+        } else if (o instanceof Packets.Packet011StartGame){
+            System.out.println("game started: " + ((Packets.Packet011StartGame) o).start);
+            game.setGameStarted(((Packets.Packet011StartGame) o).start);
         }
     }
 }

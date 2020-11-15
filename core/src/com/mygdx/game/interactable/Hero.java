@@ -21,9 +21,11 @@ public class Hero extends Character{
     public Vector3 pos3 = new Vector3();
     private String name;
     private int frozen;
+    public int score;
 
     public Hero(Rogue99 game, String sprite) {
         depth = 0;
+        score = 0;
         this.game = game;
         this.sprite = sprite;
         inventory = new ArrayList<>();
@@ -94,6 +96,18 @@ public class Hero extends Character{
             case RIGHT:
                 move(x + 1, y);
                 break;
+            case UP_LEFT:
+                move(x - 1, y + 1);
+                break;
+            case UP_RIGHT:
+                move(x + 1, y + 1);
+                break;
+            case DOWN_LEFT:
+                move(x - 1, y - 1);
+                break;
+            case DOWN_RIGHT:
+                move(x + 1, y - 1);
+                break;
         }
     }
 
@@ -109,23 +123,32 @@ public class Hero extends Character{
                 if(inventory.size() != 10){
                     inventory.add((Item) game.level.getMap()[x][y].getEntities().pop());
                     game.inventoryGui.addItemToInventory(inventory.get(inventory.size()-1));
+                    System.out.println("picked up " + inventory.get(inventory.size()-1).getSprite());
                 }
-                System.out.println(inventory.get(0).getSprite());
+                System.out.println("Player inventory size: " + this.getInventory().size());
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 setPosX(x);
                 setPosY(y);
                 game.level.getMap()[x][y].getEntities().push(this);
             } else if (game.level.getMap()[x][y].getType().equals("downstair")){
-                game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
-                if(game.levels.size() > depth+1) {
-                    game.nextLevel(depth);
-                    setPosX(game.level.entrance.getPosX());
-                    setPosY(game.level.entrance.getPosY());
-                    game.level.getMap()[getPosX()][getPosY()].getEntities().push(this);
+                if(!game.level.doorOpen){
+                    game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
+                    setPosX(x);
+                    setPosY(y);
+                    game.level.getMap()[x][y].getEntities().push(this);
+                    game.setAttacking(false);
+                } else{
+                    game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
+                    if(game.levels.size() > depth+1) {
+                        game.nextLevel(depth);
+                        setPosX(game.level.entrance.getPosX());
+                        setPosY(game.level.entrance.getPosY());
+                        game.level.getMap()[getPosX()][getPosY()].getEntities().push(this);
+                    }
+                    else
+                        game.newLevel(depth);
+                    depth++;
                 }
-                else
-                    game.newLevel(depth);
-                depth++;
             } else if (game.level.getMap()[x][y].getType().equals("upstair")){
                 if(depth == 0) {
                     game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
@@ -170,6 +193,14 @@ public class Hero extends Character{
 //        }
         if(Math.random() < getHitChance()){
             System.out.println("HIT SUCCESSFUL");
+//            if(enemy.getCurrHP() == enemy.getMaxHP() && this.getStr() >= enemy.getMaxHP()){
+//                //send observe onehitkill to adjacent enemies who retreat
+//                ArrayList<Interactable> retreating = getAdjacentEnemies("rat");
+//                for(Interactable i : retreating){
+//                    Enemy curr = (Enemy)i;
+//                    curr.observe("onehitkill");
+//                }
+//            }
             enemy.setCurrHP(enemy.getCurrHP() - this.getStr());
         } else{
             System.out.println("HIT MISSED");
@@ -193,6 +224,7 @@ public class Hero extends Character{
         }else {
             enemy.tile.getEntities().pop();
             game.level.enemies.remove(enemy);
+            score += (int)((Math.random()*100)+100);
             if(Math.random() < 0.4 && game.multiplayer){
                 game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
             }
@@ -201,6 +233,10 @@ public class Hero extends Character{
             }
             game.removeActor(game.enemyHud);
             game.removeActor(game.hudGui);
+            if(game.level.enemies.size() <= (game.level.enemiesToOpen)){
+                game.level.doorOpen = true;
+                System.out.println("OPENED DOOR");
+            }
         }
     }
     public void takeDamage(int dmg) {
@@ -218,5 +254,18 @@ public class Hero extends Character{
             frozen += time;
         }
         return frozen;
+    }
+
+    public ArrayList<Interactable> getAdjacentEnemies(String type){
+        ArrayList<Interactable> enemies = new ArrayList<>();
+        for(int i = -1; i < 2; i++){
+            for(int k = -1; k < 2; k++){
+                if(!game.level.getMap()[this.getPosX() + i][this.getPosY() + k].getEntities().empty() &&
+                        game.level.getMap()[this.getPosX() + i][this.getPosY() + k].getEntities().peek().getSprite().equals(type)){
+                    enemies.add(game.level.getMap()[this.getPosX() + i][this.getPosY() + k].getEntities().peek());
+                }
+            }
+        }
+        return enemies;
     }
 }
