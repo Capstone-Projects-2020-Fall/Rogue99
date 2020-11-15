@@ -67,6 +67,16 @@ public class GameLobbyGui extends Window {
             }
         });
         this.add(textButton).size(TEXT_WIDTH - 100, TEXT_HEIGHT).pad(10).colspan(4);
+        TextButton leaveButton = new TextButton("Leave Game", skin);
+        leaveButton.setColor(Color.DARK_GRAY);
+        leaveButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.disconnectClient();
+            }
+        });
+        this.row();
+        this.add(leaveButton).size(TEXT_WIDTH - 100, TEXT_HEIGHT).pad(10).colspan(4);
     }
 
     public void addPlayer(Hero player){
