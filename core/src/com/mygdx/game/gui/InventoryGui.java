@@ -67,7 +67,7 @@ public class InventoryGui extends Window {
                 for(int i = 0; i < inventorySlots.size(); i++){
                     if (inventorySlots.get(i).isEmpty()){
                         inventorySlots.get(i).setItem(item, game.sprites.get(item.getSprite()));
-                        return;
+                        break;
                     }
                 }
             }
