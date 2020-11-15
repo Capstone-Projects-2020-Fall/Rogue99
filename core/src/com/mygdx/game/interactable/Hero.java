@@ -229,7 +229,7 @@ public class Hero extends Character{
                 game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
             }
             else if (Math.random() > 0.4 && game.multiplayer) {
-                game.level.getMap()[x][y].getEntities().push( new FreezePotion(1, "potion_health", 5 ));
+                game.level.getMap()[x][y].getEntities().push( new FreezePotion(1, "potion_freeze", 5 ));
             }
             game.removeActor(game.enemyHud);
             game.removeActor(game.hudGui);

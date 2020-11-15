@@ -367,48 +367,6 @@ public class Level implements Serializable {
         return arr;
     }
 
-    public void generateEnemy(){
-        //System.out.println("in generateEnemy");
-        int[] diff = iterateEnemy();
-        int sum = 0;
-        int index = 1;
-        int u = 0;
-        int x = 0;
-        int y = 0;
-        for(int i : diff){
-            sum += i;
-            if(i == 0) continue;
-            for (int j = 0; j < sum; j++) {
-                //find open tile within zone
-                Zone z = zones[u];
-                Tile tile;
-                do {
-                    tile = z.tiles.get(rand.nextInt(z.tiles.size()));
-                } while (!tile.entities.isEmpty());
-
-                //get enemy type of difficulty i
-                System.out.println();
-                String type = game.enemyMap.get(i).get(rand.nextInt(game.enemyMap.get(i).size()));
-                Enemy enemy = new Enemy();
-                if(type.equals("rat")){
-                    enemy = new Rat(tile, game);
-                } else if(type.equals("wasp")){
-                    enemy = new Wasp(tile, game);
-                } else if(type.equals("slime")){
-                    enemy = new Slime(tile, game);
-                }
-
-                //Enemy enemy = new Enemy(index, "wasp", tile, game);
-                //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
-                enemies.add(enemy);
-                tile.getEntities().push(enemy);
-                u++;
-                if(u > 3) u = 0;
-            }
-            index++;
-        }
-    }
-
     public void generateEnemies(){
         int[] diffMap = new int[game.enemyMap.size()];
         //initial settings for enemy difficulty distribution
@@ -516,6 +474,9 @@ public class Level implements Serializable {
 
     private void generateItems(){
         int c = 120;
+        if(game.multiplayer){
+            c += 40;
+        }
         int numItems, itemC;
         for(Zone z : zones){
             numItems = 2 + z.id+rand.nextInt(2);
@@ -524,14 +485,12 @@ public class Level implements Serializable {
                 //TODO flesh out item chances once potion classes are finished
                 if(itemC < 20){
                     generateItemUtil(new HealthPotion(20, "potion_health", 10), z);
-                } else if(20 <= itemC && itemC < 40 && game.multiplayer){
-                    generateItemUtil(new FreezePotion(20, "potion_damage", 5), z);
-                } else if(40 <= itemC && itemC < 60){
+                } else if(20 <= itemC && itemC < 40){
                     generateItemUtil(new HealthScroll(20, "scroll_health", 5), z);
-                } else if(60 <= itemC && itemC < 70){
+                } else if(40 <= itemC && itemC < 60){
                     generateItemUtil(new StrengthScroll(20, "scroll_strength", 1), z);
                     System.out.println("STRENGTH SCROLL SPAWNED");
-                } else if(70 <= itemC && itemC < 80){
+                } else if(60 <= itemC && itemC < 80){
                     generateItemUtil(new ArmorScroll(20, "scroll_armor", 1), z);
                 } else if(80 <= itemC && itemC < 100){
                     System.out.println("weapon generated!");
@@ -539,6 +498,10 @@ public class Level implements Serializable {
                 } else if(100 <= itemC && itemC < 120){
                     System.out.println("weapon generated!");
                     generateItemUtil(new Ax(20, "axe", 8), z);
+                } else if(120 <= itemC && itemC < 140){
+                    generateItemUtil(new FreezePotion(20, "potion_freeze", 5), z);
+                } else if(140 <= itemC && itemC < 160){
+                    generateItemUtil(new DamagePotion(20, "potion_damage", 15), z);
                 }
             }
         }

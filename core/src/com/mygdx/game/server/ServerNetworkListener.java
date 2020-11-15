@@ -105,7 +105,7 @@ public class ServerNetworkListener  extends Listener {
             //if level seed is not in list, generate a new seed and add to list
             //then send seed at index=depth
 //            System.out.println("Gameserver seeds size: " + gameServer.seeds.size());
-//            System.out.println("Server: depth requested: " + ((Packets.Packet006RequestSeed) object).depth);
+            System.out.println("Server: depth requested: " + ((Packets.Packet006RequestSeed) object).depth);
             if(((Packets.Packet006RequestSeed) object).depth == gameServer.seeds.size()){
                 Level level = new Level(null, ((Packets.Packet006RequestSeed) object).depth, null);
                 level.generateFloorPlan();

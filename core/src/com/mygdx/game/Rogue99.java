@@ -502,6 +502,12 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite.setColor(Color.RED);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
+		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof FreezePotion) {
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.PURPLE);
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
 		}
 		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Weapon) {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
@@ -709,6 +715,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 		if(multiplayer) {
 			Packets.Packet006RequestSeed request = new Packets.Packet006RequestSeed();
+			depth++;
 			request.depth = depth;
 			System.out.println("Client: depth requested: " + request.depth);
 			client.client.sendTCP(request);
@@ -812,8 +819,16 @@ public class Rogue99 extends ApplicationAdapter {
 		return showEscape;
 	}
 
-	public void popUpWindow(String sentBy, String receivedBy){
-		popUpWindow = new MessageWindow(this,"Summon Scroll", skin,"Player " + sentBy + " summoned an enemy in " + receivedBy + " game!");
+	public void popUpWindow(String sentBy, String receivedBy, String itemType){
+		String message = "";
+		if(itemType.equals("summon_scroll")){
+			message = "Player " + sentBy + " summoned an enemy in " + receivedBy + "'s game!";
+		} else if(itemType.equals("damage_potion")){
+			message = "Player " + sentBy + " damaged " + receivedBy + "!";
+		} else if(itemType.equals("freeze_potion")){
+			message = "Player " + sentBy + " froze " + receivedBy + "!";
+		}
+		popUpWindow = new MessageWindow(this,"ALERT", skin, message);
 		popUpWindow.setPosition(hero.getPosX() * 36 + (16*36) - (popUpWindow.getWidth() + 2), hero.getPosY() * 36 + (9*36) - popUpWindow.getHeight());
 		popUpStage.addActor(popUpWindow);
 		showPopUp = true;

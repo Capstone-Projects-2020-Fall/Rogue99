@@ -11,7 +11,7 @@ public class Packets {
     //server has list of seeds which it has stored, sends seed at index=depth
     public static class Packet006RequestSeed{public int depth;}
     public static class Packet007PlayerAffected{public String playerName;}
-    public static class Packet008ServerMessage{public String sentBy; public String receivedBy;}
+    public static class Packet008ServerMessage{public String sentBy; public String receivedBy; public String itemType;}
     public static class Packet009Scroll{public int ID; public String type; public String playerName;}
     public static class Packet010Disconnect {public String name;}
     public static class Packet011StartGame {public boolean start;}
