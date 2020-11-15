@@ -66,7 +66,7 @@ public class Enemy extends Character {
                     n = path.get(moveDistance);
                 }
                 //System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
-                if( map[n.x][n.y].getEntities().isEmpty() && !(tile.getEntities().isEmpty())) {
+                if(!(tile.getEntities().isEmpty())) {
                     tile.getEntities().pop();
                     tile = map[n.x][n.y];
                     tile.getEntities().push(this);

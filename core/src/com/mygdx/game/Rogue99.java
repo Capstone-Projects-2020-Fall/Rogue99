@@ -81,6 +81,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public boolean multiplayer;
 	public int timerCount = 0;
 	boolean gameStarted;
+	boolean rangeMode;
 
 	Item EquippedWeapon;
 	String serverSeed;
@@ -120,6 +121,7 @@ public class Rogue99 extends ApplicationAdapter {
 		mapGenerated = false;
 		seedReceived = false;
 		gameStarted = false;
+		rangeMode = false;
 
 		//load sprites and add to hash map
 		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -278,6 +280,12 @@ public class Rogue99 extends ApplicationAdapter {
 				Gdx.input.setInputProcessor(control);
 				removeActor(inventoryGui);
 				removeActor(hudGui);
+			}
+			if(rangeMode) {
+				Gdx.input.setInputProcessor(stage);
+			}
+			else {
+				Gdx.input.setInputProcessor(control);
 			}
 		}
 		popUpStage.act();
@@ -550,7 +558,7 @@ public class Rogue99 extends ApplicationAdapter {
 		level.setSeed(seed);
 		level.generate();
 		levels.add(level);
-		stage = new LevelStage(level);
+		stage = new LevelStage(level, this);
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 		System.out.println("Stage width and height:" + stage.getWidth() + " " + stage.getHeight());
@@ -709,5 +717,13 @@ public class Rogue99 extends ApplicationAdapter {
 		mainMenuStage.addActor(gameLobbyGui);
 		gameLobbyGui.removePlayer(hero);
 		gameLobbyGui.addPlayer(hero);
+	}
+
+	public void setRangeMode(boolean rangeMode) {
+		this.rangeMode = rangeMode;
+	}
+
+	public boolean isRangeMode() {
+		return rangeMode;
 	}
 }

@@ -48,6 +48,14 @@ public class Control extends InputAdapter implements InputProcessor {
                     game.setShowInventory(true);
                 }
                 break;
+            case Input.Keys.R:
+                if(game.isRangeMode()) {
+                    game.setRangeMode(false);
+                }
+                else {
+                    game.setRangeMode(true);
+                }
+                break;
         }
         return false;
     }
