@@ -94,7 +94,7 @@ public class Rogue99 extends ApplicationAdapter {
 	MessageWindow gameLostWindow;
 
 	public MainMenu mainMenu;
-	Stage mainMenuStage;
+	public Stage mainMenuStage;
 	NameInputWindow nameInputWindow;
 
 	public GameLobbyGui gameLobbyGui;
@@ -117,7 +117,6 @@ public class Rogue99 extends ApplicationAdapter {
 		//initialize camera and viewport
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
-		camera.zoom = 0.6f;
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		mapDrawn = false;
@@ -207,6 +206,7 @@ public class Rogue99 extends ApplicationAdapter {
 				public boolean keyUp(InputEvent event, int keycode) {
 					if (keycode == Input.Keys.ESCAPE) {
 						setShowEscape(false);
+						removeActor(exitScreen);
 					}
 					return super.keyUp(event, keycode);
 				}
@@ -225,6 +225,7 @@ public class Rogue99 extends ApplicationAdapter {
 				;
 			} else {
 				if (mapGenerated) {
+					camera.zoom = 0.6f;
 					drawMap(level);
 
 					drawHeroes();
@@ -266,6 +267,7 @@ public class Rogue99 extends ApplicationAdapter {
 		/* STAGE RENDERING BEGINS */
 		if (showMainMenu) {
 			Gdx.input.setInputProcessor(mainMenuStage);
+			camera.zoom = 1;
 			mainMenuStage.act();
 			mainMenuStage.draw();
 		} else if(mapGenerated) {
@@ -367,6 +369,7 @@ public class Rogue99 extends ApplicationAdapter {
 						public boolean keyUp(InputEvent event, int keycode) {
 							if (keycode == Input.Keys.ESCAPE) {
 								setShowEscape(false);
+								removeActor(exitScreen);
 							}
 							return super.keyUp(event, keycode);
 						}
@@ -786,9 +789,7 @@ public class Rogue99 extends ApplicationAdapter {
 			setShowEscape(false);
 			removeActor(exitScreen);
 			if(multiplayer){
-				client.client.close();
-				multiplayer = false;
-				mainMenuStage.getActors().get(mainMenuStage.getActors().size-1).remove();
+				disconnectClient();
 			}
 		} else {
 			Gdx.app.exit();
@@ -796,6 +797,7 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	public void setUserName(String userName){
+		nameInputWindow.remove();
 		hero.setName(userName);
 		System.out.println(hero.getName());
 		init_multiplayer();
@@ -859,5 +861,13 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public boolean isShowMainMenu() {
 		return showMainMenu;
+	}
+
+	public void disconnectClient(){
+		client.client.close();
+		multiplayer = false;
+		mainMenuStage.getActors().get(mainMenuStage.getActors().size-1).remove();
+		players.clear();
+		gameLobbyGui = new GameLobbyGui(this, "", skin);
 	}
 }
