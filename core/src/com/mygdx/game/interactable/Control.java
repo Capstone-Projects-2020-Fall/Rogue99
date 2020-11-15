@@ -60,6 +60,8 @@ public class Control extends InputAdapter implements InputProcessor {
                     game.setShowInventory(true);
                 }
                 break;
+            case Input.Keys.ESCAPE:
+                game.setShowEscape(true);
         }
         return false;
     }
