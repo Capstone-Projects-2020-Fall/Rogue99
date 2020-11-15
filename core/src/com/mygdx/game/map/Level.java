@@ -535,10 +535,10 @@ public class Level implements Serializable {
                     generateItemUtil(new ArmorScroll(20, "scroll_armor", 1), z);
                 } else if(80 <= itemC && itemC < 100){
                     System.out.println("weapon generated!");
-                    generateItemUtil(new sword(20, "sword", 10), z);
+                    generateItemUtil(new sword(20, "sword", 5), z);
                 } else if(100 <= itemC && itemC < 120){
                     System.out.println("weapon generated!");
-                    generateItemUtil(new Ax(20, "axe", 10), z);
+                    generateItemUtil(new Ax(20, "axe", 8), z);
                 }
             }
         }
