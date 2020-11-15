@@ -41,11 +41,16 @@ public class Slime extends Enemy {
             }
             //choose random adjacent tile
             System.out.println("OPEN LIST: " + openList.size());
-            open = openList.get(rand.nextInt(openList.size()));
+            if(openList.size() > 0){
+                open = openList.get(rand.nextInt(openList.size()));
 
-            Slime newSlime = new Slime(open, this.game);
-            open.getEntities().push(newSlime);
-            game.level.enemies.add(newSlime);
+                Slime newSlime = new Slime(open, this.game);
+                open.getEntities().push(newSlime);
+                game.level.enemies.add(newSlime);
+                if(game.level.enemies.size() > game.level.enemiesToOpen){
+                    game.level.doorOpen = false;
+                }
+            }
         }
     }
 }

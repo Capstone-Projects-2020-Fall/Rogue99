@@ -127,7 +127,9 @@ public class Rogue99 extends ApplicationAdapter {
 
 		//load sprites and add to hash map
 		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
-		textureAtlas = new TextureAtlas("spritesheets/fantasysprites.txt");
+//		textureAtlas = new TextureAtlas("spritesheets/fantasysprites.txt");
+		textureAtlas = new TextureAtlas("spritesheets/fantasysprites3.txt");
+
 		addSprites();
 
 		//load skin for Inventory & HUD
@@ -328,27 +330,18 @@ public class Rogue99 extends ApplicationAdapter {
 				if(k.getType().equals("floor")){
 					drawTile(k,"floor", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("wall")){
-//					drawTile(k,"crackedwall", k.getPosX()*36, k.getPosY()*36);
 					drawTile(k,"wall", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("grass")){
-					//if(Math.random() < 0.5){
-						drawTile(k,"grass1", k.getPosX()*36, k.getPosY()*36);
-					//}
-//					else{
-//						drawTile(k,"longgrass", k.getPosX()*36, k.getPosY()*36);
-//					}
+					drawTile(k,"grass1", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("upstair")){
 					drawTile(k,"upstair", k.getPosX()*36, k.getPosY()*36);
 				} else if(k.getType().equals("downstair")) {
-					drawTile(k,"downstair", k.getPosX() * 36, k.getPosY() * 36);
+					if(level.doorOpen == true){
+						drawTile(k,"downstair", k.getPosX() * 36, k.getPosY() * 36);
+					} else{
+						drawTile(k,"downstair_closed", k.getPosX() * 36, k.getPosY() * 36);
+					}
 				}
-//				else if(k.getType().equals("enemy")){
-//					if(Math.random() < 0.5){
-//						drawTile(k,"wasp", k.getPosX()*36, k.getPosY()*36);
-//					} else{
-//						drawTile(k,"crab", k.getPosX()*36, k.getPosY()*36);
-//					}
-//				}
 			}
 		}
 	}
@@ -380,6 +373,13 @@ public class Rogue99 extends ApplicationAdapter {
 			sprite = sprites.get(tile.getEntities().peek().getSprite());
 			//System.out.println("ARMOR SCROLL SPRITE" + tile.getEntities().peek().getSprite());
 			sprite.setColor(Color.GOLDENROD);
+			sprite.setPosition(x, y);
+			sprite.draw(batch);
+		}
+		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof StrengthScroll) {
+			sprite = sprites.get(tile.getEntities().peek().getSprite());
+			//System.out.println(tile.getEntities().peek().getSprite());
+			sprite.setColor(Color.SLATE);
 			sprite.setPosition(x, y);
 			sprite.draw(batch);
 		}
@@ -521,16 +521,17 @@ public class Rogue99 extends ApplicationAdapter {
 				potion.playerName = hero.getName();
 				client.client.sendTCP(potion);
 			} else if(item.getId() == Item.WEAPON){
-					item.setEquipped(true);
-					System.out.println("Weapon used: " + item.use(hero));
-					if(EquippedWeapon != null){
-						EquippedWeapon.setEquipped(false);
-						// revert changes from previous weapon to damage //
-						hero.setStr(hero.getStr() - EquippedWeapon.getDmgModifier());
-					}
-					// do something with damage modifier in combat //
-					hero.setStr(hero.getStr() + item.getDmgModifier());
-					EquippedWeapon = item;
+				item.setEquipped(true);
+				System.out.println("Weapon used: " + item.use(hero));
+				if(EquippedWeapon != null){
+					EquippedWeapon.setEquipped(false);
+					// revert changes from previous weapon to damage //
+					hero.setStr(hero.getStr() - EquippedWeapon.getDmgModifier());
+				}
+				// do something with damage modifier in combat //
+				hero.setStr(hero.getStr() + item.getDmgModifier());
+				hero.setSprite("hero_armed");
+				EquippedWeapon = item;
 			}
 		} hero.score += (int)(Math.random()*50);
 	}
@@ -565,6 +566,7 @@ public class Rogue99 extends ApplicationAdapter {
 		stage.getViewport().setCamera(camera);
 		stage.setViewport(viewport);
 		System.out.println("Stage width and height:" + stage.getWidth() + " " + stage.getHeight());
+		System.out.println("Player inventory size: " + hero.getInventory().size());
 		generateGuiElements();
 		mapGenerated = true;
 		if(multiplayer) {

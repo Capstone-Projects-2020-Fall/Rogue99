@@ -1,0 +1,236 @@
+fantasysprites3.png
+size: 117, 390
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+axe
+  rotate: false
+  xy: 0, 0
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+bat
+  rotate: false
+  xy: 39, 0
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+bones
+  rotate: false
+  xy: 78, 0
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+crab
+  rotate: false
+  xy: 0, 39
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+dagger
+  rotate: false
+  xy: 39, 39
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+downstair
+  rotate: false
+  xy: 78, 39
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+downstair_closed
+  rotate: false
+  xy: 0, 78
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+dragon
+  rotate: false
+  xy: 39, 78
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+floor
+  rotate: false
+  xy: 78, 78
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+ghost
+  rotate: false
+  xy: 0, 117
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+grass1
+  rotate: false
+  xy: 39, 117
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+grass2
+  rotate: false
+  xy: 78, 117
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+gravestone
+  rotate: false
+  xy: 0, 156
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+hero
+  rotate: false
+  xy: 39, 156
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+hero_armed
+  rotate: false
+  xy: 78, 156
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+hero_bow
+  rotate: false
+  xy: 0, 195
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+players
+  rotate: false
+  xy: 39, 156
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+key
+  rotate: false
+  xy: 39, 195
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+potion_damage
+  rotate: false
+  xy: 78, 195
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+potion_health
+  rotate: false
+  xy: 78, 195
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+rat
+  rotate: false
+  xy: 0, 234
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+scroll_health
+  rotate: false
+  xy: 39, 234
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+scroll_armor
+  rotate: false
+  xy: 39, 234
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+scroll_strength
+  rotate: false
+  xy: 39, 234
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+scroll_summon
+  rotate: false
+  xy: 39, 234
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+skeleton
+  rotate: false
+  xy: 78, 234
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+slime
+  rotate: false
+  xy: 0, 273
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+snake
+  rotate: false
+  xy: 39, 273
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+sword
+  rotate: false
+  xy: 78, 273
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+upstair
+  rotate: false
+  xy: 0, 312
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+wall
+  rotate: false
+  xy: 39, 312
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+wasp
+  rotate: false
+  xy: 78, 312
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
+zombie
+  rotate: false
+  xy: 0, 351
+  size: 39, 39
+  orig: 39, 39
+  offset: 0, 0
+  index: -1
