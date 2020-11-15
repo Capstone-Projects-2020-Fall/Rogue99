@@ -167,7 +167,8 @@ public class Rogue99 extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(mainMenuStage);
 	}
 	private void init_single_player(){
-		hero.setCurrHP(100);
+		resetHero();
+
 		Level tempLevel = new Level(null, 0, null);
 		tempLevel.generateFloorPlan();
 		generateLevel(tempLevel.getSeed(), 0);
@@ -178,7 +179,8 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	private void init_multiplayer() {
-		hero.setCurrHP(100);
+		resetHero();
+
 		multiplayer = true;
 		//initialize client
 		client = new MPClient(this);
@@ -191,6 +193,14 @@ public class Rogue99 extends ApplicationAdapter {
 
 		control = new Control(hero, this);
 		Gdx.input.setInputProcessor(control);
+	}
+
+	public void resetHero(){
+		hero.setCurrHP(100);
+		hero.setSprite("hero");
+		hero.getInventory().clear();
+		hero.setArmor(0);
+		hero.setStr(10);
 	}
 
 	@Override

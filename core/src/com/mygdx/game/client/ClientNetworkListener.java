@@ -65,7 +65,7 @@ public class ClientNetworkListener extends Listener {
         } else if(o instanceof Packets.Packet004Potion){
             Packets.Packet008ServerMessage message = new Packets.Packet008ServerMessage();
             message.receivedBy = game.hero.getName();
-            message.sentBy = ((Packets.Packet009Scroll) o).playerName;
+            message.sentBy = ((Packets.Packet004Potion) o).playerName;
 
             if(((Packets.Packet004Potion) o).ID == Item.DAMAGEPOTION) {
                 message.itemType = "damage_potion";
