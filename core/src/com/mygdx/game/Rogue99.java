@@ -84,6 +84,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public int timerCount = 0;
 	boolean gameStarted;
 	boolean showPopUp;
+	boolean showEscape;
 
 	Item EquippedWeapon;
 	String serverSeed;
@@ -124,6 +125,7 @@ public class Rogue99 extends ApplicationAdapter {
 		seedReceived = false;
 		gameStarted = false;
 		showPopUp = false;
+		showEscape = false;
 
 		//load sprites and add to hash map
 		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -265,6 +267,7 @@ public class Rogue99 extends ApplicationAdapter {
 						return super.keyUp(event, keycode);
 					}
 				});
+
 			} else if(hero.getCurrHP() <= 0) {
 				attacking = false;
 				stage.draw();
@@ -273,7 +276,10 @@ public class Rogue99 extends ApplicationAdapter {
 				removeActor(hudGui);
 				removeActor(enemyHud);
 				addActor(gameLostWindow);
-			} else {
+			} else if(isShowEscape()){
+
+			}
+			else {
 				Gdx.input.setInputProcessor(control);
 				removeActor(inventoryGui);
 				removeActor(hudGui);
@@ -685,6 +691,14 @@ public class Rogue99 extends ApplicationAdapter {
 		System.out.println(hero.getName());
 		init_multiplayer();
 		//showMainMenu = false;
+	}
+
+	public void setShowEscape(boolean showEscape) {
+		this.showEscape = showEscape;
+	}
+
+	public boolean isShowEscape() {
+		return showEscape;
 	}
 
 	public void popUpWindow(String sentBy, String receivedBy){
