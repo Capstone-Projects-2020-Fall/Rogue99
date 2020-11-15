@@ -122,7 +122,6 @@ public class Hero extends Character{
                 // pick it up
                 if(inventory.size() != 10){
                     inventory.add((Item) game.level.getMap()[x][y].getEntities().pop());
-                    game.level.getIntMap()[x][y] = 0;
                     game.inventoryGui.addItemToInventory(inventory.get(inventory.size()-1));
                     System.out.println("picked up " + inventory.get(inventory.size()-1).getSprite());
                 }
@@ -228,11 +227,9 @@ public class Hero extends Character{
             score += (int)((Math.random()*100)+100);
             if(Math.random() < 0.4 && game.multiplayer){
                 game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
-                game.level.getIntMap()[x][y] = -1;
             }
             else if (Math.random() > 0.4 && game.multiplayer) {
                 game.level.getMap()[x][y].getEntities().push( new FreezePotion(1, "potion_health", 5 ));
-                game.level.getIntMap()[x][y] = -1;
             }
             game.removeActor(game.enemyHud);
             game.removeActor(game.hudGui);

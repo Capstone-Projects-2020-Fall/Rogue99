@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-class Pathing {
+public class Pathing {
     private final List<Node> open;
     private final List<Node> closed;
     private final List<Node> path;
@@ -16,7 +16,7 @@ class Pathing {
     private final boolean diag;
 
     // Node class for convenience
-    static class Node implements Comparable {
+    public static class Node implements Comparable {
         public Node parent;
         public int x, y;
         public double g;
@@ -47,7 +47,7 @@ class Pathing {
     }
 
     //Constructor
-    Pathing(int[][] maze, int xstart, int ystart, boolean diag) {
+    public Pathing(int[][] maze, int xstart, int ystart, boolean diag) {
         this.open = new ArrayList<Node>();
         this.closed = new ArrayList<Node>();
         this.path = new ArrayList<>();

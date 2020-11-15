@@ -156,7 +156,7 @@ public class Level implements Serializable {
         intMap = new int[width][height];
         for (int i = 0; i < width; i++) {
             for (int k = 0; k < height; k++) {
-                if( map[i][k].getType().equals("wall") || !(map[i][k].getEntities().isEmpty()) ) {
+                if( map[i][k].getType().equals("wall") ) {
                     intMap[i][k] = -1;
                 }
                 else {
