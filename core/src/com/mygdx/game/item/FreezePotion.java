@@ -2,15 +2,15 @@ package com.mygdx.game.item;
 
 import com.mygdx.game.interactable.Character;
 
-//Summons an enemy on a random player's map
-public class SummonScroll extends Item{
-    private String enemyType;
+//Makes a player stop moving
+public class FreezePotion extends Item{
+    private int freeze;
 
-    public SummonScroll(int rarity, String sprite, String type) {
+    public FreezePotion(int rarity, String sprite, int freeze) {
         super.rarity = rarity;
         super.sprite = sprite;
 
-        this.enemyType = type;
+        this.freeze = freeze;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class SummonScroll extends Item{
 
     @Override
     public int getId() {
-        return Item.SUMMONSCROLL;
+        return Item.FREEZEPOTION;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class SummonScroll extends Item{
         return 0;
     }
 
-    public String getEnemyType(){
-        return this.enemyType;
+    public int getFreeze() {
+        return freeze;
     }
 }

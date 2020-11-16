@@ -11,13 +11,16 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Rogue99;
 
 public class NameInputWindow extends Window {
+
+    public final int WINDOW_WIDTH = 132;
+    public final int WINDOW_HEIGHT = 42;
+
     public NameInputWindow(final Rogue99 game, String title, Skin skin) {
         super(title, skin);
         this.setResizable(true);
         this.setMovable(true);
         this.setName(title);
-        this.align(Align.center);
-        this.setSize(game.mainMenu.getWidth()/4, game.mainMenu.getHeight()/6);
+        this.setSize(WINDOW_WIDTH*3, WINDOW_HEIGHT*5);
         TextField textField = new TextField("Input a Name", skin);
         textField.setAlignment(Align.center);
         textField.setDisabled(true);
@@ -34,10 +37,22 @@ public class NameInputWindow extends Window {
                 game.setUserName(inputField.getText());
             }
         });
-        this.add(textField).size(this.getWidth() - 100, this.getHeight()/4).pad(6);
+        TextButton closeButton = new TextButton("Close", skin);
+        closeButton.setColor(Color.DARK_GRAY);
+        closeButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.removeActor(NameInputWindow.this);
+            }
+        });
+        this.add(textField).size(this.getWidth() - 100, this.getHeight()/4).pad(2);
         this.row();
-        this.add(inputField).size(this.getWidth() - 100, this.getHeight()/4).pad(6);
+        this.add(inputField).size(this.getWidth() - 100, this.getHeight()/4).pad(2);
         this.row();
-        this.add(button).size(this.getWidth()/6, this.getHeight()/10);
+        this.add(button).size(this.getWidth()/6, this.getHeight()/10).pad(2);
+        this.row();
+        this.add(closeButton).size(this.getWidth()/6, this.getHeight()/10);
+
     }
 }

@@ -12,6 +12,8 @@ public abstract class Item extends Interactable {
     public static final int WEAPON = 6;
     public static final int SUMMONSCROLL = 7;
     public static final int BANESCROLL = 8;
+    public static final int FREEZEPOTION = 9;
+    public static final int BOW = 10;
 
     protected int rarity;
     protected String sprite;

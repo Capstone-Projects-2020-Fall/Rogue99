@@ -2,13 +2,13 @@ package com.mygdx.game.item;
 
 import com.mygdx.game.interactable.Character;
 
-public class Weapon extends Item{
+public class Bow extends Item{
 
-    public boolean equipped;
+    boolean equipped;
     private String sprite;
     private int dmgModifier;
 
-    public Weapon(int rarity, String sprite, int dmgModifier){
+    public Bow(int rarity, String sprite, int dmgModifier){
         super.rarity = rarity;
         this.sprite = sprite;
         this.dmgModifier = dmgModifier;
@@ -21,7 +21,7 @@ public class Weapon extends Item{
 
     @Override
     public int getId() {
-        return Item.WEAPON;
+        return Item.BOW;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.mygdx.game.server;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
 
@@ -16,7 +15,6 @@ public class GameServer extends Server {
     ServerNetworkListener serverNetworkListener;
 
     public ArrayList<String> seeds;
-    public static String seed;
     Kryo kryo;
 
     public GameServer() {
@@ -28,8 +26,6 @@ public class GameServer extends Server {
         server.addListener(serverNetworkListener);
 
         seeds = new ArrayList<>();
-        //seeds.add(String.valueOf(System.currentTimeMillis()));
-        seed = String.valueOf(System.currentTimeMillis());
 
 
         try {
@@ -52,10 +48,12 @@ public class GameServer extends Server {
         kryo.register(Packets.Packet006RequestSeed.class);
         kryo.register(Packets.Packet007PlayerAffected.class);
         kryo.register(Packets.Packet008ServerMessage.class);
+        kryo.register(Packets.Packet009Scroll.class);
+        kryo.register(Packets.Packet010Disconnect.class);
+        kryo.register(Packets.Packet011StartGame.class);
     }
 
     public static void main(String[] args) {
         new GameServer();
-        //System.out.println(seed);
     }
 }

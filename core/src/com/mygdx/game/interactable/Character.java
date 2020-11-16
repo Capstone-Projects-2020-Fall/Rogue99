@@ -11,6 +11,7 @@ public class Character extends Interactable  {
     private int currHP;
     private int armor;
     private int str;
+    private double hitChance;
     public boolean up;
     public boolean down;
     public boolean left;
@@ -21,7 +22,11 @@ public class Character extends Interactable  {
     public final int UP = 1;
     public final int LEFT = 2;
     public final int RIGHT = 3;
-
+    
+    public final int UP_LEFT = 4;
+    public final int UP_RIGHT = 5;
+    public final int DOWN_LEFT = 6;
+    public final int DOWN_RIGHT = 7;
 
     @Override
     public void setPosX(int posX) {
@@ -47,6 +52,14 @@ public class Character extends Interactable  {
 
     public void setStr(int str) {
         this.str = str;
+    }
+
+    public void setHitChance(double hitChance){
+        this.hitChance = hitChance;
+    }
+
+    public double getHitChance(){
+        return hitChance;
     }
 
     @Override

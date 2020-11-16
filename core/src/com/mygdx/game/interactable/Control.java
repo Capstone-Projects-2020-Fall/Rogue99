@@ -34,6 +34,18 @@ public class Control extends InputAdapter implements InputProcessor {
             case Input.Keys.D:
                 hero.update(hero.RIGHT);
                 break;
+            case Input.Keys.Q:
+                hero.update(hero.UP_LEFT);
+                break;
+            case Input.Keys.E:
+                hero.update(hero.UP_RIGHT);
+                break;
+            case Input.Keys.Z:
+                hero.update(hero.DOWN_LEFT);
+                break;
+            case Input.Keys.C:
+                hero.update(hero.DOWN_RIGHT);
+                break;
         }
         return false;
     }
@@ -48,6 +60,16 @@ public class Control extends InputAdapter implements InputProcessor {
                     game.setShowInventory(true);
                 }
                 break;
+            case Input.Keys.R:
+                if(game.isRangeMode()) {
+                    game.setRangeMode(false);
+                }
+                else {
+                    game.setRangeMode(true);
+                }
+                break;
+            case Input.Keys.ESCAPE:
+                game.setShowEscape(true);
         }
         return false;
     }
@@ -64,6 +86,8 @@ public class Control extends InputAdapter implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        System.out.println(screenX + " " + screenY);
+        System.out.println("inventory " + game.inventoryGui.getX() + " " + game.inventoryGui.getY());
         return false;
     }
 

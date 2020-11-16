@@ -1,9 +1,7 @@
 package com.mygdx.game.map;
 
 import com.mygdx.game.Rogue99;
-import com.mygdx.game.interactable.Enemy;
-import com.mygdx.game.interactable.Hero;
-import com.mygdx.game.interactable.Interactable;
+import com.mygdx.game.interactable.*;
 import com.mygdx.game.item.*;
 
 import java.io.Serializable;
@@ -30,8 +28,12 @@ public class Level implements Serializable {
 
     //active entities
     public ArrayList<Enemy> enemies = new ArrayList<>();
+    public int enemiesNum;
     public Hero hero;
     public ArrayList<Hero> players = new ArrayList<>();
+
+    public boolean doorOpen = false;
+    public Double enemiesToOpen;
 
 
     private Rogue99 game;
@@ -61,14 +63,23 @@ public class Level implements Serializable {
         return map;
     }
 
+    public int[][] getIntMap() { return intMap; }
+
     public int getDepth() {
         return depth;
     }
 
     public void moveEnemies(){
         for(Enemy enemy : enemies){
-            enemy.moveEnemy(map, intMap, hero);
+            if(enemy.getSprite().equals("ghost")){
+                int[][] intMapGhost = new int[this.getWidth()][this.getHeight()];
+                Ghost ghost = (Ghost) enemy;
+                ghost.moveEnemy(map, intMapGhost, hero);
+            } else{
+                enemy.moveEnemy(map, intMap, hero);
+            }
         }
+        game.timerCount = 0;
     }
 
     public void setSeed(String seed) {
@@ -112,6 +123,7 @@ public class Level implements Serializable {
 
         //generate zones
         //System.out.println("Zone 0: " + zones[0].tiles.size());
+        System.out.println("Generating zones");
         int limit;
         for(int i = 1; i < 4; i++){
             limit = rand.nextInt(200)+400;
@@ -119,15 +131,23 @@ public class Level implements Serializable {
             while(zones[i].tiles.size() < 150){
                 generateZone(zones[i], limit);
             }
-            System.out.println("Zone " + i + ": " + zones[i].tiles.size());
+            //System.out.println("Zone " + i + ": " + zones[i].tiles.size());
         }
-        System.out.println("Zone 0: " + zones[0].tiles.size());
+        System.out.println("Zone generation complete");
 
-
+        System.out.println("Generating grass");
         generateGrass();
+        System.out.println("Grass generation complete");
+        System.out.println("Generating stairs");
         generateStairs();
-        generateEnemy();
+        System.out.println("Stair generation complete");
+        //generateEnemy();
+        System.out.println("Generating enemies");
+        generateEnemies();
+        System.out.println("Enemy generation complete");
+        System.out.println("Generating items");
         generateItems();
+        System.out.println("Item generation complete");
 
         this.entrance.getEntities().push(hero);
         hero.setPosX(this.entrance.getPosX());
@@ -308,7 +328,7 @@ public class Level implements Serializable {
             if (Math.random() < 0.5) y_down = (int) (Math.random() * 15);
             else y_down = (int) (Math.random() * 15) + 45;
         }
-        map[x_down][y_down].setType("stair_down");
+        map[x_down][y_down].setType("downstair");
         exit = map[x_down][y_down];
         // picks a random tile that isn't a wall and is far enough away from the other stairs and has at least 1 wall neighbor
         while (!checkDistance(x_down, y_down, x_up, y_up, 50) || map[x_up][y_up].getType().equals("wall")
@@ -316,7 +336,7 @@ public class Level implements Serializable {
             x_up = (int) (Math.random() * 60);
             y_up = (int) (Math.random() * 60);
         }
-        map[x_up][y_up].setType("stair_up");
+        map[x_up][y_up].setType("upstair");
         entrance = map[x_up][y_up];
     }
 
@@ -347,34 +367,86 @@ public class Level implements Serializable {
         return arr;
     }
 
-    public void generateEnemy(){
-        //System.out.println("in generateEnemy");
-        int[] diff = iterateEnemy();
-        int sum = 0;
-        int index = 1;
-        int u = 0;
-        int x = 0;
-        int y = 0;
-        for(int i : diff){
-            sum += i;
-            if(i == 0) continue;
-            for (int j = 0; j < sum; j++) {
+    public void generateEnemies(){
+        int[] diffMap = new int[game.enemyMap.size()];
+        //initial settings for enemy difficulty distribution
+        diffMap[0] = 6;
+        diffMap[1] = 1;
+        diffMap[2] = 0;
+        int diffMod = 0;
+        for(int i = 0; i < depth; i++){
+            if(1 <= i && i < 3){    //8, 2, 0 by L3
+                diffMap[0]++;
+                diffMap[1]++;
+                diffMap[2]++;
+            } else if(3 <= i && i < 6){
+                int c = 0;
+                diffMap[0]--;
+                diffMap[1]++;
+                diffMap[2]++;
+                if(i % 2 == 1) diffMod++;
+            } else if(6 <= i && i < 10){
+                diffMap[0]+=2;
+                diffMap[1]--;
+                diffMap[2]++;
+            } else{
+                diffMod++;
+            }
+        }
+        int count = 0;
+        for (int i : diffMap){
+            System.out.println("Difficulty " + count + ": " + i);
+            count++;
+        }
+        System.out.println("diffMod: " + diffMod);
+
+        //iterate through difficulty distribution and spawn evenly across zones; scale if necessary
+        int u;
+        for(int i = 0; i < diffMap.length; i++){
+            System.out.println("SPAWNING DIFFICULTY " + i);
+            System.out.println("diffMap[i]: " + diffMap[i]);
+            u = 0;
+            for(int k = 0; k < diffMap[i]; k++){
                 Zone z = zones[u];
                 Tile tile;
-
                 do {
                     tile = z.tiles.get(rand.nextInt(z.tiles.size()));
                 } while (!tile.entities.isEmpty());
 
-                Enemy enemy = new Enemy(index, "wasp", tile, game);
-                //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
+                String type = game.enemyMap.get(i).get(rand.nextInt(game.enemyMap.get(i).size()));
+                System.out.println("Type string: " + type);
+                Enemy enemy = new Enemy();
+                if(type.equals("rat")){
+                    System.out.println("Spawned rat");
+                    enemy = new Rat(tile, game);
+                } else if(type.equals("wasp")){
+                    System.out.println("Spawned wasp");
+                    enemy = new Wasp(tile, game);
+                } else if(type.equals("slime")){
+                    System.out.println("Spawned slime");
+                    enemy = new Slime(tile, game);
+                } else if(type.equals("ghost")){
+                    System.out.println("Spawned ghost");
+                    enemy = new Ghost(tile, game);
+                } else if(type.equals("zombie")){
+                    System.out.println("Spawned zombie");
+                    enemy = new Zombie(tile, game);
+                } else if(type.equals("skeleton")){
+                    System.out.println("Spawned skeleton");
+                    //enemy = new Skeleton(tile, game);
+                }
+                enemy.diffMod = diffMod;
+                enemy.scaleStats();
                 enemies.add(enemy);
                 tile.getEntities().push(enemy);
                 u++;
                 if(u > 3) u = 0;
             }
-            index++;
         }
+        enemiesNum = enemies.size();
+        enemiesToOpen = enemiesNum * 0.2;
+        System.out.println("ENEMIES NUM: " + enemiesNum);
+        System.out.println("ENEMIES TO OPEN: " + enemiesToOpen);
     }
 
     private void generateZone(Zone zone, int zoneLimit){
@@ -401,7 +473,10 @@ public class Level implements Serializable {
     }
 
     private void generateItems(){
-        int c = 100;
+        int c = 120;
+        if(game.multiplayer){
+            c += 40;
+        }
         int numItems, itemC;
         for(Zone z : zones){
             numItems = 2 + z.id+rand.nextInt(2);
@@ -411,16 +486,22 @@ public class Level implements Serializable {
                 if(itemC < 20){
                     generateItemUtil(new HealthPotion(20, "potion_health", 10), z);
                 } else if(20 <= itemC && itemC < 40){
-                    generateItemUtil(new DamagePotion(20, "potion_damage", 10), z);
+                    generateItemUtil(new HealthScroll(20, "scroll_health", 5), z);
                 } else if(40 <= itemC && itemC < 60){
-                    generateItemUtil(new HealthScroll(20, "scroll_health", 10), z);
-                } else if(60 <= itemC && itemC < 70){
-                    generateItemUtil(new StrengthScroll(20, "scroll_strength", 10), z);
-                } else if(70 <= itemC && itemC < 80){
-                    generateItemUtil(new ArmorScroll(20, "scroll_armor", 10), z);
+                    generateItemUtil(new StrengthScroll(20, "scroll_strength", 1), z);
+                    System.out.println("STRENGTH SCROLL SPAWNED");
+                } else if(60 <= itemC && itemC < 80){
+                    generateItemUtil(new ArmorScroll(20, "scroll_armor", 1), z);
                 } else if(80 <= itemC && itemC < 100){
                     System.out.println("weapon generated!");
-                    generateItemUtil(new Weapon(20, "tile261", 10), z);
+                    generateItemUtil(new sword(20, "sword", 5), z);
+                } else if(100 <= itemC && itemC < 120){
+                    System.out.println("weapon generated!");
+                    generateItemUtil(new Ax(20, "axe", 8), z);
+                } else if(120 <= itemC && itemC < 140){
+                    generateItemUtil(new FreezePotion(20, "potion_freeze", 5), z);
+                } else if(140 <= itemC && itemC < 160){
+                    generateItemUtil(new DamagePotion(20, "potion_damage", 15), z);
                 }
             }
         }
@@ -436,6 +517,7 @@ public class Level implements Serializable {
         } while(!tile.getEntities().empty());
 
         tile.getEntities().push(item);
+        //System.out.println("STR SCROLL SPAWNED AT: " + tile.getPosX() + " " + tile.getPosY());
     }
 
     public String getSeed() {
