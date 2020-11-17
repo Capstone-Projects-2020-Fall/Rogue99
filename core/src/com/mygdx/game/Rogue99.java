@@ -15,16 +15,15 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.client.MPClient;
 import com.mygdx.game.gui.*;
-import com.mygdx.game.interactable.Enemy;
 import com.mygdx.game.item.*;
 import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
 import com.mygdx.game.map.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import java.lang.reflect.GenericDeclaration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,9 +37,9 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 	public Hero hero;
-	SpriteBatch batch;	public OrthographicCamera camera;
+	SpriteBatch batch;	public OrthographicCamera MapCamera;
 	public MPClient client;
-	ExtendViewport viewport;
+	FitViewport MapViewport;
 
 	//map of enemy types per difficulty
 	public HashMap<Integer, ArrayList<String>> enemyMap = new HashMap<>();
@@ -71,7 +70,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public ArrayList<Hero> players;
 	long lastTime;
 
-	Stage stage;
+	Stage MapStage;
 	Control control;
 
 	boolean mapDrawn;
@@ -96,6 +95,8 @@ public class Rogue99 extends ApplicationAdapter {
 	public MainMenu mainMenu;
 	public Stage mainMenuStage;
 	NameInputWindow nameInputWindow;
+	ExtendViewport mainMenuViewport;
+	OrthographicCamera mainMenuCamera;
 
 	public GameLobbyGui gameLobbyGui;
 
@@ -103,6 +104,10 @@ public class Rogue99 extends ApplicationAdapter {
 	MessageWindow popUpWindow;
 	long lastPopUp;
 	ExitScreen exitScreen;
+
+	Stage GuiElementStage;
+	FitViewport GuiElementViewport;
+	OrthographicCamera GuiCamera;
 
 
 	@Override
@@ -115,9 +120,16 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 		//initialize camera and viewport
-		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
-		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		MapCamera = new OrthographicCamera();
+		MapViewport = new FitViewport(Gdx.graphics.getWidth()*0.8f, Gdx.graphics.getHeight(), MapCamera);
+		MapCamera.setToOrtho(false, MapCamera.viewportWidth, MapCamera.viewportHeight);
+
+		GuiElementStage = new Stage();
+		GuiCamera = new OrthographicCamera();
+		GuiElementViewport = new FitViewport(Gdx.graphics.getWidth()*0.20f, Gdx.graphics.getHeight(), GuiCamera);
+		GuiElementStage.setViewport(GuiElementViewport);
+		GuiElementStage.getViewport().setCamera(GuiCamera);
+		GuiCamera.setToOrtho(false, GuiCamera.viewportWidth, GuiCamera.viewportHeight);
 
 		mapDrawn = false;
 		showInventory = false;
@@ -149,11 +161,11 @@ public class Rogue99 extends ApplicationAdapter {
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been defeated.");
 
 		 mainMenuStage = new Stage();
-		 mainMenuStage.getViewport().setCamera(camera);
-		 mainMenuStage.setViewport(viewport);
+		 mainMenuStage.getViewport().setCamera(MapCamera);
+		 mainMenuStage.setViewport(MapViewport);
 		 popUpStage = new Stage();
-		 popUpStage.getViewport().setCamera(camera);
-		 popUpStage.setViewport(viewport);
+		 popUpStage.getViewport().setCamera(MapCamera);
+		 popUpStage.setViewport(MapViewport);
 
 		showMainMenu = true;
 		mainMenu();
@@ -205,176 +217,30 @@ public class Rogue99 extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		if(showEscape && !multiplayer){
-			stage.act();
-			exitScreen.setPosition(hero.getPosX() * 36 - exitScreen.getWidth() / 2, hero.getPosY() * 36 - exitScreen.getHeight() / 2);
-			stage.addActor(exitScreen);
-			stage.draw();
-			Gdx.input.setInputProcessor(stage);
-			stage.addListener(new InputListener() {
-				@Override
-				public boolean keyUp(InputEvent event, int keycode) {
-					if (keycode == Input.Keys.ESCAPE) {
-						setShowEscape(false);
-						removeActor(exitScreen);
-					}
-					return super.keyUp(event, keycode);
-				}
-			});
-		} else {
-			Gdx.gl.glClearColor(0, 0, 0, 1);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-			/* BATCH RENDERING */
-			batch.setProjectionMatrix(camera.combined);
-			batch.begin();
-
-			/* MAIN MENU STAGE DOES NOT NEED TO BE OUTSIDE THE BATCH SINCE THEY DON'T OVERLAP */
-			if (showMainMenu) {
-				/* SKIP TO STAGE DRAWING */
-				;
-			} else {
-				if (mapGenerated) {
-					camera.zoom = 0.6f;
-					drawMap(level);
-
-					drawHeroes();
-
-					if (System.currentTimeMillis() - lastPopUp > 2000) {
-						if (popUpStage.getActors().size > 0) {
-							popUpStage.getActors().get(0).remove();
-							showPopUp = false;
-						}
-						lastPopUp = System.currentTimeMillis();
-					}
-				}
-
-				// Only Main thread has access to OpenGL so it needs to be the one generating the map
-				// MPClient or its network listeners can't just use generateLevel because they are on a different thread.
-				if (seedReceived) {
-					generateLevel(serverSeed, serverDepth);
-					seedReceived = false;
-				}
-
-				if (System.currentTimeMillis() - lastTime > 1000) {
-					hero.freezeTime(-1);
-					lastTime = System.currentTimeMillis();
-				}
-
-				if (timerCount == 60) {
-					level.moveEnemies();
-				} else {
-					timerCount++;
-				}
-
-				camera.position.lerp(hero.pos3, 0.1f);
-				camera.update();
-
-			}
-			batch.end();
-			/* BATCH REDNERING ENDS */
-
-		/* STAGE RENDERING BEGINS */
-		if (showMainMenu) {
-			Gdx.input.setInputProcessor(mainMenuStage);
-			camera.zoom = 1;
-			mainMenuStage.act();
-			mainMenuStage.draw();
-		} else if(mapGenerated) {
-			stage.act();
-
-			if (isShowInventory()) {
-				Gdx.input.setInputProcessor(stage);
-				addActor(inventoryGui);
-				addActor(hudGui);
-				inventoryGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
-				hudGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 + HEIGHT_PAD);
-				removeActor(enemyHud);
-				stage.draw();
-				stage.addListener(new InputListener() {
-					@Override
-					public boolean keyUp(InputEvent event, int keycode) {
-						if (keycode == Input.Keys.I) {
-							setShowInventory(false);
-						}
-						return super.keyUp(event, keycode);
-					}
-				});
-			} else if(hero.getCurrHP() <= 0) {
-				attacking = false;
-				stage.draw();
-				gameLostWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
-				Gdx.input.setInputProcessor(stage);
-				removeActor(hudGui);
-				removeActor(enemyHud);
-				addActor(gameLostWindow);
-			} else {
-				Gdx.input.setInputProcessor(control);
-				removeActor(inventoryGui);
-				removeActor(hudGui);
-			}
-			if(rangeMode) {
-				Gdx.input.setInputProcessor(stage);
-			}
-			else {
-				Gdx.input.setInputProcessor(control);
-      }
-			if (isAttacking()) {
-				addActor(hudGui);
-				addActor(enemyHud);
-				hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
-				enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
-				stage.draw();
-			}
-			if(showPopUp) {
-				Gdx.input.setInputProcessor(control);
-				popUpWindow.setPosition(hero.getPosX() * 36 + (16 * 36) - (popUpWindow.getWidth() + 2), hero.getPosY() * 36 + (9 * 36) - popUpWindow.getHeight());
-				popUpStage.act();
-				popUpStage.draw();
-			}
-		}
-		/* STAGE RENDERING ENDS */
 			/* STAGE RENDERING BEGINS */
 			if (showMainMenu) {
 				Gdx.input.setInputProcessor(mainMenuStage);
 				mainMenuStage.act();
 				mainMenuStage.draw();
 			} else if (mapGenerated) {
-				stage.act();
-				removeActor(hudGui);
-				removeActor(enemyHud);
-				if (isShowInventory()) {
-					Gdx.input.setInputProcessor(stage);
-					addActor(inventoryGui);
-					addActor(hudGui);
-					inventoryGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 - 108);
-					hudGui.setPosition(hero.getPosX() * 36 + 72, hero.getPosY() * 36 + HEIGHT_PAD);
-					removeActor(enemyHud);
-					stage.draw();
-					stage.addListener(new InputListener() {
-						@Override
-						public boolean keyUp(InputEvent event, int keycode) {
-							if (keycode == Input.Keys.I) {
-								setShowInventory(false);
-							}
-							return super.keyUp(event, keycode);
-						}
-					});
+				MapCamera.zoom = 0.6f;
+				MapStage.act();
+				MapStage.getViewport().setScreenBounds(0,0, (int) (Gdx.graphics.getWidth()*0.8), Gdx.graphics.getHeight());
+				MapStage.getViewport().apply();
+				MapStage.draw();
+				GuiElementStage.act();
+				GuiElementStage.getViewport().setScreenBounds((int)(Gdx.graphics.getWidth()*0.8),0,(int)(Gdx.graphics.getWidth()*0.2),Gdx.graphics.getHeight() );
+				GuiElementStage.getViewport().apply();
+				GuiElementStage.draw();
 
-				} else if (hero.getCurrHP() <= 0) {
-					attacking = false;
-					stage.draw();
-					gameLostWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
-					Gdx.input.setInputProcessor(stage);
-					removeActor(hudGui);
-					removeActor(enemyHud);
-					addActor(gameLostWindow);
-				} else if (isShowEscape()) {
+				if (isShowEscape()) {
 					exitScreen.setPosition(hero.getPosX() * 36 - exitScreen.getWidth() / 2, hero.getPosY() * 36 - exitScreen.getHeight() / 2);
-					stage.addActor(exitScreen);
-					stage.draw();
-					Gdx.input.setInputProcessor(stage);
-					stage.addListener(new InputListener() {
+					MapStage.addActor(exitScreen);
+					Gdx.input.setInputProcessor(MapStage);
+					MapStage.addListener(new InputListener() {
 						@Override
 						public boolean keyUp(InputEvent event, int keycode) {
 							if (keycode == Input.Keys.ESCAPE) {
@@ -389,23 +255,53 @@ public class Rogue99 extends ApplicationAdapter {
 					removeActor(inventoryGui);
 					removeActor(hudGui);
 				}
-				if (isAttacking()) {
-					addActor(hudGui);
-					addActor(enemyHud);
-					hudGui.setPosition(hero.getPosX() * 36 + 144, hero.getPosY() * 36);
-					enemyHud.setPosition(hero.getPosX() * 36 - 144, hero.getPosY() * 36);
-					stage.draw();
+
+				drawHeroes();
+
+					if (System.currentTimeMillis() - lastPopUp > 2000) {
+						if (popUpStage.getActors().size > 0) {
+							popUpStage.getActors().get(0).remove();
+							showPopUp = false;
+						}
+						lastPopUp = System.currentTimeMillis();
+					}
+
+				if (System.currentTimeMillis() - lastTime > 1000) {
+					hero.freezeTime(-1);
+					lastTime = System.currentTimeMillis();
 				}
-				if (showPopUp) {
-					Gdx.input.setInputProcessor(control);
-					popUpWindow.setPosition(hero.getPosX() * 36 + (16 * 36) - (popUpWindow.getWidth() + 2), hero.getPosY() * 36 + (9 * 36) - popUpWindow.getHeight());
-					popUpStage.act();
-					popUpStage.draw();
+
+				if (timerCount == 60) {
+					level.moveEnemies();
+				} else {
+					timerCount++;
+				}
+
+				if(hero.getCurrHP() <= 0) {
+					attacking = false;
+					gameLostWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
+					Gdx.input.setInputProcessor(MapStage);
+					removeActor(hudGui);
+					removeActor(enemyHud);
+					MapStage.addActor(gameLostWindow);
 				}
 			}
-			/* STAGE RENDERING ENDS */
-		}
-	}
+
+				// Only Main thread has access to OpenGL so it needs to be the one generating the map
+				// MPClient or its network listeners can't just use generateLevel because they are on a different thread.
+				if (seedReceived) {
+					generateLevel(serverSeed, serverDepth);
+					seedReceived = false;
+				}
+
+
+				MapCamera.position.lerp(hero.pos3, 0.1f);
+				MapCamera.update();
+		/* STAGE RENDERING ENDS */
+			}
+
+
+
 
 
 	@Override
@@ -417,8 +313,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 	@Override
 	public void resize(int width, int height) {
-		viewport.update(width, height, true);
-		batch.setProjectionMatrix(camera.combined);
+		MapViewport.update(width, height, true);
+		batch.setProjectionMatrix(MapCamera.combined);
 	}
 
 	//adds sprites to hash map for more efficient use
@@ -431,105 +327,6 @@ public class Rogue99 extends ApplicationAdapter {
 		}
 	}
 
-	//draws map for given level
-	public void drawMap(Level level) {
-		Tile[][] map = level.getMap();
-		for(Tile[] i : map){
-			for(Tile k : i){
-				//check type of tile and draw sprite
-				if(k.getType().equals("floor")){
-					drawTile(k,"floor", k.getPosX()*36, k.getPosY()*36);
-				} else if(k.getType().equals("wall")){
-					drawTile(k,"wall", k.getPosX()*36, k.getPosY()*36);
-				} else if(k.getType().equals("grass")){
-					drawTile(k,"grass1", k.getPosX()*36, k.getPosY()*36);
-				} else if(k.getType().equals("upstair")){
-					drawTile(k,"upstair", k.getPosX()*36, k.getPosY()*36);
-				} else if(k.getType().equals("downstair")) {
-					if(level.doorOpen == true){
-						drawTile(k,"downstair", k.getPosX() * 36, k.getPosY() * 36);
-					} else{
-						drawTile(k,"downstair_closed", k.getPosX() * 36, k.getPosY() * 36);
-					}
-				}
-			}
-		}
-	}
-
-	//draws tile on specified spot in screen
-	public void drawTile(Tile tile, String name, float x, float y) {
-		Sprite sprite;
-		if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof  Hero){
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			sprite.setPosition(x,y);
-			sprite.draw(batch);
-		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Enemy){
-			//System.out.println("Drawing" + sprites.get(tile.getEntities().peek().getSprite()));
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			if(tile.getEntities().peek().getSprite().equals("ghost")){
-				//System.out.println("ghost sprite set alpha");
-				sprite.setAlpha(0.2f);
-			}
-			//System.out.println("ENEMY SPRITE" + tile.getEntities().peek().getSprite());
-			sprite.setPosition(x,y);
-			sprite.draw(batch);
-		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthScroll){
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			//System.out.println("HEALTH SCROLL SPRITE" + tile.getEntities().peek().getSprite());
-			sprite.setColor(Color.CYAN);
-			sprite.setPosition(x,y);
-			sprite.draw(batch);
-		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof ArmorScroll) {
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			//System.out.println("ARMOR SCROLL SPRITE" + tile.getEntities().peek().getSprite());
-			sprite.setColor(Color.GOLDENROD);
-			sprite.setPosition(x, y);
-			sprite.draw(batch);
-		}
-		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof StrengthScroll) {
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			//System.out.println(tile.getEntities().peek().getSprite());
-			sprite.setColor(Color.SLATE);
-			sprite.setPosition(x, y);
-			sprite.draw(batch);
-		}
-		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthPotion) {
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
-			sprite.setColor(Color.CYAN);
-			sprite.setPosition(x, y);
-			sprite.draw(batch);
-		}
-		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof SummonScroll){
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			sprite.setColor(Color.RED);
-			sprite.setPosition(x, y);
-			sprite.draw(batch);
-		}
-		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof DamagePotion) {
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
-			sprite.setColor(Color.RED);
-			sprite.setPosition(x, y);
-			sprite.draw(batch);
-		} else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof FreezePotion) {
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
-			sprite.setColor(Color.PURPLE);
-			sprite.setPosition(x, y);
-			sprite.draw(batch);
-		}
-		else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Weapon) {
-			sprite = sprites.get(tile.getEntities().peek().getSprite());
-			//System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
-			sprite.setPosition(x, y);
-			sprite.draw(batch);
-		} else {
-			sprite = sprites.get(name);
-			sprite.setPosition(x, y);
-			sprite.draw(batch);
-		}
-	}
 
 	private void drawHeroes(){
 		//System.out.println("Drawing hero");
@@ -552,9 +349,11 @@ public class Rogue99 extends ApplicationAdapter {
 		bars.put(HEALTHBAR, 100);
 		bars.put(ARMOURBAR, 0);
 		hudGui = new HUDGui("OwnStats",skin, bars);
-		hudGui.setPosition(Gdx.graphics.getWidth(), inventoryGui.getHeight() + HEIGHT_PAD);
+		System.out.println("Inventory Gui y: " + inventoryGui.getY() + " Inventory y + height " + inventoryGui.getY() + inventoryGui.getHeight() );
+		hudGui.setPosition(-GuiElementStage.getWidth(), inventoryGui.getY() + inventoryGui.getHeight()*3.6f);
 		hudGui.getColor().a = .8f;
 		barList = hudGui.getHudBars();
+		GuiElementStage.addActor(hudGui);
 	}
 
 	public void createEnemyHud(){
@@ -565,13 +364,16 @@ public class Rogue99 extends ApplicationAdapter {
 		enemyBarList = enemyHud.getHudBars();
 		enemyHud.getColor().a = .8f;
 		enemyHud.setSize(26*3+40,26*(enemyBarList.size() + 1) + 80);
+		enemyHud.setPosition(-GuiElementStage.getWidth() + hudGui.getWidth()*3.1f, inventoryGui.getY() + inventoryGui.getHeight()*3.6f);
+		GuiElementStage.addActor(enemyHud);
 	}
 
 	//creates Inventory GUI
 	public void createInventoryGui(){
 		inventoryGui = new InventoryGui(skin, hero, this);
-		inventoryGui.setPosition(Gdx.graphics.getWidth(), 0);
+		inventoryGui.setPosition(-GuiElementStage.getWidth(), -GuiElementStage.getHeight());
 		inventoryGui.getColor().a = .8f;
+		GuiElementStage.addActor(inventoryGui);
 	}
 
 	//adjust stats bars
@@ -678,10 +480,10 @@ public class Rogue99 extends ApplicationAdapter {
 		level.setSeed(seed);
 		level.generate();
 		levels.add(level);
-		stage = new LevelStage(level, this);
-		stage.getViewport().setCamera(camera);
-		stage.setViewport(viewport);
-		System.out.println("Stage width and height:" + stage.getWidth() + " " + stage.getHeight());
+		MapStage = new LevelStage(level, this);
+		MapStage.getViewport().setCamera(MapCamera);
+		MapStage.setViewport(MapViewport);
+		System.out.println("Stage width and height:" + MapStage.getWidth() + " " + MapStage.getHeight());
 		System.out.println("Player inventory size: " + hero.getInventory().size());
 		generateGuiElements();
 		mapGenerated = true;
@@ -757,9 +559,6 @@ public class Rogue99 extends ApplicationAdapter {
 		}
 	}
 
-	public void addActor(Actor actor){
-		stage.addActor(actor);
-	}
 
 	public void removeActor(Actor actor){
 		if(showMainMenu){
@@ -769,15 +568,15 @@ public class Rogue99 extends ApplicationAdapter {
 				}
 			}
 		} else {
-			for (Actor a : stage.getActors()) {
+			for (Actor a : MapStage.getActors()) {
 				if (a.getName() == actor.getName()) {
 					if (a.getName() == "You Lost!") {
 						if (multiplayer) {
 							client.client.close();
 							mainMenuStage.getActors().get(mainMenuStage.getActors().size -1).remove();
 						}
-						viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-						batch.setProjectionMatrix(camera.combined);
+						MapViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+						MapCamera.zoom = 1;
 						showMainMenu = true;
 						mapGenerated = false;
 					}
@@ -793,14 +592,14 @@ public class Rogue99 extends ApplicationAdapter {
 			showMainMenu = false;
 		} else if (buttonName.equals("Multiplayer")) {
 			nameInputWindow = new NameInputWindow(this, "Set Username", skin);
-			nameInputWindow.setPosition(camera.viewportWidth / 2 - nameInputWindow.getWidth() / 2, camera.viewportHeight / 2 - nameInputWindow.getHeight() / 2);
+			nameInputWindow.setPosition(MapCamera.viewportWidth / 2 - nameInputWindow.getWidth() / 2, MapCamera.viewportHeight / 2 - nameInputWindow.getHeight() / 2);
 			mainMenuStage.addActor(nameInputWindow);
 		} else if (buttonName.equals("Resume")) {
 			setShowEscape(false);
 			removeActor(exitScreen);
 		} else if(buttonName.equals("Main Menu")) {
-			viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-			batch.setProjectionMatrix(camera.combined);
+			MapViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+			MapCamera.zoom = 1;
 			showMainMenu = true;
 			mapGenerated = false;
 			setShowEscape(false);
@@ -861,7 +660,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public void connectionRejected(String message){
 		MessageWindow messageWindow = new MessageWindow(this,"Connection Rejected", skin,message);
-		messageWindow.setPosition(camera.viewportWidth/2 - messageWindow.getWidth()/2, camera.viewportHeight/2 - messageWindow.getHeight());
+		messageWindow.setPosition(MapCamera.viewportWidth/2 - messageWindow.getWidth()/2, MapCamera.viewportHeight/2 - messageWindow.getHeight());
 		messageWindow.setMovable(true);
 		mainMenuStage.addActor(messageWindow);
 	}
