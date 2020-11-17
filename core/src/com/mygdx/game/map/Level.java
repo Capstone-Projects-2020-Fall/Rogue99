@@ -325,13 +325,13 @@ public class Level implements Serializable {
         // picks a random tile that isn't a wall and has at least 1 wall neighbor
         while (map[x_down][y_down].getType().equals("wall") || countAliveNeighbors(map[x_down][y_down], "wall") < 1) {
             x_down = (int) (Math.random() * 60);
-            if (Math.random() < 0.5) y_down = (int) (Math.random() * 15);
-            else y_down = (int) (Math.random() * 15) + 45;
+            if (Math.random() < 0.5) y_down = (int) (Math.random() * 12);
+            else y_down = (int) (Math.random() * 12) + 48;
         }
         map[x_down][y_down].setType("downstair");
         exit = map[x_down][y_down];
         // picks a random tile that isn't a wall and is far enough away from the other stairs and has at least 1 wall neighbor
-        while (!checkDistance(x_down, y_down, x_up, y_up, 50) || map[x_up][y_up].getType().equals("wall")
+        while (!checkDistance(x_down, y_down, x_up, y_up, 40) || map[x_up][y_up].getType().equals("wall")
                 || countAliveNeighbors(map[x_up][y_up], "wall") < 1) {
             x_up = (int) (Math.random() * 60);
             y_up = (int) (Math.random() * 60);
