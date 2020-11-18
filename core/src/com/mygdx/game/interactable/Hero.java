@@ -207,9 +207,8 @@ public class Hero extends Character{
         }
         System.out.println("enemy health after attack: " + enemy.getCurrHP());
         game.changeBarValue("EnemyHP", enemy.getCurrHP());
-        game.changeBarValue("EnemyAR", enemy.getArmor());
         game.enemyHud.statsNumTexts.get(0).setText(String.valueOf(enemy.getCurrHP()));
-        game.enemyHud.statsNumTexts.get(1).setText(String.valueOf(enemy.getArmor()));
+        game.enemyHud.getTitleLabel().setText(enemy.getSprite().toUpperCase());
         if(enemy.getCurrHP() > 0){
             //game.level.getMap()[x][y].getEntities().push(enemy);
             enemy.attack(this);

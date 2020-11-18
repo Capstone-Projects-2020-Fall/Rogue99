@@ -13,8 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.client.MPClient;
 import com.mygdx.game.gui.*;
@@ -160,9 +162,13 @@ public class Rogue99 extends ApplicationAdapter {
 
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been defeated.");
 
+		 mainMenuCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		 mainMenuViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mainMenuCamera);
 		 mainMenuStage = new Stage();
-		 mainMenuStage.getViewport().setCamera(MapCamera);
 		 mainMenuStage.setViewport(MapViewport);
+		 mainMenuStage.getViewport().setCamera(MapCamera);
+		 mainMenuCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 		 popUpStage = new Stage();
 		 popUpStage.getViewport().setCamera(MapCamera);
 		 popUpStage.setViewport(MapViewport);
@@ -256,15 +262,6 @@ public class Rogue99 extends ApplicationAdapter {
 					removeActor(hudGui);
 				}
 
-				drawHeroes();
-
-					if (System.currentTimeMillis() - lastPopUp > 2000) {
-						if (popUpStage.getActors().size > 0) {
-							popUpStage.getActors().get(0).remove();
-							showPopUp = false;
-						}
-						lastPopUp = System.currentTimeMillis();
-					}
 
 				if (System.currentTimeMillis() - lastTime > 1000) {
 					hero.freezeTime(-1);
@@ -284,6 +281,18 @@ public class Rogue99 extends ApplicationAdapter {
 					removeActor(hudGui);
 					removeActor(enemyHud);
 					MapStage.addActor(gameLostWindow);
+				}
+				if(showInventory){
+					Gdx.input.setInputProcessor(GuiElementStage);
+					GuiElementStage.addListener(new InputListener() {
+						@Override
+						public boolean keyUp(InputEvent event, int keycode) {
+							if (keycode == Input.Keys.I) {
+								setShowInventory(false);
+							}
+							return super.keyUp(event, keycode);
+						}
+					});
 				}
 			}
 
@@ -328,20 +337,6 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 
-	private void drawHeroes(){
-		//System.out.println("Drawing hero");
-		for(Hero player : players) {
-			if(player.depth == hero.depth){
-				Sprite sprite = sprites.get("players");
-				sprite.setPosition(player.getPosX()*36, player.getPosY()*36);
-				Color color = new Color(player.getSpriteColor());
-				color.a = 1;
-				sprite.setColor(color);
-				sprite.setAlpha(.5f);
-				sprite.draw(batch);
-			}
-		}
-	}
 
 	//creates HUD GUI & the map of the stats bars.
 	public void createHUDGui(){
@@ -349,6 +344,7 @@ public class Rogue99 extends ApplicationAdapter {
 		bars.put(HEALTHBAR, 100);
 		bars.put(ARMOURBAR, 0);
 		hudGui = new HUDGui("OwnStats",skin, bars);
+		hudGui.getTitleLabel().setText("PLAYER");
 		System.out.println("Inventory Gui y: " + inventoryGui.getY() + " Inventory y + height " + inventoryGui.getY() + inventoryGui.getHeight() );
 		hudGui.setPosition(-GuiElementStage.getWidth(), inventoryGui.getY() + inventoryGui.getHeight()*3.6f);
 		hudGui.getColor().a = .8f;
@@ -359,7 +355,6 @@ public class Rogue99 extends ApplicationAdapter {
 	public void createEnemyHud(){
 		Map<String, Integer> bars = new HashMap<>();
 		bars.put("EnemyHP", 0);
-		bars.put("EnemyAR", 0);
 		enemyHud = new HUDGui("EnemyStats",skin, bars);
 		enemyBarList = enemyHud.getHudBars();
 		enemyHud.getColor().a = .8f;
@@ -521,6 +516,9 @@ public class Rogue99 extends ApplicationAdapter {
 		createHUDGui();
 		createEnemyHud();
 		exitScreen = new ExitScreen(this, "Menu", skin);
+		popUpWindow = new MessageWindow(this,"ALERT", skin, "");
+		popUpWindow.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
+		GuiElementStage.addActor(popUpWindow);
   }
 
 	public void newLevel(int depth){
@@ -637,10 +635,7 @@ public class Rogue99 extends ApplicationAdapter {
 		} else if(itemType.equals("freeze_potion")){
 			message = "Player " + sentBy + " froze " + receivedBy + "!";
 		}
-		popUpWindow = new MessageWindow(this,"ALERT", skin, message);
-		popUpWindow.setPosition(hero.getPosX() * 36 + (16*36) - (popUpWindow.getWidth() + 2), hero.getPosY() * 36 + (9*36) - popUpWindow.getHeight());
-		popUpStage.addActor(popUpWindow);
-		showPopUp = true;
+		popUpWindow.getTextField().setText(message);
 		lastPopUp = System.currentTimeMillis();
 	}
 
