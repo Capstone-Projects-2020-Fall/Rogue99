@@ -72,7 +72,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public ArrayList<Hero> players;
 	long lastTime;
 
-	Stage MapStage;
+	LevelStage MapStage;
 	Control control;
 
 	boolean mapDrawn;
@@ -475,9 +475,13 @@ public class Rogue99 extends ApplicationAdapter {
 		level.setSeed(seed);
 		level.generate();
 		levels.add(level);
-		MapStage = new LevelStage(level, this);
-		MapStage.getViewport().setCamera(MapCamera);
-		MapStage.setViewport(MapViewport);
+		if(MapStage==null){
+			MapStage = new LevelStage(level, this);
+			MapStage.getViewport().setCamera(MapCamera);
+			MapStage.setViewport(MapViewport);
+		} else {
+			MapStage.setStageLevel(level);
+		}
 		System.out.println("Stage width and height:" + MapStage.getWidth() + " " + MapStage.getHeight());
 		System.out.println("Player inventory size: " + hero.getInventory().size());
 		generateGuiElements();
@@ -491,10 +495,12 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 	public void nextLevel(int depth){
 		level = levels.get(depth+1);
+		MapStage.setStageLevel(level);
 	}
 
 	public void prevLevel(){
 		level = levels.get(level.getDepth()-1);
+		MapStage.setStageLevel(level);
 	}
 
 	// Get the seed from server
@@ -516,9 +522,11 @@ public class Rogue99 extends ApplicationAdapter {
 		createHUDGui();
 		createEnemyHud();
 		exitScreen = new ExitScreen(this, "Menu", skin);
-		popUpWindow = new MessageWindow(this,"ALERT", skin, "");
-		popUpWindow.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
-		GuiElementStage.addActor(popUpWindow);
+		if(multiplayer){
+			popUpWindow = new MessageWindow(this,"ALERT", skin, "");
+			popUpWindow.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
+			GuiElementStage.addActor(popUpWindow);
+		}
   }
 
 	public void newLevel(int depth){

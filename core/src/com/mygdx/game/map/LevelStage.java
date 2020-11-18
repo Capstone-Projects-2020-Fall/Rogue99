@@ -22,6 +22,14 @@ public class LevelStage extends Stage {
         createActorsForLevel();
     }
 
+    public void setStageLevel(Level level) {
+        this.level = level;
+    }
+
+    public Level getStageLevel() {
+        return level;
+    }
+
     private void createActorsForLevel() {
         for (int x = 0; x < level.getMap().length; x++) {
             for (int y = 0; y < level.getMap()[0].length; y++) {
