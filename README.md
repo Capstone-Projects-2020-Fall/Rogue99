@@ -4,7 +4,7 @@
 
 - Download the Source Code from the pre-release section.
 - Navigate to the source code directory and open it in the command line or terminal for linux/mac users
-- Type in the following command "./gradlew desktop:dist" without the quotation marks.
+- Type in the following command "./gradlew desktop:dist" (Linux/Mac) or "gradlew desktop:dist" (Windows) without the quotation marks
 - An executable jar file will be built and put under desktop/build/libs folder.
 
 # How to Run
