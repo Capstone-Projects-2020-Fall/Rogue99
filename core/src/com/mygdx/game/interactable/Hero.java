@@ -223,6 +223,7 @@ public class Hero extends Character{
         }else {
             enemy.tile.getEntities().pop();
             game.level.enemies.remove(enemy);
+            game.enemyHud.getTitleLabel().setText("EnemyStats");
             score += (int)((Math.random()*100)+100);
             if(Math.random() < 0.4 && game.multiplayer){
                 game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
@@ -230,8 +231,6 @@ public class Hero extends Character{
             else if (Math.random() > 0.4 && game.multiplayer) {
                 game.level.getMap()[x][y].getEntities().push( new FreezePotion(1, "potion_freeze", 5 ));
             }
-            game.removeActor(game.enemyHud);
-            game.removeActor(game.hudGui);
             if(game.level.enemies.size() <= (game.level.enemiesToOpen)){
                 game.level.doorOpen = true;
                 System.out.println("OPENED DOOR");

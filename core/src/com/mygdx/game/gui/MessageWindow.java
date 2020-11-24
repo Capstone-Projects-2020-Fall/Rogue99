@@ -31,7 +31,7 @@ public class MessageWindow extends Window {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.removeActor(MessageWindow.this);
+                MessageWindow.this.remove();
             }
         });
         this.add(textField).size(this.getWidth(), this.getHeight()/4).pad(6);
