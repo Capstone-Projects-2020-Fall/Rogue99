@@ -8,10 +8,7 @@ import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.Packets;
 import com.mygdx.game.map.Level;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ServerNetworkListener  extends Listener {
 
@@ -50,16 +47,21 @@ public class ServerNetworkListener  extends Listener {
 
     @Override
     public void disconnected(Connection connection) {
-        for(Connection c : connectionInfoMap.keySet()){
+        Set<Connection> connections = connectionInfoMap.keySet();
+        ArrayList<Connection> keys = new ArrayList<>();
+        for(Connection c : connections){
             if(connection.equals(c)){
+                keys.add(c);
                 Packets.Packet010Disconnect disconnect = new Packets.Packet010Disconnect();
                 disconnect.name =((Packets.Packet001Connection)connectionInfoMap.get(c)).name;
                 server.sendToAllExceptTCP(connection.getID(), disconnect);
-                connectionInfoMap.remove(c);
                 removeTableRow(disconnect.name);
             }
         }
-        if(connectionInfoMap.size() <= 1){
+        for(int i = 0; i<keys.size();i++){
+            connectionInfoMap.remove(keys.get(i));
+        }
+        if(connectionInfoMap.size() < 1){
             connectionInfoMap.clear();
             gameStarted = false;
             gameServer.seeds.clear();
@@ -103,7 +105,7 @@ public class ServerNetworkListener  extends Listener {
             //if level seed is not in list, generate a new seed and add to list
             //then send seed at index=depth
 //            System.out.println("Gameserver seeds size: " + gameServer.seeds.size());
-//            System.out.println("Server: depth requested: " + ((Packets.Packet006RequestSeed) object).depth);
+            System.out.println("Server: depth requested: " + ((Packets.Packet006RequestSeed) object).depth);
             if(((Packets.Packet006RequestSeed) object).depth == gameServer.seeds.size()){
                 Level level = new Level(null, ((Packets.Packet006RequestSeed) object).depth, null);
                 level.generateFloorPlan();

@@ -63,11 +63,18 @@ public class ClientNetworkListener extends Listener {
                 }
             }
         } else if(o instanceof Packets.Packet004Potion){
+            Packets.Packet008ServerMessage message = new Packets.Packet008ServerMessage();
+            message.receivedBy = game.hero.getName();
+            message.sentBy = ((Packets.Packet004Potion) o).playerName;
+
             if(((Packets.Packet004Potion) o).ID == Item.DAMAGEPOTION) {
+                message.itemType = "damage_potion";
                 game.getHero().takeDamage( ((Packets.Packet004Potion) o).value );
             } else if(((Packets.Packet004Potion) o).ID == Item.FREEZEPOTION) {
+                message.itemType = "freeze_potion";
                 game.getHero().freezeTime( ((Packets.Packet004Potion) o).value );
             }
+            c.sendTCP(message);
         } else if(o instanceof Packets.Packet005Stats){
             for(Hero player : game.players){
                 if(player.getName() == ((Packets.Packet005Stats) o).name){
@@ -76,11 +83,14 @@ public class ClientNetworkListener extends Listener {
                 }
             }
         } else if (o instanceof Packets.Packet008ServerMessage){
-            game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
+            game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy, ((Packets.Packet008ServerMessage) o).itemType);
         } else if(o instanceof Packets.Packet009Scroll){
             Packets.Packet008ServerMessage message = new Packets.Packet008ServerMessage();
             message.receivedBy = game.hero.getName();
             message.sentBy = ((Packets.Packet009Scroll) o).playerName;
+            if(((Packets.Packet009Scroll) o).ID == Item.SUMMONSCROLL){
+                message.itemType = "summon_scroll";
+            }
             c.sendTCP(message);
             int x,y;
             boolean summoned = false;
@@ -118,8 +128,6 @@ public class ClientNetworkListener extends Listener {
                     player.setArmor(((Packets.Packet005Stats) o).armor);
                 }
             }
-        } else if (o instanceof Packets.Packet008ServerMessage){
-            game.popUpWindow(((Packets.Packet008ServerMessage) o).sentBy, ((Packets.Packet008ServerMessage) o).receivedBy);
         } else if (o instanceof Packets.Packet010Disconnect){
             game.removePLayer(((Packets.Packet010Disconnect) o).name);
         } else if (o instanceof Packets.Packet011StartGame){

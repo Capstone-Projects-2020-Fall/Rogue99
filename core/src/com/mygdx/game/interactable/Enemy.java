@@ -84,6 +84,8 @@ public class Enemy extends Character {
                 }
                 //System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
                 if(!(tile.getEntities().isEmpty())) {
+                    game.level.intMap[tile.getPosX()][tile.getPosY()] = 0;
+                    game.level.intMap[n.x][n.y] = -1;
                     tile.getEntities().pop();
                     tile = map[n.x][n.y];
                     tile.getEntities().push(this);
@@ -108,9 +110,11 @@ public class Enemy extends Character {
                 if(openList.size() != 0){
                     System.out.println("ENEMY WANDERED");
                     Random rand = new Random();
+                    game.level.intMap[tile.getPosX()][tile.getPosY()] = 0;
                     tile.getEntities().pop();
                     tile = openList.get(rand.nextInt(openList.size()));
                     tile.getEntities().push(this);
+                    game.level.intMap[tile.getPosX()][tile.getPosY()] = -1;
                 }
             }
         }

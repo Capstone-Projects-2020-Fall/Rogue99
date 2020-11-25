@@ -30,6 +30,7 @@ public class HUDGui extends Window {
         this.setName(HUDName);
         this.setResizable(false);
         this.setMovable(false);
+        this.scaleBy(.3f);
         this.align(Align.center);
         this.setSize(HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET, HUD_SIZE * (bars.size() + 1) + HUD_WINDOW_HEIGHT_OFFSET);
         Window_Width = HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET;

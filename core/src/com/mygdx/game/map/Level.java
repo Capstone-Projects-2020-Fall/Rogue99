@@ -156,7 +156,7 @@ public class Level implements Serializable {
         intMap = new int[width][height];
         for (int i = 0; i < width; i++) {
             for (int k = 0; k < height; k++) {
-                if( map[i][k].getType().equals("wall") ) {
+                if(map[i][k].getType().equals("wall") || (!map[i][k].getEntities().empty() && (map[i][k].getEntities().peek() instanceof Enemy))) {
                     intMap[i][k] = -1;
                 }
                 else {
@@ -325,13 +325,13 @@ public class Level implements Serializable {
         // picks a random tile that isn't a wall and has at least 1 wall neighbor
         while (map[x_down][y_down].getType().equals("wall") || countAliveNeighbors(map[x_down][y_down], "wall") < 1) {
             x_down = (int) (Math.random() * 60);
-            if (Math.random() < 0.5) y_down = (int) (Math.random() * 15);
-            else y_down = (int) (Math.random() * 15) + 45;
+            if (Math.random() < 0.5) y_down = (int) (Math.random() * 12);
+            else y_down = (int) (Math.random() * 12) + 48;
         }
         map[x_down][y_down].setType("downstair");
         exit = map[x_down][y_down];
         // picks a random tile that isn't a wall and is far enough away from the other stairs and has at least 1 wall neighbor
-        while (!checkDistance(x_down, y_down, x_up, y_up, 50) || map[x_up][y_up].getType().equals("wall")
+        while (!checkDistance(x_down, y_down, x_up, y_up, 40) || map[x_up][y_up].getType().equals("wall")
                 || countAliveNeighbors(map[x_up][y_up], "wall") < 1) {
             x_up = (int) (Math.random() * 60);
             y_up = (int) (Math.random() * 60);
@@ -365,48 +365,6 @@ public class Level implements Serializable {
             if(n >= 6) arr[n-6] = 0;
         }
         return arr;
-    }
-
-    public void generateEnemy(){
-        //System.out.println("in generateEnemy");
-        int[] diff = iterateEnemy();
-        int sum = 0;
-        int index = 1;
-        int u = 0;
-        int x = 0;
-        int y = 0;
-        for(int i : diff){
-            sum += i;
-            if(i == 0) continue;
-            for (int j = 0; j < sum; j++) {
-                //find open tile within zone
-                Zone z = zones[u];
-                Tile tile;
-                do {
-                    tile = z.tiles.get(rand.nextInt(z.tiles.size()));
-                } while (!tile.entities.isEmpty());
-
-                //get enemy type of difficulty i
-                System.out.println();
-                String type = game.enemyMap.get(i).get(rand.nextInt(game.enemyMap.get(i).size()));
-                Enemy enemy = new Enemy();
-                if(type.equals("rat")){
-                    enemy = new Rat(tile, game);
-                } else if(type.equals("wasp")){
-                    enemy = new Wasp(tile, game);
-                } else if(type.equals("slime")){
-                    enemy = new Slime(tile, game);
-                }
-
-                //Enemy enemy = new Enemy(index, "wasp", tile, game);
-                //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
-                enemies.add(enemy);
-                tile.getEntities().push(enemy);
-                u++;
-                if(u > 3) u = 0;
-            }
-            index++;
-        }
     }
 
     public void generateEnemies(){
@@ -515,7 +473,10 @@ public class Level implements Serializable {
     }
 
     private void generateItems(){
-        int c = 100;
+        int c = 120;
+        if(game.multiplayer){
+            c += 40;
+        }
         int numItems, itemC;
         for(Zone z : zones){
             numItems = 2 + z.id+rand.nextInt(2);
@@ -524,18 +485,23 @@ public class Level implements Serializable {
                 //TODO flesh out item chances once potion classes are finished
                 if(itemC < 20){
                     generateItemUtil(new HealthPotion(20, "potion_health", 10), z);
-                } else if(20 <= itemC && itemC < 40 && game.multiplayer){
-                    generateItemUtil(new FreezePotion(20, "potion_damage", 5), z);
-                } else if(40 <= itemC && itemC < 60){
+                } else if(20 <= itemC && itemC < 40){
                     generateItemUtil(new HealthScroll(20, "scroll_health", 5), z);
-                } else if(60 <= itemC && itemC < 70){
+                } else if(40 <= itemC && itemC < 60){
                     generateItemUtil(new StrengthScroll(20, "scroll_strength", 1), z);
                     System.out.println("STRENGTH SCROLL SPAWNED");
-                } else if(70 <= itemC && itemC < 80){
+                } else if(60 <= itemC && itemC < 80){
                     generateItemUtil(new ArmorScroll(20, "scroll_armor", 1), z);
                 } else if(80 <= itemC && itemC < 100){
                     System.out.println("weapon generated!");
-                    generateItemUtil(new Weapon(20, "sword", 10), z);
+                    generateItemUtil(new sword(20, "sword", 5), z);
+                } else if(100 <= itemC && itemC < 120){
+                    System.out.println("weapon generated!");
+                    generateItemUtil(new Ax(20, "axe", 8), z);
+                } else if(120 <= itemC && itemC < 140){
+                    generateItemUtil(new FreezePotion(20, "potion_freeze", 5), z);
+                } else if(140 <= itemC && itemC < 160){
+                    generateItemUtil(new DamagePotion(20, "potion_damage", 15), z);
                 }
             }
         }

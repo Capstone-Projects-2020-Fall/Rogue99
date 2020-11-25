@@ -31,7 +31,7 @@ public class InventoryGui extends Window {
         this.setResizable(false);
         this.setMovable(false);
         this.setSize(INVENTORY_WINDOW_WIDTH_SIZE*3+INVENTORY_WINDOW_WIDTH_OFFSET, InventorySlot.SIZE*INVENTORY_COLUMNS + INVENTORY_WINDOW_HEIGHT_OFFSET);
-        //this.scaleBy(1);
+        this.scaleBy(.3f);
         this.inventory = hero.getInventory();
         this.game = game;
         inventorySlots = new ArrayList<>();
