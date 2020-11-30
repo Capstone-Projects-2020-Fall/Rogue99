@@ -446,17 +446,28 @@ public class Rogue99 extends ApplicationAdapter {
 				potion.playerName = hero.getName();
 				client.client.sendTCP(potion);
 			} else if(item.getId() == Item.WEAPON){
-				item.setEquipped(true);
-				System.out.println("Weapon used: " + item.use(hero));
-				if(EquippedWeapon != null){
+				// if clicked weapon equals equipped weapon, un-equip the weapon //
+				if (item.equals(EquippedWeapon)) {
 					EquippedWeapon.setEquipped(false);
-					// revert changes from previous weapon to damage //
+					EquippedWeapon = null;
 					hero.setStr(hero.getStr() - EquippedWeapon.getDmgModifier());
+					hero.setSprite("hero");
 				}
-				// do something with damage modifier in combat //
-				hero.setStr(hero.getStr() + item.getDmgModifier());
-				hero.setSprite("hero_armed");
-				EquippedWeapon = item;
+				// else equip the clicked weapon and revert the changes from the previous weapon //
+				else {
+					item.setEquipped(true);
+					System.out.println("Weapon used: " + item.use(hero));
+					if(EquippedWeapon != null){
+						EquippedWeapon.setEquipped(false);
+						// revert changes from previous weapon to damage //
+						hero.setStr(hero.getStr() - EquippedWeapon.getDmgModifier());
+					}
+					// do something with damage modifier in combat //
+					hero.setStr(hero.getStr() + item.getDmgModifier());
+					hero.setSprite("hero_armed");
+					EquippedWeapon = item;
+					EquippedWeapon.setEquipped(true);
+				}
 			}
 		} hero.score += (int)(Math.random()*50);
 	}
