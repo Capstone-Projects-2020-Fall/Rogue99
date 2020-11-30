@@ -72,8 +72,8 @@ public class Level implements Serializable {
     }
 
     public void moveEnemies(){
+        newEnemiesInRange = 0;
         for(Enemy enemy : enemies){
-            newEnemiesInRange = 0;
             if(enemy.getSprite().equals("ghost")){
                 int[][] intMapGhost = new int[this.getWidth()][this.getHeight()];
                 Ghost ghost = (Ghost) enemy;
@@ -82,6 +82,7 @@ public class Level implements Serializable {
                 newEnemiesInRange += enemy.moveEnemy(map, intMap, enemiesInRange, hero);
             }
         }
+        System.out.println("Enemies In Range: " + newEnemiesInRange);
         enemiesInRange = newEnemiesInRange;
         game.timerCount = 0;
     }
