@@ -25,6 +25,8 @@ public class Level implements Serializable {
     public Tile exit;
     private Zone[] zones = new Zone[4];
     private int zoneSize;
+    private int enemiesInRange = 0;
+    private int newEnemiesInRange = 0;
 
     //active entities
     public ArrayList<Enemy> enemies = new ArrayList<>();
@@ -71,14 +73,16 @@ public class Level implements Serializable {
 
     public void moveEnemies(){
         for(Enemy enemy : enemies){
+            newEnemiesInRange = 0;
             if(enemy.getSprite().equals("ghost")){
                 int[][] intMapGhost = new int[this.getWidth()][this.getHeight()];
                 Ghost ghost = (Ghost) enemy;
-                ghost.moveEnemy(map, intMapGhost, hero);
+                newEnemiesInRange += ghost.moveEnemy(map, intMapGhost, enemiesInRange, hero);
             } else{
-                enemy.moveEnemy(map, intMap, hero);
+                newEnemiesInRange += enemy.moveEnemy(map, intMap, enemiesInRange, hero);
             }
         }
+        enemiesInRange = newEnemiesInRange;
         game.timerCount = 0;
     }
 
@@ -527,4 +531,8 @@ public class Level implements Serializable {
     public int getHeight() { return height; }
 
     public int getWidth() { return width; }
+
+    public int getEnemiesInRange() {
+        return enemiesInRange;
+    }
 }

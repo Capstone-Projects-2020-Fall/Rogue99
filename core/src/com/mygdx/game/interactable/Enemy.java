@@ -60,7 +60,7 @@ public class Enemy extends Character {
         }
     }
 
-    public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {
+    public int moveEnemy(Tile[][] map, int[][] intMap, int enemiesInRange, Hero hero) {
         if(FRIGHTENED == true){
             retreat(3);
         }
@@ -74,21 +74,28 @@ public class Enemy extends Character {
             Pathing.Node n = path.get(0);
             //System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
             if (path.size() > 2 && (path.size() <= visRange || FOLLOWING == true)) {
-                WANDERING = false;
-                ATTACKING = false;
-                FOLLOWING = true;
-                if(path.size() == 3){
-                    n = path.get(1);
-                } else{
-                    n = path.get(moveDistance);
+                if (enemiesInRange > 3) {
+                    WANDERING = false;
+                    ATTACKING = false;
+                    FOLLOWING = true;
+                    if (path.size() == 3) {
+                        n = path.get(1);
+                    } else {
+                        n = path.get(moveDistance);
+                    }
+                    //System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
+                    if (!(tile.getEntities().isEmpty())) {
+                        game.level.intMap[tile.getPosX()][tile.getPosY()] = 0;
+                        game.level.intMap[n.x][n.y] = -1;
+                        tile.getEntities().pop();
+                        tile = map[n.x][n.y];
+                        tile.getEntities().push(this);
+                    }
+                    return 1;
                 }
-                //System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
-                if(!(tile.getEntities().isEmpty())) {
-                    game.level.intMap[tile.getPosX()][tile.getPosY()] = 0;
-                    game.level.intMap[n.x][n.y] = -1;
-                    tile.getEntities().pop();
-                    tile = map[n.x][n.y];
-                    tile.getEntities().push(this);
+                else {
+                    retreat(1);
+                    return 0;
                 }
             } else if(path.size() <= 2){
                 this.attack(hero);
@@ -118,7 +125,7 @@ public class Enemy extends Character {
                 }
             }
         }
-
+        return 0;
     }
 
     public void setDifficulty(int difficulty) {
@@ -150,7 +157,7 @@ public class Enemy extends Character {
     public void retreat(int retreatCount){
         if(retreatCount == 0) {
             FRIGHTENED = false;
-            moveEnemy(game.level.getMap(), game.level.getIntMap(), game.hero);
+            moveEnemy(game.level.getMap(), game.level.getIntMap(), game.level.getEnemiesInRange(), game.hero);
             return;
         }
 
