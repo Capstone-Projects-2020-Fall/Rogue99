@@ -47,8 +47,8 @@ public class LevelStage extends Stage {
     public void draw() {
         this.batch = getBatch();
         batch.begin();
-        drawMap(level);
         drawHeroes();
+        drawMap(level);
         batch.end();
         super.draw();
     }
@@ -162,12 +162,17 @@ public class LevelStage extends Stage {
         //System.out.println("Drawing hero");
         for(Hero player : game.players) {
             if(player.depth == game.hero.depth){
-                Sprite sprite = game.sprites.get("players");
+                Sprite sprite = game.sprites.get(player.getSprite());
                 sprite.setPosition(player.getPosX()*36, player.getPosY()*36);
                 Color color = new Color(player.getSpriteColor());
                 color.a = 1;
                 sprite.setColor(color);
-                sprite.setAlpha(.5f);
+                if(player.getSprite().equals("gravestone")){
+                    System.out.println("gravestone");
+                    sprite.setAlpha(1);
+                } else {
+                    sprite.setAlpha(.5f);
+                }
                 sprite.draw(batch);
             }
         }

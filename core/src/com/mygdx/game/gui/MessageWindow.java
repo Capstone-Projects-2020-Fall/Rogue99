@@ -31,6 +31,7 @@ public class MessageWindow extends Window {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+                game.menuButtonClicked("Main Menu");
                 MessageWindow.this.remove();
             }
         });

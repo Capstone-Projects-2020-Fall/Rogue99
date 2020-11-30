@@ -598,8 +598,8 @@ public class Rogue99 extends ApplicationAdapter {
 	public void removePLayer(String playerName){
 		for(Hero player : players){
 			if(player.getName().equals(playerName)){
+				player.setSprite("gravestone");
 				gameLobbyGui.removePlayer(player);
-				players.remove(player);
 				return;
 			}
 		}
