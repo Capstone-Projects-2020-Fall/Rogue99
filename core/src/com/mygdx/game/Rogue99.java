@@ -98,6 +98,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public MainMenu mainMenu;
 	public Stage mainMenuStage;
 	NameInputWindow nameInputWindow;
+	Scoreboard scoreboard;
 	ExtendViewport mainMenuViewport;
 	OrthographicCamera mainMenuCamera;
 
@@ -487,6 +488,7 @@ public class Rogue99 extends ApplicationAdapter {
 				}
 			}
 		} hero.score += (int)(Math.random()*50);
+		scoreboard.getPlayerScore().setText("Score: " + hero.score);
 	}
 
 	public void setShowInventory(boolean showInventory) {
@@ -562,9 +564,13 @@ public class Rogue99 extends ApplicationAdapter {
 		createHUDGui();
 		createEnemyHud();
 		exitScreen = new ExitScreen(this, "Menu", skin);
+		scoreboard = new Scoreboard(skin, this);
+		scoreboard.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
+		GuiElementStage.addActor(scoreboard);
 		if(multiplayer){
 			popUpWindow = new MessageWindow(this,"ALERT", skin, "");
 			popUpWindow.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
+			scoreboard.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight() - popUpWindow.getHeight()*8 - 80);
 			GuiElementStage.addActor(popUpWindow);
 		}
   }
@@ -593,6 +599,7 @@ public class Rogue99 extends ApplicationAdapter {
 		System.out.println("Player Added");
 		players.add(player);
 		gameLobbyGui.addPlayer(player);
+		scoreboard.addPlayer(player);
 	}
 
 	public void removePLayer(String playerName){
@@ -623,6 +630,7 @@ public class Rogue99 extends ApplicationAdapter {
 			showMainMenu = true;
 			mapGenerated = false;
 			setShowEscape(false);
+			scoreboard.remove();
 			MapStage = null;
 			if(multiplayer){
 				disconnectClient();
@@ -710,5 +718,9 @@ public class Rogue99 extends ApplicationAdapter {
 		mainMenuStage.getActors().get(mainMenuStage.getActors().size-1).remove();
 		players.clear();
 		gameLobbyGui = new GameLobbyGui(this, "", skin);
+	}
+
+	public Scoreboard getScoreboard() {
+		return scoreboard;
 	}
 }

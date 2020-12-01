@@ -15,4 +15,5 @@ public class Packets {
     public static class Packet009Scroll{public int ID; public String type; public String playerName;}
     public static class Packet010Disconnect {public String name;}
     public static class Packet011StartGame {public boolean start;}
+    public static class Packet012Score {public String name; public int score;}
 }

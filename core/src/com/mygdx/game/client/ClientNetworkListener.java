@@ -133,6 +133,8 @@ public class ClientNetworkListener extends Listener {
         } else if (o instanceof Packets.Packet011StartGame){
             System.out.println("game started: " + ((Packets.Packet011StartGame) o).start);
             game.setGameStarted(((Packets.Packet011StartGame) o).start);
+        } else if (o instanceof Packets.Packet012Score){
+            game.getScoreboard().changePlayerScore(((Packets.Packet012Score) o).name, ((Packets.Packet012Score) o).score);
         }
     }
 }
