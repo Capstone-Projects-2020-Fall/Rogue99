@@ -75,12 +75,11 @@ public class ClientNetworkListener extends Listener {
             c.sendTCP(message);
         } else if(o instanceof Packets.Packet005Stats){
             for(Hero player : game.players){
-                if(player.getName() == ((Packets.Packet005Stats) o).name){
+                if(player.getName().equals(((Packets.Packet005Stats) o).name)){
                     player.setCurrHP(((Packets.Packet005Stats) o).health);
                     player.setArmor(((Packets.Packet005Stats) o).armor);
                     game.getScoreboard().changePlayerScore(((Packets.Packet005Stats) o).name,((Packets.Packet005Stats) o).score, ((Packets.Packet005Stats) o).
                             health, ((Packets.Packet005Stats) o).armor, ((Packets.Packet005Stats) o).depth);
-                    System.out.println("GOT HERE");
                 }
             }
         } else if (o instanceof Packets.Packet008ServerMessage){

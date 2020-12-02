@@ -317,7 +317,7 @@ public class Rogue99 extends ApplicationAdapter {
 						}
 					});
 				}
-				if(level.doorOpen && level.getDepth()==1 && !keepPlaying && !isMultiplayer()){
+				if(level.doorOpen && level.getDepth()==9 && !keepPlaying && !isMultiplayer()){
 					gameWonWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
 					Gdx.input.setInputProcessor(MapStage);
 					MapStage.addActor(gameWonWindow);
@@ -429,7 +429,6 @@ public class Rogue99 extends ApplicationAdapter {
 				bar.setValue(newValue);
 			}
 			if(isMultiplayer()){
-				System.out.println("SENT PACKET!");
 				Packets.Packet005Stats stats = new Packets.Packet005Stats();
 				stats.name = hero.getName();
 				stats.health = hero.getCurrHP();
@@ -610,21 +609,29 @@ public class Rogue99 extends ApplicationAdapter {
   }
 
 	public void newLevel(int depth){
-
+		depth++;
 		if(multiplayer) {
 			Packets.Packet006RequestSeed request = new Packets.Packet006RequestSeed();
-			depth++;
 			request.depth = depth;
 			System.out.println("Client: depth requested: " + request.depth);
 			client.client.sendTCP(request);
 		}
 		else {
-			Level temp = new Level(this, depth++, null);// single player option
+			Level temp = new Level(this, depth, null);// single player option
 			temp.generateFloorPlan();
 			generateLevel(temp.getSeed(), depth);
 		}
 		getScoreboard().getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
-				+ " Armor: " + hero.getArmor() + " Level: "+ hero.depth);
+				+ " Armor: " + hero.getArmor() + " Level: "+ depth);
+		if (isMultiplayer()){
+			Packets.Packet005Stats stats = new Packets.Packet005Stats();
+			stats.name = hero.getName();
+			stats.score = hero.score;
+			stats.health = hero.getCurrHP();
+			stats.armor = hero.getArmor();
+			stats.depth = depth;
+			client.client.sendTCP(stats);
+		}
 	}
 
 	public Hero getHero() {
