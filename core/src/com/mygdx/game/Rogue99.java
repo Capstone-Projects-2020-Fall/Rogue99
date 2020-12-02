@@ -71,6 +71,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//list of other players
 	public ArrayList<Hero> players;
+	int deadPlayers;
 	long lastTime;
 
 	LevelStage MapStage;
@@ -96,6 +97,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	MessageWindow gameLostWindow;
 	MessageWindow gameWonWindow;
+	MessageWindow lastPlayerWinWindow;
 
 	public MainMenu mainMenu;
 	public Stage mainMenuStage;
@@ -167,6 +169,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been defeated.");
 		 gameWonWindow = new MessageWindow(this, "You Won!", skin, "You Won the Game!");
+		 lastPlayerWinWindow = new MessageWindow(this, "Last Player Standing!",skin, "You Won the Game!");
 
 		 mainMenuCamera = new OrthographicCamera();
 		 mainMenuViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mainMenuCamera);
@@ -310,10 +313,15 @@ public class Rogue99 extends ApplicationAdapter {
 						}
 					});
 				}
-				if(level.doorOpen && level.getDepth()==9 && !keepPlaying){
+				if(level.doorOpen && level.getDepth()==1 && !keepPlaying && !isMultiplayer()){
 					gameWonWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
 					Gdx.input.setInputProcessor(MapStage);
 					MapStage.addActor(gameWonWindow);
+				}
+				if(deadPlayers == players.size() && isMultiplayer()){
+					lastPlayerWinWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
+					Gdx.input.setInputProcessor(MapStage);
+					MapStage.addActor(lastPlayerWinWindow);
 				}
 				MapCamera.position.lerp(hero.pos3, 0.1f);
 				keepCameraInBounds();
@@ -616,6 +624,7 @@ public class Rogue99 extends ApplicationAdapter {
 			if(player.getName().equals(playerName)){
 				player.setSprite("gravestone");
 				gameLobbyGui.removePlayer(player);
+				deadPlayers++;
 				return;
 			}
 		}
@@ -735,5 +744,9 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public void setKeepPlaying(boolean keepPlaying) {
 		this.keepPlaying = keepPlaying;
+	}
+
+	public boolean isMultiplayer() {
+		return multiplayer;
 	}
 }

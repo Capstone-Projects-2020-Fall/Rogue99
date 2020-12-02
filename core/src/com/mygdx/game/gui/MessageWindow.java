@@ -28,7 +28,7 @@ public class MessageWindow extends Window {
         textField.setDisabled(true);
         this.add(textField).size(this.getWidth(), this.getHeight() / 4).pad(6);
         this.row();
-        if(title.equals("You Won!") && !game.multiplayer){
+        if(title.equals("You Won!")){
             TextButton button = new TextButton("Continue", skin);
             button.addListener(new ClickListener() {
                 @Override
