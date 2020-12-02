@@ -225,7 +225,8 @@ public class Hero extends Character{
             game.level.enemies.remove(enemy);
             game.enemyHud.getTitleLabel().setText("EnemyStats");
             score += (int)((Math.random()*100)+100);
-            game.getScoreboard().getPlayerScore().setText("Score: " + score);
+            game.getScoreboard().getPlayerScore().setText("Score: " + score + " Health: " + game.hero.getCurrHP()
+                    + " Armor: " + game.hero.getArmor() + " Level: "+ game.hero.depth);
             if(Math.random() < 0.4 && game.multiplayer){
                 game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
             }

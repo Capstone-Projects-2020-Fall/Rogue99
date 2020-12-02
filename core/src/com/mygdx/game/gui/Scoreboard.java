@@ -30,7 +30,8 @@ public class Scoreboard extends Window {
 
 
     private void init_scoreboard(){
-        playerScore = new TextField("Score: 0", skin);
+        playerScore = new TextField("Score: " + game.hero.score + " Health: " + game.hero.getCurrHP()
+                + " Armor: " + game.hero.getArmor() + " Level: "+ game.hero.depth, skin);
         playerScore.setAlignment(Align.center);
         playerScore.setDisabled(true);
         if(game.multiplayer){
@@ -47,16 +48,17 @@ public class Scoreboard extends Window {
         return playerScore;
     }
 
-    public void changePlayerScore(String name, int score){
+    public void changePlayerScore(String name, int score, int health, int armor, int depth){
         for(TextField textField : scores){
             if(textField.getName().equals(name)){
-                textField.setText(name + "'s Score: " + score);
+                textField.setText(name + "'s Score: " + score + " Health: " + health + " Armor: " + armor + " Level: "+ depth);
             }
         }
     }
 
     public void addPlayer(Hero player){
-        TextField textField = new TextField(player.getName() + "'s Score: " + player.score, skin);
+        TextField textField = new TextField(player.getName() + "'s Score: " + player.score + " Health: " + player.getCurrHP()
+                + " Armor: " + player.getArmor() + " Level: "+ player.depth, skin);
         Color color = new Color(player.getSpriteColor());
         color.a = 1;
         textField.setColor(color);

@@ -126,6 +126,8 @@ public class ClientNetworkListener extends Listener {
                 if(player.getName() == ((Packets.Packet005Stats) o).name){
                     player.setCurrHP(((Packets.Packet005Stats) o).health);
                     player.setArmor(((Packets.Packet005Stats) o).armor);
+                    game.getScoreboard().changePlayerScore(((Packets.Packet005Stats) o).name,((Packets.Packet005Stats) o).score, ((Packets.Packet005Stats) o).
+                            health, ((Packets.Packet005Stats) o).armor, ((Packets.Packet005Stats) o).depth);
                 }
             }
         } else if (o instanceof Packets.Packet010Disconnect){
@@ -133,8 +135,6 @@ public class ClientNetworkListener extends Listener {
         } else if (o instanceof Packets.Packet011StartGame){
             System.out.println("game started: " + ((Packets.Packet011StartGame) o).start);
             game.setGameStarted(((Packets.Packet011StartGame) o).start);
-        } else if (o instanceof Packets.Packet012Score){
-            game.getScoreboard().changePlayerScore(((Packets.Packet012Score) o).name, ((Packets.Packet012Score) o).score);
         }
     }
 }

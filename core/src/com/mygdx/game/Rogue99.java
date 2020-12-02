@@ -505,7 +505,17 @@ public class Rogue99 extends ApplicationAdapter {
 				}
 			}
 		} hero.score += (int)(Math.random()*50);
-		scoreboard.getPlayerScore().setText("Score: " + hero.score);
+		scoreboard.getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
+				+ " Armor: " + hero.getArmor() + " Level: "+ hero.depth);
+		if (multiplayer){
+			Packets.Packet005Stats stats = new Packets.Packet005Stats();
+			stats.name = hero.getName();
+			stats.score = hero.score;
+			stats.health = hero.getCurrHP();
+			stats.armor = hero.getArmor();
+			stats.depth = hero.depth;
+			client.client.sendTCP(stats);
+		}
 	}
 
 	public void setShowInventory(boolean showInventory) {
@@ -606,6 +616,8 @@ public class Rogue99 extends ApplicationAdapter {
 			temp.generateFloorPlan();
 			generateLevel(temp.getSeed(), depth);
 		}
+		getScoreboard().getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
+				+ " Armor: " + hero.getArmor() + " Level: "+ hero.depth);
 	}
 
 	public Hero getHero() {
