@@ -26,19 +26,43 @@ public class MessageWindow extends Window {
         this.textField = new TextField(message, skin);
         textField.setAlignment(Align.center);
         textField.setDisabled(true);
-        TextButton button = new TextButton("Close",skin);
-        button.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                game.menuButtonClicked("Main Menu");
-                MessageWindow.this.remove();
-            }
-        });
-        this.add(textField).size(this.getWidth(), this.getHeight()/4).pad(6);
+        this.add(textField).size(this.getWidth(), this.getHeight() / 4).pad(6);
         this.row();
-        if(!title.equals("ALERT")){
-            this.add(button).size(this.getWidth()/4, this.getHeight()/4);
+        if(title.equals("You Won!") && !game.multiplayer){
+            TextButton button = new TextButton("Continue", skin);
+            button.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    game.setKeepPlaying(true);
+                    MessageWindow.this.remove();
+                }
+            });
+            TextButton button2 = new TextButton("Menu", skin);
+            button2.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    game.menuButtonClicked("Main Menu");
+                    MessageWindow.this.remove();
+                }
+            });
+            this.add(button).size(this.getWidth() / 5, this.getHeight() / 4);
+            this.row();
+            this.add(button2).size(this.getWidth()/5,this.getHeight()/4);
+        } else {
+            TextButton button = new TextButton("Main Menu", skin);
+            button.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    game.menuButtonClicked("Main Menu");
+                    MessageWindow.this.remove();
+                }
+            });
+            if (!title.equals("ALERT")) {
+                this.add(button).size(this.getWidth() / 4, this.getHeight() / 4);
+            }
         }
     }
 

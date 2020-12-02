@@ -88,12 +88,14 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean rangeMode;
 	boolean showPopUp;
 	boolean showEscape;
+	boolean keepPlaying;
 
 	Item EquippedWeapon;
 	String serverSeed;
 	int serverDepth;
 
 	MessageWindow gameLostWindow;
+	MessageWindow gameWonWindow;
 
 	public MainMenu mainMenu;
 	public Stage mainMenuStage;
@@ -144,6 +146,7 @@ public class Rogue99 extends ApplicationAdapter {
 		rangeMode = false;
 		showPopUp = false;
 		showEscape = false;
+		keepPlaying = false;
 
 		//load sprites and add to hash map
 		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -163,6 +166,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been defeated.");
+		 gameWonWindow = new MessageWindow(this, "You Won!", skin, "You Won the Game!");
 
 		 mainMenuCamera = new OrthographicCamera();
 		 mainMenuViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mainMenuCamera);
@@ -305,6 +309,11 @@ public class Rogue99 extends ApplicationAdapter {
 							return super.keyUp(event, keycode);
 						}
 					});
+				}
+				if(level.doorOpen && level.getDepth()==9 && !keepPlaying){
+					gameWonWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
+					Gdx.input.setInputProcessor(MapStage);
+					MapStage.addActor(gameWonWindow);
 				}
 				MapCamera.position.lerp(hero.pos3, 0.1f);
 				keepCameraInBounds();
@@ -722,5 +731,9 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public Scoreboard getScoreboard() {
 		return scoreboard;
+	}
+
+	public void setKeepPlaying(boolean keepPlaying) {
+		this.keepPlaying = keepPlaying;
 	}
 }
