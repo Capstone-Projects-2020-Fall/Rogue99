@@ -59,8 +59,6 @@ public class InventorySlot extends Widget {
                     batch.setColor(Color.RED);
                 }
             }
-            System.out.println("itemID: "+ item.getId());
-            System.out.println("itemIcon: " + itemIcon);
             batch.draw(itemIcon, this.getX() + OFFSET, this.getY() + OFFSET, this.getWidth() - OFFSET * 2, this.getHeight() - OFFSET * 2);
             batch.setColor(0,0,0,0);
         }

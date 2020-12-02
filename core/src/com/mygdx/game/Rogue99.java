@@ -39,7 +39,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 	public Hero hero;
-	SpriteBatch batch;	public OrthographicCamera MapCamera;
+	SpriteBatch batch;
+	public OrthographicCamera MapCamera;
 	public MPClient client;
 	FitViewport MapViewport;
 
@@ -184,6 +185,21 @@ public class Rogue99 extends ApplicationAdapter {
 		gameLobbyGui = new GameLobbyGui(this,"",skin);
 		Gdx.input.setInputProcessor(mainMenuStage);
 	}
+
+	private void keepCameraInBounds(){
+		if(MapCamera.position.x < (13*36)){
+			MapCamera.position.x = (13*36);
+		} else if(MapCamera.position.x > 2160-(13*36)+12){
+			MapCamera.position.x = 2160-(13*36)+12;
+		}
+
+		if(MapCamera.position.y < (9*36)){
+			MapCamera.position.y = (9*36);
+		} else if(MapCamera.position.y > 2160-(9*36)){
+			MapCamera.position.y = 2160-(9*36);
+		}
+	}
+
 	private void init_single_player(){
 		resetHero();
 
@@ -290,6 +306,7 @@ public class Rogue99 extends ApplicationAdapter {
 					});
 				}
 				MapCamera.position.lerp(hero.pos3, 0.1f);
+				keepCameraInBounds();
 				MapCamera.update();
 			}
 
@@ -582,8 +599,8 @@ public class Rogue99 extends ApplicationAdapter {
 	public void removePLayer(String playerName){
 		for(Hero player : players){
 			if(player.getName().equals(playerName)){
+				player.setSprite("gravestone");
 				gameLobbyGui.removePlayer(player);
-				players.remove(player);
 				return;
 			}
 		}
