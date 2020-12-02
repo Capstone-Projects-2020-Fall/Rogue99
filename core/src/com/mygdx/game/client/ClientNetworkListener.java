@@ -54,12 +54,10 @@ public class ClientNetworkListener extends Listener {
             game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
             for(Hero player : game.players){
-                System.out.println("player in list: " + player.getName() + " received name: " + ((Packets.Packet003Movement) o).name);
                 if(player.getName().equals(((Packets.Packet003Movement) o).name)){
                     player.setPosX(((Packets.Packet003Movement) o).xPos);
                     player.setPosY(((Packets.Packet003Movement) o).yPos);
                     player.depth = ((Packets.Packet003Movement) o).depth;
-                    System.out.println("player in list depth: " + player.depth + " received depth: " + ((Packets.Packet003Movement) o).depth);
                 }
             }
         } else if(o instanceof Packets.Packet004Potion){
@@ -80,6 +78,9 @@ public class ClientNetworkListener extends Listener {
                 if(player.getName() == ((Packets.Packet005Stats) o).name){
                     player.setCurrHP(((Packets.Packet005Stats) o).health);
                     player.setArmor(((Packets.Packet005Stats) o).armor);
+                    game.getScoreboard().changePlayerScore(((Packets.Packet005Stats) o).name,((Packets.Packet005Stats) o).score, ((Packets.Packet005Stats) o).
+                            health, ((Packets.Packet005Stats) o).armor, ((Packets.Packet005Stats) o).depth);
+                    System.out.println("GOT HERE");
                 }
             }
         } else if (o instanceof Packets.Packet008ServerMessage){
@@ -121,15 +122,6 @@ public class ClientNetworkListener extends Listener {
             }
             game.level.enemies.add(enemy);
             game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getEntities().push(enemy);
-        } else if(o instanceof Packets.Packet005Stats){
-            for(Hero player : game.players){
-                if(player.getName() == ((Packets.Packet005Stats) o).name){
-                    player.setCurrHP(((Packets.Packet005Stats) o).health);
-                    player.setArmor(((Packets.Packet005Stats) o).armor);
-                    game.getScoreboard().changePlayerScore(((Packets.Packet005Stats) o).name,((Packets.Packet005Stats) o).score, ((Packets.Packet005Stats) o).
-                            health, ((Packets.Packet005Stats) o).armor, ((Packets.Packet005Stats) o).depth);
-                }
-            }
         } else if (o instanceof Packets.Packet010Disconnect){
             game.removePLayer(((Packets.Packet010Disconnect) o).name);
         } else if (o instanceof Packets.Packet011StartGame){

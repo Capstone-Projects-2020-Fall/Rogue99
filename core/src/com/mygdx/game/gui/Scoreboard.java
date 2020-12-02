@@ -34,14 +34,9 @@ public class Scoreboard extends Window {
                 + " Armor: " + game.hero.getArmor() + " Level: "+ game.hero.depth, skin);
         playerScore.setAlignment(Align.center);
         playerScore.setDisabled(true);
-        if(game.multiplayer){
-            scores = new ArrayList<>();
-            this.setSize(WINDOW_WIDTH*3, WINDOW_HEIGHT*10);
-            this.add(playerScore).size(this.getWidth(), (WINDOW_HEIGHT*3)/4);
-        } else {
-            this.setSize(WINDOW_WIDTH*3, WINDOW_HEIGHT*3);
-            this.add(playerScore).size(this.getWidth(), (WINDOW_HEIGHT*3)/4);
-        }
+        scores = new ArrayList<>();
+        this.setSize(WINDOW_WIDTH*3, WINDOW_HEIGHT*3);
+        this.add(playerScore).size(this.getWidth(), (WINDOW_HEIGHT*3)/4);
     }
 
     public TextField getPlayerScore() {

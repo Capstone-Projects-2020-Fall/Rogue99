@@ -120,6 +120,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+		multiplayer = false;
 		batch = new SpriteBatch();
 		levels = new ArrayList<>();
 		players = new ArrayList<>();
@@ -162,6 +163,9 @@ public class Rogue99 extends ApplicationAdapter {
 
 		//create player's hero
 		hero = new Hero(this, "hero");
+
+
+		scoreboard = new Scoreboard(skin, this);
 
 
 		lastTime = System.currentTimeMillis();
@@ -232,7 +236,7 @@ public class Rogue99 extends ApplicationAdapter {
 		seedRequest.depth = 0;
 		System.out.println("Sending seed request for level 0");
 		client.client.sendTCP(seedRequest);
-
+		scoreboard.setSize(scoreboard.WINDOW_WIDTH*3, scoreboard.WINDOW_HEIGHT*10);
 		control = new Control(hero, this);
 		Gdx.input.setInputProcessor(control);
 	}
@@ -424,11 +428,14 @@ public class Rogue99 extends ApplicationAdapter {
 			if(bar.getName() == barName){
 				bar.setValue(newValue);
 			}
-			if(multiplayer){
+			if(isMultiplayer()){
+				System.out.println("SENT PACKET!");
 				Packets.Packet005Stats stats = new Packets.Packet005Stats();
 				stats.name = hero.getName();
 				stats.health = hero.getCurrHP();
 				stats.armor = hero.getArmor();
+				stats.score = hero.score;
+				stats.depth = hero.depth;
 				client.client.sendTCP(stats);
 			}
 		}
@@ -507,7 +514,7 @@ public class Rogue99 extends ApplicationAdapter {
 		} hero.score += (int)(Math.random()*50);
 		scoreboard.getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
 				+ " Armor: " + hero.getArmor() + " Level: "+ hero.depth);
-		if (multiplayer){
+		if (isMultiplayer()){
 			Packets.Packet005Stats stats = new Packets.Packet005Stats();
 			stats.name = hero.getName();
 			stats.score = hero.score;
@@ -557,6 +564,7 @@ public class Rogue99 extends ApplicationAdapter {
 		mapGenerated = true;
 		if(multiplayer) {
 			Packets.Packet003Movement movement = new Packets.Packet003Movement();
+			movement.name = hero.getName();
 			movement.xPos = hero.getPosX();
 			movement.yPos = hero.getPosY();
 			client.client.sendTCP(movement);
@@ -591,7 +599,6 @@ public class Rogue99 extends ApplicationAdapter {
 		createHUDGui();
 		createEnemyHud();
 		exitScreen = new ExitScreen(this, "Menu", skin);
-		scoreboard = new Scoreboard(skin, this);
 		scoreboard.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
 		GuiElementStage.addActor(scoreboard);
 		if(multiplayer){
@@ -628,6 +635,7 @@ public class Rogue99 extends ApplicationAdapter {
 		System.out.println("Player Added");
 		players.add(player);
 		gameLobbyGui.addPlayer(player);
+		System.out.println("Added " + player.getName());
 		scoreboard.addPlayer(player);
 	}
 

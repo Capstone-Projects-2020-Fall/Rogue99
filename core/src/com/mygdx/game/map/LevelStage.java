@@ -47,8 +47,8 @@ public class LevelStage extends Stage {
     public void draw() {
         this.batch = getBatch();
         batch.begin();
-        drawHeroes();
         drawMap(level);
+        drawHeroes();
         batch.end();
         super.draw();
     }
