@@ -522,7 +522,8 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	public void prevLevel(){
-		level = levels.get(level.getDepth()-1);
+		int prevDepth = level.getDepth()-1;
+		level = levels.get(prevDepth);
 		MapStage.setStageLevel(level);
 	}
 
