@@ -1,5 +1,6 @@
 package com.mygdx.game.interactable;
 
+import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.Item;
 import com.mygdx.game.map.Tile;
@@ -154,6 +155,17 @@ public class Enemy extends Character {
             game.changeBarValue(game.ARMOURBAR, hero.getArmor());
             game.hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
             game.hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
+            game.getScoreboard().getPlayerScore().setText("Score: " + game.hero.score + " Health: " + game.hero.getCurrHP()
+                    + " Armor: " + game.hero.getArmor() + " Level: "+ game.hero.depth);
+            if (game.multiplayer){
+                Packets.Packet005Stats stats = new Packets.Packet005Stats();
+                stats.name = hero.getName();
+                stats.score = hero.score;
+                stats.health = hero.getCurrHP();
+                stats.armor = hero.getArmor();
+                stats.depth = hero.depth;
+                game.client.client.sendTCP(stats);
+            }
         }
     }
 

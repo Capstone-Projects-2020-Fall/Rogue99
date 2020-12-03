@@ -71,6 +71,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//list of other players
 	public ArrayList<Hero> players;
+	int deadPlayers;
 	long lastTime;
 
 	LevelStage MapStage;
@@ -88,16 +89,20 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean rangeMode;
 	boolean showPopUp;
 	boolean showEscape;
+	boolean keepPlaying;
 
 	Item EquippedWeapon;
 	String serverSeed;
 	int serverDepth;
 
 	MessageWindow gameLostWindow;
+	MessageWindow gameWonWindow;
+	MessageWindow lastPlayerWinWindow;
 
 	public MainMenu mainMenu;
 	public Stage mainMenuStage;
 	NameInputWindow nameInputWindow;
+	Scoreboard scoreboard;
 	ExtendViewport mainMenuViewport;
 	OrthographicCamera mainMenuCamera;
 
@@ -115,6 +120,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+		multiplayer = false;
 		batch = new SpriteBatch();
 		levels = new ArrayList<>();
 		players = new ArrayList<>();
@@ -143,6 +149,7 @@ public class Rogue99 extends ApplicationAdapter {
 		rangeMode = false;
 		showPopUp = false;
 		showEscape = false;
+		keepPlaying = false;
 
 		//load sprites and add to hash map
 		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -158,10 +165,15 @@ public class Rogue99 extends ApplicationAdapter {
 		hero = new Hero(this, "hero");
 
 
+		scoreboard = new Scoreboard(skin, this);
+
+
 		lastTime = System.currentTimeMillis();
 
 
 		 gameLostWindow = new MessageWindow(this, "You Lost!", skin, "You have been defeated.");
+		 gameWonWindow = new MessageWindow(this, "You Won!", skin, "You Won the Game!");
+		 lastPlayerWinWindow = new MessageWindow(this, "Last Player Standing!",skin, "You Won the Game!");
 
 		 mainMenuCamera = new OrthographicCamera();
 		 mainMenuViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mainMenuCamera);
@@ -224,7 +236,7 @@ public class Rogue99 extends ApplicationAdapter {
 		seedRequest.depth = 0;
 		System.out.println("Sending seed request for level 0");
 		client.client.sendTCP(seedRequest);
-
+		scoreboard.setSize(scoreboard.WINDOW_WIDTH*3, scoreboard.WINDOW_HEIGHT*10);
 		control = new Control(hero, this);
 		Gdx.input.setInputProcessor(control);
 	}
@@ -304,6 +316,16 @@ public class Rogue99 extends ApplicationAdapter {
 							return super.keyUp(event, keycode);
 						}
 					});
+				}
+				if(level.doorOpen && level.getDepth()==9 && !keepPlaying && !isMultiplayer()){
+					gameWonWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
+					Gdx.input.setInputProcessor(MapStage);
+					MapStage.addActor(gameWonWindow);
+				}
+				if(deadPlayers == players.size() && isMultiplayer()){
+					lastPlayerWinWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
+					Gdx.input.setInputProcessor(MapStage);
+					MapStage.addActor(lastPlayerWinWindow);
 				}
 				MapCamera.position.lerp(hero.pos3, 0.1f);
 				keepCameraInBounds();
@@ -406,11 +428,13 @@ public class Rogue99 extends ApplicationAdapter {
 			if(bar.getName() == barName){
 				bar.setValue(newValue);
 			}
-			if(multiplayer){
+			if(isMultiplayer()){
 				Packets.Packet005Stats stats = new Packets.Packet005Stats();
 				stats.name = hero.getName();
 				stats.health = hero.getCurrHP();
 				stats.armor = hero.getArmor();
+				stats.score = hero.score;
+				stats.depth = hero.depth;
 				client.client.sendTCP(stats);
 			}
 		}
@@ -487,6 +511,17 @@ public class Rogue99 extends ApplicationAdapter {
 				}
 			}
 		} hero.score += (int)(Math.random()*50);
+		scoreboard.getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
+				+ " Armor: " + hero.getArmor() + " Level: "+ hero.depth);
+		if (isMultiplayer()){
+			Packets.Packet005Stats stats = new Packets.Packet005Stats();
+			stats.name = hero.getName();
+			stats.score = hero.score;
+			stats.health = hero.getCurrHP();
+			stats.armor = hero.getArmor();
+			stats.depth = hero.depth;
+			client.client.sendTCP(stats);
+		}
 	}
 
 	public void setShowInventory(boolean showInventory) {
@@ -528,6 +563,7 @@ public class Rogue99 extends ApplicationAdapter {
 		mapGenerated = true;
 		if(multiplayer) {
 			Packets.Packet003Movement movement = new Packets.Packet003Movement();
+			movement.name = hero.getName();
 			movement.xPos = hero.getPosX();
 			movement.yPos = hero.getPosY();
 			client.client.sendTCP(movement);
@@ -563,26 +599,39 @@ public class Rogue99 extends ApplicationAdapter {
 		createHUDGui();
 		createEnemyHud();
 		exitScreen = new ExitScreen(this, "Menu", skin);
+		scoreboard.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
+		GuiElementStage.addActor(scoreboard);
 		if(multiplayer){
 			popUpWindow = new MessageWindow(this,"ALERT", skin, "");
 			popUpWindow.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
+			scoreboard.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight() - popUpWindow.getHeight()*8 - 80);
 			GuiElementStage.addActor(popUpWindow);
 		}
   }
 
 	public void newLevel(int depth){
-
+		depth++;
 		if(multiplayer) {
 			Packets.Packet006RequestSeed request = new Packets.Packet006RequestSeed();
-			depth++;
 			request.depth = depth;
 			System.out.println("Client: depth requested: " + request.depth);
 			client.client.sendTCP(request);
 		}
 		else {
-			Level temp = new Level(this, depth++, null);// single player option
+			Level temp = new Level(this, depth, null);// single player option
 			temp.generateFloorPlan();
 			generateLevel(temp.getSeed(), depth);
+		}
+		getScoreboard().getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
+				+ " Armor: " + hero.getArmor() + " Level: "+ depth);
+		if (isMultiplayer()){
+			Packets.Packet005Stats stats = new Packets.Packet005Stats();
+			stats.name = hero.getName();
+			stats.score = hero.score;
+			stats.health = hero.getCurrHP();
+			stats.armor = hero.getArmor();
+			stats.depth = depth;
+			client.client.sendTCP(stats);
 		}
 	}
 
@@ -594,6 +643,8 @@ public class Rogue99 extends ApplicationAdapter {
 		System.out.println("Player Added");
 		players.add(player);
 		gameLobbyGui.addPlayer(player);
+		System.out.println("Added " + player.getName());
+		scoreboard.addPlayer(player);
 	}
 
 	public void removePLayer(String playerName){
@@ -601,6 +652,7 @@ public class Rogue99 extends ApplicationAdapter {
 			if(player.getName().equals(playerName)){
 				player.setSprite("gravestone");
 				gameLobbyGui.removePlayer(player);
+				deadPlayers++;
 				return;
 			}
 		}
@@ -624,6 +676,7 @@ public class Rogue99 extends ApplicationAdapter {
 			showMainMenu = true;
 			mapGenerated = false;
 			setShowEscape(false);
+			scoreboard.remove();
 			MapStage = null;
 			if(multiplayer){
 				disconnectClient();
@@ -711,5 +764,17 @@ public class Rogue99 extends ApplicationAdapter {
 		mainMenuStage.getActors().get(mainMenuStage.getActors().size-1).remove();
 		players.clear();
 		gameLobbyGui = new GameLobbyGui(this, "", skin);
+	}
+
+	public Scoreboard getScoreboard() {
+		return scoreboard;
+	}
+
+	public void setKeepPlaying(boolean keepPlaying) {
+		this.keepPlaying = keepPlaying;
+	}
+
+	public boolean isMultiplayer() {
+		return multiplayer;
 	}
 }

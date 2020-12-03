@@ -225,6 +225,17 @@ public class Hero extends Character{
             game.level.enemies.remove(enemy);
             game.enemyHud.getTitleLabel().setText("EnemyStats");
             score += (int)((Math.random()*100)+100);
+            game.getScoreboard().getPlayerScore().setText("Score: " + score + " Health: " + game.hero.getCurrHP()
+                    + " Armor: " + game.hero.getArmor() + " Level: "+ game.hero.depth);
+            if (game.isMultiplayer()){
+                Packets.Packet005Stats stats = new Packets.Packet005Stats();
+                stats.name = getName();
+                stats.score = score;
+                stats.health = getCurrHP();
+                stats.armor = getArmor();
+                stats.depth = depth;
+                game.client.client.sendTCP(stats);
+            }
             if(Math.random() < 0.4 && game.multiplayer){
                 game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
             }
