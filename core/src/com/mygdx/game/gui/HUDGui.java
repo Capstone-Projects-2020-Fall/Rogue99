@@ -25,7 +25,7 @@ public class HUDGui extends Window {
     public ArrayList<TextField> statsNumTexts;
 
     public HUDGui(String HUDName,Skin skin, Map<String, Integer> bars){
-        super("Stats", skin);
+        super(HUDName, skin);
         patch = skin.getPatch("default-round");
         this.setName(HUDName);
         this.setResizable(false);

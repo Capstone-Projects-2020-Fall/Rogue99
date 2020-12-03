@@ -205,7 +205,6 @@ public class Hero extends Character{
         } else{
             System.out.println("HIT MISSED");
         }
-        System.out.println("enemy health after attack: " + enemy.getCurrHP());
         game.changeBarValue("EnemyHP", enemy.getCurrHP());
         game.enemyHud.statsNumTexts.get(0).setText(String.valueOf(enemy.getCurrHP()));
         game.enemyHud.getTitleLabel().setText(enemy.getSprite().toUpperCase());
@@ -252,7 +251,15 @@ public class Hero extends Character{
         if (getCurrHP() - dmg > 0) {
             setCurrHP( getCurrHP() - dmg );
             game.changeBarValue(game.HEALTHBAR, getCurrHP());
-            game.hudGui.statsNumTexts.get(1).setText(String.valueOf( getCurrHP()) );
+            if(game.isMultiplayer()){
+                Packets.Packet005Stats stats = new Packets.Packet005Stats();
+                stats.name = getName();
+                stats.health = getCurrHP();
+                stats.armor = getArmor();
+                stats.score = score;
+                stats.depth = depth;
+                game.client.client.sendTCP(stats);
+            }
         } else {
             setCurrHP(0);
         }

@@ -236,7 +236,7 @@ public class Rogue99 extends ApplicationAdapter {
 		seedRequest.depth = 0;
 		System.out.println("Sending seed request for level 0");
 		client.client.sendTCP(seedRequest);
-		scoreboard.setSize(scoreboard.WINDOW_WIDTH*3, scoreboard.WINDOW_HEIGHT*10);
+		scoreboard.setSize(scoreboard.WINDOW_WIDTH*3, scoreboard.WINDOW_HEIGHT*15);
 		control = new Control(hero, this);
 		Gdx.input.setInputProcessor(control);
 	}
@@ -410,7 +410,7 @@ public class Rogue99 extends ApplicationAdapter {
 		enemyBarList = enemyHud.getHudBars();
 		enemyHud.getColor().a = .8f;
 		enemyHud.setSize(26*3+40,26*(enemyBarList.size() + 1) + 80);
-		enemyHud.setPosition(-GuiElementStage.getWidth() + hudGui.getWidth()*3.1f, inventoryGui.getY() + inventoryGui.getHeight()*3.6f);
+		enemyHud.setPosition(-GuiElementStage.getWidth() + inventoryGui.getWidth()*3.1f, inventoryGui.getY());
 		GuiElementStage.addActor(enemyHud);
 	}
 
@@ -424,20 +424,6 @@ public class Rogue99 extends ApplicationAdapter {
 
 	//adjust stats bars
 	public void changeBarValue(String barName, int newValue){
-		for(HUDProgressBar bar : barList){
-			if(bar.getName() == barName){
-				bar.setValue(newValue);
-			}
-			if(isMultiplayer()){
-				Packets.Packet005Stats stats = new Packets.Packet005Stats();
-				stats.name = hero.getName();
-				stats.health = hero.getCurrHP();
-				stats.armor = hero.getArmor();
-				stats.score = hero.score;
-				stats.depth = hero.depth;
-				client.client.sendTCP(stats);
-			}
-		}
 		for(HUDProgressBar bar : enemyBarList){
 			if(bar.getName() == barName){
 				bar.setValue(newValue);
@@ -452,10 +438,7 @@ public class Rogue99 extends ApplicationAdapter {
 		} else {
 			item.use(hero);
 			if(item.getId() == Item.HEALTHPOTION){
-				changeBarValue(HEALTHBAR, hero.getCurrHP());
-				hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
-				System.out.println(hudGui.getHudBars().get(1).getValue());
-				System.out.println(hero.getCurrHP());
+
 			}
 			else if(item.getId() == Item.DAMAGEPOTION){
 				Packets.Packet004Potion potion = new Packets.Packet004Potion();
@@ -465,8 +448,7 @@ public class Rogue99 extends ApplicationAdapter {
 				client.client.sendTCP(potion);
 			}
 			else if(item.getId() == Item.ARMORSCROLL){
-				changeBarValue(ARMOURBAR, hero.getArmor());
-				hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
+
 			} else if(item.getId() == Item.HEALTHSCROLL) {
 				// write code here for visual changes if wanted //
 			} else if(item.getId() == Item.STRENGTHSCROLL) {
@@ -596,7 +578,7 @@ public class Rogue99 extends ApplicationAdapter {
 	private void generateGuiElements(){
 		//initialize Inventory & HUD gui
 		createInventoryGui();
-		createHUDGui();
+		//createHUDGui();
 		createEnemyHud();
 		exitScreen = new ExitScreen(this, "Menu", skin);
 		scoreboard.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
@@ -604,7 +586,7 @@ public class Rogue99 extends ApplicationAdapter {
 		if(multiplayer){
 			popUpWindow = new MessageWindow(this,"ALERT", skin, "");
 			popUpWindow.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
-			scoreboard.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight() - popUpWindow.getHeight()*8 - 80);
+			scoreboard.setPosition(-GuiElementStage.getWidth(), -GuiElementStage.getHeight() + inventoryGui.getHeight() + scoreboard.getHeight() - 15);
 			GuiElementStage.addActor(popUpWindow);
 		}
   }

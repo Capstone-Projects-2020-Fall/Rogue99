@@ -147,14 +147,8 @@ public class Enemy extends Character {
         } else{
             System.out.println(this.sprite + " HIT MISSED");
         }
-
-        System.out.println("enemy health after attack: " + hero.getCurrHP());
         if(hero.getCurrHP() > 0){
             game.setAttacking(true);
-            game.changeBarValue(game.HEALTHBAR, hero.getCurrHP());
-            game.changeBarValue(game.ARMOURBAR, hero.getArmor());
-            game.hudGui.statsNumTexts.get(1).setText(String.valueOf(hero.getCurrHP()));
-            game.hudGui.statsNumTexts.get(0).setText(String.valueOf(hero.getArmor()));
             game.getScoreboard().getPlayerScore().setText("Score: " + game.hero.score + " Health: " + game.hero.getCurrHP()
                     + " Armor: " + game.hero.getArmor() + " Level: "+ game.hero.depth);
             if (game.multiplayer){
