@@ -9,13 +9,7 @@ public class Rat extends Enemy {
 
     public Rat(Tile tile, Rogue99 game){
         super(10, 0.7, 1, 0, 10, 2, "rat", tile, game);
-    }
-
-    @Override
-    public void observe(String event) {
-        if(event.equals("onehitkill")){
-            this.FRIGHTENED = true;
-            this.retreat(3);
-        }
+        super.mobs = true;
+        super.mobbingNumber = 3;
     }
 }
