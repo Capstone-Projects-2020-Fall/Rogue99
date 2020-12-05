@@ -29,12 +29,15 @@ public class Enemy extends Character {
     public boolean FOLLOWING = false;
     public boolean ATTACKING = false;
     public boolean FRIGHTENED = false;
+    public boolean mobs = false;
+    public int mobbingNumber = 0;
     public int frightened_timer = 0;
     public boolean WAITING = false;
 
     public Enemy(){}
 
-    public Enemy(int visRange, double hitChance, int moveDistance, int difficulty, int baseHp, int baseStr, String sprite, Tile tile, Rogue99 game) {
+    public Enemy(int visRange, double hitChance, int moveDistance, int difficulty,
+                 int baseHp, int baseStr, String sprite, Tile tile, Rogue99 game) {
         this.visRange = visRange;
         this.moveDistance = moveDistance;
         this.difficulty = difficulty;
@@ -75,25 +78,14 @@ public class Enemy extends Character {
             Pathing.Node n = path.get(0);
             //System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
             if (path.size() > 2 && (path.size() <= visRange || FOLLOWING == true)) {
-                if( (enemiesInRange > 1 && path.size() < 8) || path.size() >= 8) {
-                    WANDERING = false;
-                    ATTACKING = false;
-                    FOLLOWING = true;
-                    if (path.size() == 3) {
-                        n = path.get(1);
+                if(this.mobs == true && game.aiEnabled){
+                    if((enemiesInRange > this.mobbingNumber && path.size() < 8) || path.size() >= 8) {
+                        moveTowards(map, path, n);
                     } else {
-                        n = path.get(moveDistance);
+                        retreat(1);
                     }
-                    //System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
-                    if (!(tile.getEntities().isEmpty())) {
-                        game.level.intMap[tile.getPosX()][tile.getPosY()] = 0;
-                        game.level.intMap[n.x][n.y] = -1;
-                        tile.getEntities().pop();
-                        tile = map[n.x][n.y];
-                        tile.getEntities().push(this);
-                    }
-                } else {
-                    retreat(1);
+                } else{
+                    moveTowards(map, path, n);
                 }
             } else if(path.size() <= 2){
                 this.attack(hero);
@@ -132,12 +124,23 @@ public class Enemy extends Character {
         return 0;
     }
 
-    public void setDifficulty(int difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public int getDifficulty() {
-        return difficulty;
+    private void moveTowards(Tile[][] map, List<Pathing.Node> path, Pathing.Node n){
+        WANDERING = false;
+        ATTACKING = false;
+        FOLLOWING = true;
+        if (path.size() == 3) {
+            n = path.get(1);
+        } else {
+            n = path.get(moveDistance);
+        }
+        //System.out.print("The enemy should move to " + "[" + n.x + ", " + n.y + "] \n\n");
+        if (!(tile.getEntities().isEmpty())) {
+            game.level.intMap[tile.getPosX()][tile.getPosY()] = 0;
+            game.level.intMap[n.x][n.y] = -1;
+            tile.getEntities().pop();
+            tile = map[n.x][n.y];
+            tile.getEntities().push(this);
+        }
     }
 
     public void attack(Hero hero){

@@ -90,6 +90,7 @@ public class Rogue99 extends ApplicationAdapter {
 	boolean showPopUp;
 	boolean showEscape;
 	boolean keepPlaying;
+	public boolean aiEnabled;
 
 	Item EquippedWeapon;
 	String serverSeed;
@@ -150,6 +151,7 @@ public class Rogue99 extends ApplicationAdapter {
 		showPopUp = false;
 		showEscape = false;
 		keepPlaying = false;
+		aiEnabled = true;
 
 		//load sprites and add to hash map
 		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
@@ -653,6 +655,13 @@ public class Rogue99 extends ApplicationAdapter {
 		} else if (buttonName.equals("Resume")) {
 			setShowEscape(false);
 			exitScreen.remove();
+		} else if (buttonName.equals("Disable AI")) {
+			aiEnabled = false;
+			exitScreen.changeAIButton(aiEnabled);
+		} else if (buttonName.equals("Enable AI")) {
+			aiEnabled = true;
+			exitScreen.changeAIButton(aiEnabled);
+
 		} else if(buttonName.equals("Main Menu")) {
 			mainMenuViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 			showMainMenu = true;
