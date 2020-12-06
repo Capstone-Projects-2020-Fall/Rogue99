@@ -197,6 +197,9 @@ public class Rogue99 extends ApplicationAdapter {
 		inputMultiplexer.addProcessor(mainMenuStage);
 		inputMultiplexer.addProcessor(popUpStage);
 		inputMultiplexer.addProcessor(GuiElementStage);
+		control = new Control(hero, this);
+		inputMultiplexer.addProcessor(control);
+		Gdx.input.setInputProcessor(inputMultiplexer);
 		//init_single_player();
 		//init_multiplayer();
 	}
@@ -227,9 +230,9 @@ public class Rogue99 extends ApplicationAdapter {
 		tempLevel.generateFloorPlan();
 		generateLevel(tempLevel.getSeed(), 0);
 		
-		control = new Control(hero, this);
-
-		inputMultiplexer.addProcessor(control);
+//		control = new Control(hero, this);
+//
+//		inputMultiplexer.addProcessor(control);
 	}
 
 	private void init_multiplayer() {
@@ -245,8 +248,8 @@ public class Rogue99 extends ApplicationAdapter {
 		System.out.println("Sending seed request for level 0");
 		client.client.sendTCP(seedRequest);
 		scoreboard.setSize(scoreboard.WINDOW_WIDTH*3, scoreboard.WINDOW_HEIGHT*15);
-		control = new Control(hero, this);
-		inputMultiplexer.addProcessor(control);
+//		control = new Control(hero, this);
+//		inputMultiplexer.addProcessor(control);
 	}
 
 	public void resetHero(){
@@ -342,8 +345,8 @@ public class Rogue99 extends ApplicationAdapter {
 			}
 			/* STAGE RENDERING ENDS */
 		}
-		Gdx.input.setInputProcessor(inputMultiplexer);
-			}
+//		Gdx.input.setInputProcessor(inputMultiplexer);
+	}
 
 
 
