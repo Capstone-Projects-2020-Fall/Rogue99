@@ -198,7 +198,6 @@ public class Rogue99 extends ApplicationAdapter {
 		inputMultiplexer.addProcessor(popUpStage);
 		inputMultiplexer.addProcessor(GuiElementStage);
 		control = new Control(hero, this);
-		inputMultiplexer.addProcessor(control);
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		//init_single_player();
 		//init_multiplayer();
@@ -331,6 +330,7 @@ public class Rogue99 extends ApplicationAdapter {
 				if(deadPlayers == players.size() && isMultiplayer()){
 					lastPlayerWinWindow.setPosition(hero.getPosX() * 36 - 127, hero.getPosY() * 36);
 					MapStage.addActor(lastPlayerWinWindow);
+					inputMultiplexer.removeProcessor(control);
 				}
 				MapCamera.position.lerp(hero.pos3, 0.1f);
 				keepCameraInBounds();
@@ -547,6 +547,7 @@ public class Rogue99 extends ApplicationAdapter {
 			movement.yPos = hero.getPosY();
 			client.client.sendTCP(movement);
 		}
+		inputMultiplexer.addProcessor(control);
 	}
 	public void nextLevel(int depth){
 		level = levels.get(depth+1);
@@ -667,6 +668,7 @@ public class Rogue99 extends ApplicationAdapter {
 			if(multiplayer){
 				disconnectClient();
 			}
+			inputMultiplexer.removeProcessor(control);
 		} else {
 			Gdx.app.exit();
 		}
