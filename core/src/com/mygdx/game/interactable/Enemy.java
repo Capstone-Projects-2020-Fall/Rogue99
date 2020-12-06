@@ -146,7 +146,12 @@ public class Enemy extends Character {
     public void attack(Hero hero){
         if(Math.random() < getHitChance()){
             System.out.println(this.sprite + " HIT SUCCESSFUL");
-            hero.setCurrHP(hero.getCurrHP() + hero.getArmor() - getStr());
+            if( getStr() - hero.getArmor() > 0 ) {
+                hero.takeDamage(getStr() - hero.getArmor());
+            }
+            else {
+                hero.takeDamage(1);
+            }
         } else{
             System.out.println(this.sprite + " HIT MISSED");
         }

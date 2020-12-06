@@ -248,6 +248,7 @@ public class Hero extends Character{
         }
     }
     public void takeDamage(int dmg) {
+
         if (getCurrHP() - dmg > 0) {
             setCurrHP( getCurrHP() - dmg );
             game.changeBarValue(game.HEALTHBAR, getCurrHP());
