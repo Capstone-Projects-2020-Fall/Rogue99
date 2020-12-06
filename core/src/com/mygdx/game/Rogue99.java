@@ -533,6 +533,7 @@ public class Rogue99 extends ApplicationAdapter {
 			MapStage.getViewport().setCamera(MapCamera);
 			MapStage.setViewport(MapViewport);
 			inputMultiplexer.addProcessor(MapStage);
+			inputMultiplexer.addProcessor(control);
 		} else {
 			MapStage.setStageLevel(level);
 		}
@@ -547,7 +548,6 @@ public class Rogue99 extends ApplicationAdapter {
 			movement.yPos = hero.getPosY();
 			client.client.sendTCP(movement);
 		}
-		inputMultiplexer.addProcessor(control);
 	}
 	public void nextLevel(int depth){
 		level = levels.get(depth+1);
@@ -664,6 +664,7 @@ public class Rogue99 extends ApplicationAdapter {
 			mapGenerated = false;
 			setShowEscape(false);
 			scoreboard.remove();
+			inputMultiplexer.removeProcessor(MapStage);
 			MapStage = null;
 			if(multiplayer){
 				disconnectClient();
