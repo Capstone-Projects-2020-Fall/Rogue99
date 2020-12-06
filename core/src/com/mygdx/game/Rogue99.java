@@ -698,7 +698,7 @@ public class Rogue99 extends ApplicationAdapter {
 		lastPopUp = System.currentTimeMillis();
 	}
 
-	private void setEnemyMap(){
+	public void setEnemyMap(){
 		enemyMap.put(0, new ArrayList<String>());
 		enemyMap.get(0).add("rat");
 		enemyMap.get(0).add("zombie");
