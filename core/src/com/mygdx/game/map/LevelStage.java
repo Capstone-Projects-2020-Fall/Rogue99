@@ -37,8 +37,8 @@ public class LevelStage extends Stage {
                 LevelActor actor = new LevelActor(level, tile);
                 actor.setBounds(tile.getPosX()*36, tile.getPosY()*36, 36, 36);
                 addActor(actor);
-                EventListener eventListener = new LevelClickListener(actor, level, game);
-                actor.addListener(eventListener);
+//                EventListener eventListener = new LevelClickListener(actor, level, game);
+//                actor.addListener(eventListener);
             }
         }
     }

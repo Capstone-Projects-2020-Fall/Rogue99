@@ -53,13 +53,6 @@ public class Control extends InputAdapter implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         switch (keycode){
-            case Input.Keys.I:
-                if(game.isShowInventory()){
-                    game.setShowInventory(false);
-                } else {
-                    game.setShowInventory(true);
-                }
-                break;
             case Input.Keys.R:
                 if(game.isRangeMode()) {
                     game.setRangeMode(false);
@@ -69,7 +62,11 @@ public class Control extends InputAdapter implements InputProcessor {
                 }
                 break;
             case Input.Keys.ESCAPE:
-                game.setShowEscape(true);
+                if(game.isShowEscape()){
+                    game.setShowEscape(false);
+                } else {
+                    game.setShowEscape(true);
+                }
         }
         return false;
     }
