@@ -18,6 +18,10 @@ package de.tomgrill.gdxtesting.examples;
 
 import static org.junit.Assert.assertEquals;
 
+import com.mygdx.game.Rogue99;
+import com.mygdx.game.interactable.Hero;
+import com.mygdx.game.item.sword;
+import de.tomgrill.gdxtesting.GdxTestRunner;
 import org.junit.Test;
 
 public class UnitTestExample {
@@ -26,5 +30,7 @@ public class UnitTestExample {
 	public void oneEqualsOne() {
 		assertEquals(1, 1);
 	}
+
+
 
 }

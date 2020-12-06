@@ -40,7 +40,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 
 	public Hero hero;
-	SpriteBatch batch;
+	//SpriteBatch batch;
 	public OrthographicCamera MapCamera;
 	public MPClient client;
 	FitViewport MapViewport;
@@ -124,7 +124,7 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		multiplayer = false;
-		batch = new SpriteBatch();
+		//batch = new SpriteBatch();
 		levels = new ArrayList<>();
 		players = new ArrayList<>();
 		//establish enemy difficulty map
@@ -351,7 +351,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	@Override
 	public void dispose () {
-		batch.dispose();
+		//batch.dispose();
 		textureAtlas.dispose();
 		sprites.clear();
 	}
@@ -360,7 +360,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		MapViewport.update(width, height, true);
 		mainMenuViewport.update(width,height,true);
-		batch.setProjectionMatrix(MapCamera.combined);
+		//batch.setProjectionMatrix(MapCamera.combined);
 	}
 
 	//adds sprites to hash map for more efficient use
@@ -484,8 +484,10 @@ public class Rogue99 extends ApplicationAdapter {
 				}
 			}
 		} hero.score += (int)(Math.random()*50);
-		scoreboard.getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
-				+ " Armor: " + hero.getArmor() + " Level: "+ hero.depth);
+		if(scoreboard != null) {
+			scoreboard.getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
+					+ " Armor: " + hero.getArmor() + " Level: " + hero.depth);
+		}
 		if (isMultiplayer()){
 			Packets.Packet005Stats stats = new Packets.Packet005Stats();
 			stats.name = hero.getName();
