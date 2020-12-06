@@ -89,6 +89,11 @@ public class LevelStage extends Stage {
         if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Hero){
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
             sprite.setPosition(x,y);
+            if(game.hero.isFrozen()){
+                sprite.setColor(Color.TEAL);
+            } else{
+                sprite.setColor(Color.WHITE);
+            }
             sprite.draw(batch);
         } else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Enemy){
             //System.out.println("Drawing" + sprites.get(tile.getEntities().peek().getSprite()));

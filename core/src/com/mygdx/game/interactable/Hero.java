@@ -272,6 +272,14 @@ public class Hero extends Character{
         return frozen;
     }
 
+    public boolean isFrozen(){
+        if(frozen > 0){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     public ArrayList<Interactable> getAdjacentEnemies(String type){
         ArrayList<Interactable> enemies = new ArrayList<>();
         for(int i = -1; i < 2; i++){
