@@ -21,7 +21,7 @@ public class Slime extends Enemy {
         double splitChance = Math.random();
 
         //if slime splits
-        if(splitChance > 0.5){
+        if(splitChance > 0.65){
             int x = this.tile.getPosX();
             int y = this.tile.getPosY();
 

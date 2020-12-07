@@ -216,6 +216,7 @@ public class Rogue99 extends ApplicationAdapter {
 
 	private void init_single_player(){
 		resetHero();
+		//hero = new Hero(this, "hero");
 
 		Level tempLevel = new Level(null, 0, null);
 		tempLevel.generateFloorPlan();
@@ -243,6 +244,7 @@ public class Rogue99 extends ApplicationAdapter {
 		hero.getInventory().clear();
 		hero.setArmor(0);
 		hero.setStr(10);
+		hero.depth = 0;
 	}
 
 	@Override

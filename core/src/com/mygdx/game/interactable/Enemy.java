@@ -104,10 +104,33 @@ public class Enemy extends Character {
                     game.level.intMap[tile.getPosX()][tile.getPosY()] = -1;
                 }
             }
+//            else if(path.size() > visRange){
+//                WANDERING = true;
+//                FOLLOWING = false;
+//                //System.out.println("Enemy location: " + tile.getPosX() + tile.getPosY());
+//                ArrayList<Tile> openList = new ArrayList<>();
+//                for(int i = -1; i < 2; i++){
+//                    for(int k = -1; k < 2; k++){
+//                        if(!map[tile.getPosX() + i][tile.getPosY() + k].getType().equals("wall") &&
+//                                (!map[tile.getPosX() + i][tile.getPosY() + k].getEntities().empty() && map[tile.getPosX() + i][tile.getPosY() + k].getEntities().peek() instanceof Enemy) &&
+//                                (i != 0 && k != 0)){
+//                            openList.add(map[tile.getPosX() + i][tile.getPosY() + k]);
+//                        }
+//                    }
+//                }
+//                if(openList.size() != 0){
+//                    System.out.println("ENEMY WANDERED");
+//                    Random rand = new Random();
+//                    game.level.intMap[tile.getPosX()][tile.getPosY()] = 0;
+//                    tile.getEntities().pop();
+//                    tile = openList.get(rand.nextInt(openList.size()));
+//                    tile.getEntities().push(this);
+//                    game.level.intMap[tile.getPosX()][tile.getPosY()] = -1;
+//                }
+//            }
             if(path.size() < 10) {
                 return 1;
-            }
-            else {
+            } else {
                 return 0;
             }
         }
