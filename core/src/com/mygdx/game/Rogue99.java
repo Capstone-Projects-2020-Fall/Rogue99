@@ -406,6 +406,7 @@ public class Rogue99 extends ApplicationAdapter {
 				Packets.Packet004Potion potion = new Packets.Packet004Potion();
 				potion.ID = Item.DAMAGEPOTION;
 				potion.value = ( (DamagePotion) item).getDmgAmt();
+				potion.playerName = hero.getName();
 
 				client.client.sendTCP(potion);
 			}
