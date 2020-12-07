@@ -68,12 +68,12 @@ public class IntegrationsTests {
 
     @Test
     public void testInventoryUpdate(){
-        assertEquals(1,game.hero.getInventory().size());
+        assertEquals(2,game.hero.getInventory().size());
     }
 
     @Test
     public void testAttackEnemy(){
-        assertEquals(1,game.hero.getInventory().size());
+        assertEquals(2,game.hero.getInventory().size());
     }
 
 }

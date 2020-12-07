@@ -68,12 +68,12 @@ public class AutomatedAcceptanceTests {
 
     @Test
     public void testAutomatedInventoryUpdate(){
-        assertEquals(1,game.hero.getInventory().size());
+        assertEquals(2,game.hero.getInventory().size());
     }
 
     @Test
     public void testAutomatedAttackEnemy(){
-        assertEquals(1,game.hero.getInventory().size());
+        assertEquals(2,game.hero.getInventory().size());
     }
 
 }
