@@ -4,12 +4,14 @@
 
 - Download the Source Code from the pre-release section.
 - Navigate to the source code directory and open it in the command line or terminal for linux/mac users
+- For Linux & Mac users type the following command "chmod +x ./gradlew" without the quotation marks
 - Type in the following command "./gradlew desktop:dist" (Linux/Mac) or "gradlew desktop:dist" (Windows) without the quotation marks
 - An executable jar file will be built and put under desktop/build/libs folder.
 
 # How to Run
 
 - Java is required to run this game. If you do not have java installed please go to https://www.java.com/en/download/ to download the latest version
+- For Linux & Mac users make the output file executable by running the command "chmod +x desktop-1.0.jar" which is located in desktop/build/libs folder
 - Double click the executable jar that was made from the "How to Build" section.
 
 # Feature List
@@ -37,6 +39,4 @@
 # Known Bugs
 
 - Enemies moving through each other
-- Map generation stuck on placing stairs on map which causes the game to freeze
-- Empty stack exception causing the game to crash
-- Moving to previous level in multiplayer causes an exception that crashes the game
+- Server crashes sometimes (still unknown reasons)
