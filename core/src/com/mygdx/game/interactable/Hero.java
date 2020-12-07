@@ -5,7 +5,6 @@ import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.FreezePotion;
 import com.mygdx.game.item.Item;
-import com.mygdx.game.item.HealthPotion;
 import com.mygdx.game.item.SummonScroll;
 
 import java.util.ArrayList;
@@ -112,7 +111,6 @@ public class Hero extends Character{
     }
 
     private void move(int x, int y){
-        System.out.println("Hero Position: [" + x + "][" + y + "]");
         if(!game.level.getMap()[x][y].getType().equals("wall")){
             if(!game.level.getMap()[x][y].getEntities().isEmpty() && game.level.getMap()[x][y].getEntities().peek() instanceof Enemy){
                 // attack
@@ -123,9 +121,7 @@ public class Hero extends Character{
                 if(inventory.size() != 10){
                     inventory.add((Item) game.level.getMap()[x][y].getEntities().pop());
                     game.inventoryGui.addItemToInventory(inventory.get(inventory.size()-1));
-                    System.out.println("picked up " + inventory.get(inventory.size()-1).getSprite());
                 }
-                System.out.println("Player inventory size: " + this.getInventory().size());
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 setPosX(x);
                 setPosY(y);
@@ -180,38 +176,20 @@ public class Hero extends Character{
                 movement.depth = depth;
                 game.client.client.sendTCP(movement);
             }
-            //game.timerCount = 0;
-            //game.level.moveEnemies();
         }
     }
 
     public void attack(int x, int y){
         Enemy enemy = (Enemy) game.level.getMap()[x][y].getEntities().peek();
-        System.out.println("enemy health: " + enemy.getCurrHP() + " enemy armor: " + enemy.getArmor());
-//        if (getStr() > enemy.getArmor()) {
-//            enemy.setCurrHP(enemy.getCurrHP() + enemy.getArmor() - getStr());
-//        }
         if(Math.random() < getHitChance()){
-            System.out.println("HIT SUCCESSFUL");
-//            if(enemy.getCurrHP() == enemy.getMaxHP() && this.getStr() >= enemy.getMaxHP()){
-//                //send observe onehitkill to adjacent enemies who retreat
-//                ArrayList<Interactable> retreating = getAdjacentEnemies("rat");
-//                for(Interactable i : retreating){
-//                    Enemy curr = (Enemy)i;
-//                    curr.observe("onehitkill");
-//                }
-//            }
             enemy.setCurrHP(enemy.getCurrHP() - this.getStr());
         } else{
-            System.out.println("HIT MISSED");
+
         }
-        System.out.println("enemy health after attack: " + enemy.getCurrHP());
         game.changeBarValue("EnemyHP", enemy.getCurrHP());
-        game.changeBarValue("EnemyAR", enemy.getArmor());
         game.enemyHud.statsNumTexts.get(0).setText(String.valueOf(enemy.getCurrHP()));
-        game.enemyHud.statsNumTexts.get(1).setText(String.valueOf(enemy.getArmor()));
+        game.enemyHud.getTitleLabel().setText(enemy.getSprite().toUpperCase());
         if(enemy.getCurrHP() > 0){
-            //game.level.getMap()[x][y].getEntities().push(enemy);
             enemy.attack(this);
             //hit() performs an action that the enemy performs when hit, such as slimes splitting or wasps moving away
             if(enemy.getSprite().equals("wasp")){
@@ -222,28 +200,47 @@ public class Hero extends Character{
                 slime.hit();
             }
         }else {
-            enemy.tile.getEntities().pop();
-            game.level.enemies.remove(enemy);
-            score += (int)((Math.random()*100)+100);
-            if(Math.random() < 0.4 && game.multiplayer){
-                game.level.getMap()[x][y].getEntities().push( new SummonScroll(1, "scroll_summon", enemy.getSprite()) );
-            }
-            else if (Math.random() > 0.4 && game.multiplayer) {
-                game.level.getMap()[x][y].getEntities().push( new FreezePotion(1, "potion_freeze", 5 ));
-            }
-            game.removeActor(game.enemyHud);
-            game.removeActor(game.hudGui);
-            if(game.level.enemies.size() <= (game.level.enemiesToOpen)){
-                game.level.doorOpen = true;
-                System.out.println("OPENED DOOR");
+            if(enemy.tile.getEntities().size() > 0) {
+                enemy.tile.getEntities().pop();
+                game.level.enemies.remove(enemy);
+                game.enemyHud.getTitleLabel().setText("EnemyStats");
+                score += (int) ((Math.random() * 100) + 100);
+                game.getScoreboard().getPlayerScore().setText("Score: " + score + " Health: " + game.hero.getCurrHP()
+                        + " Armor: " + game.hero.getArmor() + " Level: " + game.hero.depth);
+                if (game.isMultiplayer()) {
+                    Packets.Packet005Stats stats = new Packets.Packet005Stats();
+                    stats.name = getName();
+                    stats.score = score;
+                    stats.health = getCurrHP();
+                    stats.armor = getArmor();
+                    stats.depth = depth;
+                    game.client.client.sendTCP(stats);
+                }
+                if (Math.random() < 0.4 && game.multiplayer) {
+                    game.level.getMap()[x][y].getEntities().push(new SummonScroll(1, "scroll_summon", enemy.getSprite()));
+                } else if (Math.random() > 0.4 && game.multiplayer) {
+                    game.level.getMap()[x][y].getEntities().push(new FreezePotion(1, "potion_freeze", 5));
+                }
+                if (game.level.enemies.size() <= (game.level.enemiesToOpen)) {
+                    game.level.doorOpen = true;
+                }
             }
         }
     }
     public void takeDamage(int dmg) {
+
         if (getCurrHP() - dmg > 0) {
             setCurrHP( getCurrHP() - dmg );
             game.changeBarValue(game.HEALTHBAR, getCurrHP());
-            game.hudGui.statsNumTexts.get(1).setText(String.valueOf( getCurrHP()) );
+            if(game.isMultiplayer()){
+                Packets.Packet005Stats stats = new Packets.Packet005Stats();
+                stats.name = getName();
+                stats.health = getCurrHP();
+                stats.armor = getArmor();
+                stats.score = score;
+                stats.depth = depth;
+                game.client.client.sendTCP(stats);
+            }
         } else {
             setCurrHP(0);
         }
@@ -254,6 +251,14 @@ public class Hero extends Character{
             frozen += time;
         }
         return frozen;
+    }
+
+    public boolean isFrozen(){
+        if(frozen > 0){
+            return true;
+        } else{
+            return false;
+        }
     }
 
     public ArrayList<Interactable> getAdjacentEnemies(String type){

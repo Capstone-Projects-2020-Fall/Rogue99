@@ -1,6 +1,5 @@
 package com.mygdx.game.gui;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -31,7 +30,7 @@ public class InventoryGui extends Window {
         this.setResizable(false);
         this.setMovable(false);
         this.setSize(INVENTORY_WINDOW_WIDTH_SIZE*3+INVENTORY_WINDOW_WIDTH_OFFSET, InventorySlot.SIZE*INVENTORY_COLUMNS + INVENTORY_WINDOW_HEIGHT_OFFSET);
-        //this.scaleBy(1);
+        this.scaleBy(.3f);
         this.inventory = hero.getInventory();
         this.game = game;
         inventorySlots = new ArrayList<>();
@@ -41,7 +40,6 @@ public class InventoryGui extends Window {
             slot.addListener(new ClickListener(){
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    System.out.println("Item Clicked!");
                     if(!slot.isEmpty()){
                         game.usedItem(slot.getItem());
                         if(slot.getItem() instanceof Weapon){
@@ -82,30 +80,10 @@ public class InventoryGui extends Window {
             for (int i = 0; i < inventorySlots.size(); i++) {
                 if (inventorySlots.get(i).isEmpty()) {
                     inventorySlots.get(i).setItem(item, game.sprites.get(item.getSprite()));
-                    System.out.println("added item");
                     return;
                 }
             }
             // if reached here inventory is full
     }
-
-//    @Override
-//    public void draw(Batch batch, float parentAlpha) {
-//        super.draw(batch, parentAlpha);
-//        int row = 0;
-//        int column = 0;
-//        int slotNum = 0;
-//        for(InventorySlot slot : inventorySlots){
-//            slot.setPosition(this.getX() + column + 20,this.getY() + row + 20);
-//            column = column + InventorySlot.SIZE;
-//            slotNum++;
-//            if(slotNum >= 2){
-//                slotNum = 0;
-//                row = row + InventorySlot.SIZE;
-//                column = 0;
-//            }
-//            slot.draw(batch,parentAlpha);
-//        }
-//    }
 }
 

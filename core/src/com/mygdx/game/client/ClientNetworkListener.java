@@ -26,11 +26,9 @@ public class ClientNetworkListener extends Listener {
     }
 
     public void disconnected(Connection c){
-        System.out.println("CLIENT disconnected");
     }
 
     public void received(Connection c, Object o){
-        //System.out.println("RECEIVED");
         if(o instanceof Packets.Packet000ConnectionAnswer){
             if(((Packets.Packet000ConnectionAnswer) o).answer == false){
                 game.connectionRejected("Game in Progress!");
@@ -49,17 +47,14 @@ public class ClientNetworkListener extends Listener {
                 game.addPlayer(player);
             }
         } else if(o instanceof Packets.Packet002Map){
-            System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
             //receives seed, sets seed of level at specified depth, generates level
             game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
             for(Hero player : game.players){
-                System.out.println("player in list: " + player.getName() + " received name: " + ((Packets.Packet003Movement) o).name);
                 if(player.getName().equals(((Packets.Packet003Movement) o).name)){
                     player.setPosX(((Packets.Packet003Movement) o).xPos);
                     player.setPosY(((Packets.Packet003Movement) o).yPos);
                     player.depth = ((Packets.Packet003Movement) o).depth;
-                    System.out.println("player in list depth: " + player.depth + " received depth: " + ((Packets.Packet003Movement) o).depth);
                 }
             }
         } else if(o instanceof Packets.Packet004Potion){
@@ -77,9 +72,11 @@ public class ClientNetworkListener extends Listener {
             c.sendTCP(message);
         } else if(o instanceof Packets.Packet005Stats){
             for(Hero player : game.players){
-                if(player.getName() == ((Packets.Packet005Stats) o).name){
+                if(player.getName().equals(((Packets.Packet005Stats) o).name)){
                     player.setCurrHP(((Packets.Packet005Stats) o).health);
                     player.setArmor(((Packets.Packet005Stats) o).armor);
+                    game.getScoreboard().changePlayerScore(((Packets.Packet005Stats) o).name,((Packets.Packet005Stats) o).score, ((Packets.Packet005Stats) o).
+                            health, ((Packets.Packet005Stats) o).armor, ((Packets.Packet005Stats) o).depth);
                 }
             }
         } else if (o instanceof Packets.Packet008ServerMessage){
@@ -101,8 +98,6 @@ public class ClientNetworkListener extends Listener {
                 y = rand.nextInt(5);
                 if ( game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getType() == "floor" &&
                         game.level.getMap()[game.hero.getPosX() +x][game.hero.getPosY() + y].getEntities().isEmpty() ) {
-                    //Enemy enemy = new Enemy( game.hero.depth, "wasp", game.level.getMap()[x][y], game);
-                    //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
                     summoned = true;
                 }
             } while ( !summoned );
@@ -121,17 +116,9 @@ public class ClientNetworkListener extends Listener {
             }
             game.level.enemies.add(enemy);
             game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getEntities().push(enemy);
-        } else if(o instanceof Packets.Packet005Stats){
-            for(Hero player : game.players){
-                if(player.getName() == ((Packets.Packet005Stats) o).name){
-                    player.setCurrHP(((Packets.Packet005Stats) o).health);
-                    player.setArmor(((Packets.Packet005Stats) o).armor);
-                }
-            }
         } else if (o instanceof Packets.Packet010Disconnect){
             game.removePLayer(((Packets.Packet010Disconnect) o).name);
         } else if (o instanceof Packets.Packet011StartGame){
-            System.out.println("game started: " + ((Packets.Packet011StartGame) o).start);
             game.setGameStarted(((Packets.Packet011StartGame) o).start);
         }
     }

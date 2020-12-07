@@ -14,7 +14,6 @@ public class StrengthScroll extends Item{
     }
     public boolean use(Character character) {
             character.setStr( character.getStr() + strAmt );
-            System.out.println("STRENGTH CHANGED");
             return true;
     }
 

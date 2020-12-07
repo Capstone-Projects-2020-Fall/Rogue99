@@ -1,6 +1,5 @@
 package com.mygdx.game.gui;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -25,11 +24,12 @@ public class HUDGui extends Window {
     public ArrayList<TextField> statsNumTexts;
 
     public HUDGui(String HUDName,Skin skin, Map<String, Integer> bars){
-        super("Stats", skin);
+        super(HUDName, skin);
         patch = skin.getPatch("default-round");
         this.setName(HUDName);
         this.setResizable(false);
         this.setMovable(false);
+        this.scaleBy(.3f);
         this.align(Align.center);
         this.setSize(HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET, HUD_SIZE * (bars.size() + 1) + HUD_WINDOW_HEIGHT_OFFSET);
         Window_Width = HUD_SIZE * 3 + HUD_WINDOW_WIDTH_OFFSET;

@@ -16,12 +16,13 @@ public class ServerNetworkListener  extends Listener {
     GameServer gameServer;
     Kryo kryo;
     HashMap<Connection, Object> connectionInfoMap;
-    String tempName;
     boolean gameStarted;
     Random rand;
     TableGenerator tableGenerator;
     List<String> headersList;
     List<List<String>> rowList;
+    int packetsReceived;
+    int packtesSent;
 
     public ServerNetworkListener(Server server, GameServer gameServer, Kryo kryo){
         this.server = server;
@@ -38,6 +39,9 @@ public class ServerNetworkListener  extends Listener {
         headersList.add("YPos");
         headersList.add("Health");
         headersList.add("Armor");
+        headersList.add("Packets #");
+        packetsReceived = 0;
+        packtesSent = 0;
     }
 
     @Override
@@ -55,6 +59,7 @@ public class ServerNetworkListener  extends Listener {
                 Packets.Packet010Disconnect disconnect = new Packets.Packet010Disconnect();
                 disconnect.name =((Packets.Packet001Connection)connectionInfoMap.get(c)).name;
                 server.sendToAllExceptTCP(connection.getID(), disconnect);
+                packtesSent++;
                 removeTableRow(disconnect.name);
             }
         }
@@ -70,6 +75,7 @@ public class ServerNetworkListener  extends Listener {
 
     @Override
     public void received(Connection connection, Object object) {
+        packetsReceived++;
         if(object instanceof Packets.Packet001Connection){
             Packets.Packet000ConnectionAnswer connectionAnswer = new Packets.Packet000ConnectionAnswer();
             if(gameStarted){
@@ -80,6 +86,7 @@ public class ServerNetworkListener  extends Listener {
                 connectionPacket.name = ((Packets.Packet001Connection) object).name;
                 connectionPacket.spriteColor = Color.argb8888(256, rand.nextInt(256),rand.nextInt(256), rand.nextInt(256));
                 server.sendToAllExceptTCP(connection.getID(), connectionPacket);
+                packtesSent++;
                 if (!connectionInfoMap.isEmpty()) {
                     for (Connection c : connectionInfoMap.keySet()) {
                         connection.sendTCP(connectionInfoMap.get(c));
@@ -93,6 +100,7 @@ public class ServerNetworkListener  extends Listener {
                 row.add("0");
                 row.add("100");
                 row.add("0");
+                row.add("1");
                 rowList.add(row);
                 System.out.println(tableGenerator.generateTable(headersList, rowList));
                 System.out.println("Number Of Players Connected: " + connectionInfoMap.size());
@@ -119,7 +127,8 @@ public class ServerNetworkListener  extends Listener {
             connection.sendTCP(mapAnswer);
         } else if(object instanceof Packets.Packet003Movement){
             server.sendToAllExceptTCP(connection.getID(), object);
-            updateTableRow(((Packets.Packet003Movement) object).name, String.valueOf(((Packets.Packet003Movement) object).xPos), String.valueOf(((Packets.Packet003Movement) object).yPos), null, null);
+            packtesSent++;
+            updateTableRow(((Packets.Packet003Movement) object).name, String.valueOf(((Packets.Packet003Movement) object).xPos), String.valueOf(((Packets.Packet003Movement) object).yPos), null, null, 1);
         }
         else if(object instanceof Packets.Packet004Potion || object instanceof Packets.Packet009Scroll){
             Connection[] connectionList = server.getConnections();
@@ -133,22 +142,32 @@ public class ServerNetworkListener  extends Listener {
                 }
                 connectionList[i].sendTCP(object);
             }
+            if(object instanceof Packets.Packet004Potion){
+                updateTableRow(((Packets.Packet004Potion)object).playerName, null, null, null, null, 1);
+            } else {
+                updateTableRow(((Packets.Packet009Scroll)object).playerName, null, null, null, null, 1);
+            }
         } else if(object instanceof Packets.Packet008ServerMessage){
             System.out.println("Player " + ((Packets.Packet008ServerMessage) object).receivedBy + " Game Has Been Affected by Player " + ((Packets.Packet008ServerMessage) object).sentBy);
             server.sendToAllTCP(object);
+            packtesSent++;
+            updateTableRow(((Packets.Packet008ServerMessage) object).receivedBy, null, null, null, null,1);
         } else if(object instanceof Packets.Packet011StartGame){
             gameStarted = true;
             server.sendToAllTCP(object);
+            packtesSent++;
         } else if(object instanceof Packets.Packet005Stats){
             server.sendToAllExceptTCP(connection.getID(), object);
-            updateTableRow(((Packets.Packet005Stats) object).name, null, null, String.valueOf(((Packets.Packet005Stats) object).health), String.valueOf(((Packets.Packet005Stats) object).armor));
+            packtesSent++;
+            updateTableRow(((Packets.Packet005Stats) object).name, null, null, String.valueOf(((Packets.Packet005Stats) object).health), String.valueOf(((Packets.Packet005Stats) object).armor) , 1);
             //System.out.println("Player " + ((Packets.Packet005Stats) object).name + " Has new Stats: " + ((Packets.Packet005Stats) object).health + "HP " + ((Packets.Packet005Stats) object).armor + "AR");
         } else {
             server.sendToAllExceptTCP(connection.getID(), object);
+            packtesSent++;
         }
     }
 
-    private void updateTableRow(String name, String x, String y, String hp, String armor){
+    private void updateTableRow(String name, String x, String y, String hp, String armor, int packetNum){
         for(List list : rowList){
             if(list.get(0).equals(name)){
                 if(x != null){
@@ -163,10 +182,16 @@ public class ServerNetworkListener  extends Listener {
                 if(armor !=null){
                     list.set(4,armor);
                 }
+                if(packetNum == 1){
+                    int num = Integer.valueOf(list.get(5).toString());
+                    num++;
+                    list.set(5, String.valueOf(num));
+                }
             }
         }
         System.out.println(tableGenerator.generateTable(headersList,rowList));
         System.out.println("Number Of Players Connected: " + connectionInfoMap.size());
+        System.out.printf("Packets Received: " + packetsReceived + " Packets Sent: " + packtesSent);
     }
     private void removeTableRow(String name){
         for(List list : rowList){

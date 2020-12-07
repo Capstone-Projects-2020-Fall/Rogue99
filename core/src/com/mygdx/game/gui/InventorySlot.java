@@ -1,7 +1,6 @@
 package com.mygdx.game.gui;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -59,8 +58,6 @@ public class InventorySlot extends Widget {
                     batch.setColor(Color.RED);
                 }
             }
-            System.out.println("itemID: "+ item.getId());
-            System.out.println("itemIcon: " + itemIcon);
             batch.draw(itemIcon, this.getX() + OFFSET, this.getY() + OFFSET, this.getWidth() - OFFSET * 2, this.getHeight() - OFFSET * 2);
             batch.setColor(0,0,0,0);
         }

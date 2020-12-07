@@ -13,6 +13,7 @@ public class MessageWindow extends Window {
 
     public final int WINDOW_WIDTH = 132;
     public final int WINDOW_HEIGHT = 42;
+    private TextField textField;
 
     public MessageWindow(final Rogue99 game, final String title, Skin skin, String message) {
         super(title, skin);
@@ -20,19 +21,50 @@ public class MessageWindow extends Window {
         this.setMovable(false);
         this.setName(title);
         this.setSize(WINDOW_WIDTH*3, WINDOW_HEIGHT*3);
-        TextField textField = new TextField(message, skin);
+        this.textField = new TextField(message, skin);
         textField.setAlignment(Align.center);
         textField.setDisabled(true);
-        TextButton button = new TextButton("Close",skin);
-        button.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                game.removeActor(MessageWindow.this);
-            }
-        });
-        this.add(textField).size(this.getWidth(), this.getHeight()/4).pad(6);
+        this.add(textField).size(this.getWidth(), this.getHeight() / 4).pad(6);
         this.row();
-        this.add(button).size(this.getWidth()/4, this.getHeight()/4);
+        if(title.equals("You Won!")){
+            TextButton button = new TextButton("Continue", skin);
+            button.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    game.setKeepPlaying(true);
+                    MessageWindow.this.remove();
+                }
+            });
+            TextButton button2 = new TextButton("Menu", skin);
+            button2.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    game.menuButtonClicked("Main Menu");
+                    MessageWindow.this.remove();
+                }
+            });
+            this.add(button).size(this.getWidth() / 5, this.getHeight() / 4);
+            this.row();
+            this.add(button2).size(this.getWidth()/5,this.getHeight()/4);
+        } else {
+            TextButton button = new TextButton("Main Menu", skin);
+            button.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    game.menuButtonClicked("Main Menu");
+                    MessageWindow.this.remove();
+                }
+            });
+            if (!title.equals("ALERT")) {
+                this.add(button).size(this.getWidth() / 4, this.getHeight() / 4);
+            }
+        }
+    }
+
+    public TextField getTextField(){
+        return textField;
     }
 }

@@ -43,7 +43,7 @@ public class NameInputWindow extends Window {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.removeActor(NameInputWindow.this);
+                NameInputWindow.this.remove();
             }
         });
         this.add(textField).size(this.getWidth() - 100, this.getHeight()/4).pad(2);

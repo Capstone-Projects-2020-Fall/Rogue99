@@ -12,12 +12,13 @@ public class Wasp extends Enemy{
 
     public Wasp(Tile tile, Rogue99 game){
         super(13, 0.6, 2,1, 20, 3, "wasp", tile, game);
+        super.mobs = true;
+        super.mobbingNumber = 2;
     }
 
     @Override
     public void hit() {
         Random rand = new Random();
-        System.out.println("Wasp hit");
 
         int thisX = this.tile.getPosX();
         int thisY = this.tile.getPosY();
@@ -37,7 +38,6 @@ public class Wasp extends Enemy{
                 }
             }
             if(openList.size() >= 1){
-                System.out.println("WASP MOVE SUCCESSFUL");
                 open = openList.get(rand.nextInt(openList.size()));
                 this.tile.getEntities().pop();
                 this.tile = open;
@@ -54,7 +54,6 @@ public class Wasp extends Enemy{
                 }
             }
             if(openList.size() >= 1){
-                System.out.println("WASP MOVE SUCCESSFUL");
                 open = openList.get(rand.nextInt(openList.size()));
                 this.tile.getEntities().pop();
                 this.tile = open;
@@ -71,7 +70,6 @@ public class Wasp extends Enemy{
                 }
             }
             if(openList.size() >= 1){
-                System.out.println("WASP MOVE SUCCESSFUL");
                 open = openList.get(rand.nextInt(openList.size()));
                 this.tile.getEntities().pop();
                 this.tile = open;
@@ -88,7 +86,6 @@ public class Wasp extends Enemy{
                 }
             }
             if(openList.size() >= 1){
-                System.out.println("WASP MOVE SUCCESSFUL");
                 open = openList.get(rand.nextInt(openList.size()));
                 this.tile.getEntities().pop();
                 this.tile = open;
@@ -97,8 +94,4 @@ public class Wasp extends Enemy{
         }
     }
 
-//    @Override
-//    public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {
-//        super.moveEnemy(map, intMap, hero);
-//    }
 }
