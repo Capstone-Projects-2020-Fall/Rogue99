@@ -217,6 +217,8 @@ public class Rogue99 extends ApplicationAdapter {
 	private void init_single_player(){
 		resetHero();
 		//hero = new Hero(this, "hero");
+		scoreboard.getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
+				+ " Armor: " + hero.getArmor() + " Level: " + hero.depth);
 
 		Level tempLevel = new Level(null, 0, null);
 		tempLevel.generateFloorPlan();
@@ -226,6 +228,8 @@ public class Rogue99 extends ApplicationAdapter {
 
 	private void init_multiplayer() {
 		resetHero();
+		scoreboard.getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
+				+ " Armor: " + hero.getArmor() + " Level: " + hero.depth);
 
 		multiplayer = true;
 		//initialize client
@@ -245,6 +249,7 @@ public class Rogue99 extends ApplicationAdapter {
 		hero.setArmor(0);
 		hero.setStr(10);
 		hero.depth = 0;
+		hero.score = 0;
 	}
 
 	@Override
@@ -618,6 +623,8 @@ public class Rogue99 extends ApplicationAdapter {
 			mapGenerated = false;
 			setShowEscape(false);
 			scoreboard.remove();
+//			scoreboard.getPlayerScore().setText("Score: " + hero.score + " Health: " + hero.getCurrHP()
+//					+ " Armor: " + hero.getArmor() + " Level: " + hero.depth);
 			inputMultiplexer.removeProcessor(MapStage);
 			MapStage = null;
 			if(multiplayer){
