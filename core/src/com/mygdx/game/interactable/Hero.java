@@ -5,7 +5,6 @@ import com.mygdx.game.Packets;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.item.FreezePotion;
 import com.mygdx.game.item.Item;
-import com.mygdx.game.item.HealthPotion;
 import com.mygdx.game.item.SummonScroll;
 
 import java.util.ArrayList;
@@ -112,7 +111,6 @@ public class Hero extends Character{
     }
 
     private void move(int x, int y){
-        System.out.println("Hero Position: [" + x + "][" + y + "]");
         if(!game.level.getMap()[x][y].getType().equals("wall")){
             if(!game.level.getMap()[x][y].getEntities().isEmpty() && game.level.getMap()[x][y].getEntities().peek() instanceof Enemy){
                 // attack
@@ -123,9 +121,7 @@ public class Hero extends Character{
                 if(inventory.size() != 10){
                     inventory.add((Item) game.level.getMap()[x][y].getEntities().pop());
                     game.inventoryGui.addItemToInventory(inventory.get(inventory.size()-1));
-                    System.out.println("picked up " + inventory.get(inventory.size()-1).getSprite());
                 }
-                System.out.println("Player inventory size: " + this.getInventory().size());
                 game.level.getMap()[getPosX()][getPosY()].getEntities().pop();
                 setPosX(x);
                 setPosY(y);
@@ -180,36 +176,20 @@ public class Hero extends Character{
                 movement.depth = depth;
                 game.client.client.sendTCP(movement);
             }
-            //game.timerCount = 0;
-            //game.level.moveEnemies();
         }
     }
 
     public void attack(int x, int y){
         Enemy enemy = (Enemy) game.level.getMap()[x][y].getEntities().peek();
-        System.out.println("enemy health: " + enemy.getCurrHP() + " enemy armor: " + enemy.getArmor());
-//        if (getStr() > enemy.getArmor()) {
-//            enemy.setCurrHP(enemy.getCurrHP() + enemy.getArmor() - getStr());
-//        }
         if(Math.random() < getHitChance()){
-            System.out.println("HIT SUCCESSFUL");
-//            if(enemy.getCurrHP() == enemy.getMaxHP() && this.getStr() >= enemy.getMaxHP()){
-//                //send observe onehitkill to adjacent enemies who retreat
-//                ArrayList<Interactable> retreating = getAdjacentEnemies("rat");
-//                for(Interactable i : retreating){
-//                    Enemy curr = (Enemy)i;
-//                    curr.observe("onehitkill");
-//                }
-//            }
             enemy.setCurrHP(enemy.getCurrHP() - this.getStr());
         } else{
-            System.out.println("HIT MISSED");
+
         }
         game.changeBarValue("EnemyHP", enemy.getCurrHP());
         game.enemyHud.statsNumTexts.get(0).setText(String.valueOf(enemy.getCurrHP()));
         game.enemyHud.getTitleLabel().setText(enemy.getSprite().toUpperCase());
         if(enemy.getCurrHP() > 0){
-            //game.level.getMap()[x][y].getEntities().push(enemy);
             enemy.attack(this);
             //hit() performs an action that the enemy performs when hit, such as slimes splitting or wasps moving away
             if(enemy.getSprite().equals("wasp")){
@@ -243,7 +223,6 @@ public class Hero extends Character{
             }
             if(game.level.enemies.size() <= (game.level.enemiesToOpen)){
                 game.level.doorOpen = true;
-                System.out.println("OPENED DOOR");
             }
         }
     }

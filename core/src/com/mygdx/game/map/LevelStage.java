@@ -3,7 +3,6 @@ package com.mygdx.game.map;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Rogue99;
 import com.mygdx.game.interactable.Enemy;
@@ -37,8 +36,6 @@ public class LevelStage extends Stage {
                 LevelActor actor = new LevelActor(level, tile);
                 actor.setBounds(tile.getPosX()*36, tile.getPosY()*36, 36, 36);
                 addActor(actor);
-//                EventListener eventListener = new LevelClickListener(actor, level, game);
-//                actor.addListener(eventListener);
             }
         }
     }
@@ -96,38 +93,31 @@ public class LevelStage extends Stage {
             }
             sprite.draw(batch);
         } else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Enemy){
-            //System.out.println("Drawing" + sprites.get(tile.getEntities().peek().getSprite()));
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
             if(tile.getEntities().peek().getSprite().equals("ghost")){
-                //System.out.println("ghost sprite set alpha");
                 sprite.setAlpha(0.2f);
             }
-            //System.out.println("ENEMY SPRITE" + tile.getEntities().peek().getSprite());
             sprite.setPosition(x,y);
             sprite.draw(batch);
         } else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthScroll){
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
-            //System.out.println("HEALTH SCROLL SPRITE" + tile.getEntities().peek().getSprite());
             sprite.setColor(Color.CYAN);
             sprite.setPosition(x,y);
             sprite.draw(batch);
         } else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof ArmorScroll) {
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
-            //System.out.println("ARMOR SCROLL SPRITE" + tile.getEntities().peek().getSprite());
             sprite.setColor(Color.GOLDENROD);
             sprite.setPosition(x, y);
             sprite.draw(batch);
         }
         else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof StrengthScroll) {
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
-            //System.out.println(tile.getEntities().peek().getSprite());
             sprite.setColor(Color.SLATE);
             sprite.setPosition(x, y);
             sprite.draw(batch);
         }
         else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof HealthPotion) {
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
-            //System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
             sprite.setColor(Color.CYAN);
             sprite.setPosition(x, y);
             sprite.draw(batch);
@@ -140,20 +130,17 @@ public class LevelStage extends Stage {
         }
         else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof DamagePotion) {
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
-            //System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
             sprite.setColor(Color.RED);
             sprite.setPosition(x, y);
             sprite.draw(batch);
         } else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof FreezePotion) {
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
-            //System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
             sprite.setColor(Color.PURPLE);
             sprite.setPosition(x, y);
             sprite.draw(batch);
         }
         else if(!tile.getEntities().isEmpty() && tile.getEntities().peek() instanceof Weapon) {
             sprite = game.sprites.get(tile.getEntities().peek().getSprite());
-            //System.out.println("POTION SPRITE" + tile.getEntities().peek().getSprite());
             sprite.setPosition(x, y);
             sprite.draw(batch);
         } else {
@@ -164,7 +151,6 @@ public class LevelStage extends Stage {
     }
 
     private void drawHeroes(){
-        //System.out.println("Drawing hero");
         for(Hero player : game.players) {
             if(player.depth == game.hero.depth){
                 Sprite sprite = game.sprites.get(player.getSprite());
@@ -173,7 +159,6 @@ public class LevelStage extends Stage {
                 color.a = 1;
                 sprite.setColor(color);
                 if(player.getSprite().equals("gravestone")){
-                    System.out.println("gravestone");
                     sprite.setAlpha(1);
                 } else {
                     sprite.setAlpha(.5f);

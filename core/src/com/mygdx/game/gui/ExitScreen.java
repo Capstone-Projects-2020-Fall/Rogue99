@@ -1,18 +1,15 @@
 package com.mygdx.game.gui;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.game.Rogue99;
-import org.w3c.dom.Text;
 
 public class ExitScreen extends Window {
     public final int WINDOW_WIDTH = 60;
@@ -25,7 +22,6 @@ public class ExitScreen extends Window {
         this.setMovable(false);
         this.setName(title);
         this.setSize(WINDOW_WIDTH*3, WINDOW_HEIGH*3);
-        //String[] buttonNames = {"Resume", "Disable AI", "Main Menu", "Exit"};
 
 
 
@@ -38,10 +34,8 @@ public class ExitScreen extends Window {
                     public void changed(ChangeEvent changeEvent, Actor actor) {
                         if(checkBox.isChecked()){
                             game.aiEnabled = true;
-                            System.out.println(game.aiEnabled);
                         } else{
                             game.aiEnabled = false;
-                            System.out.println(game.aiEnabled);
                         }
                     }
                 });

@@ -8,9 +8,6 @@ import com.mygdx.game.map.Tile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Stack;
-
-import static java.lang.StrictMath.abs;
 
 public class Enemy extends Character {
 
@@ -18,8 +15,6 @@ public class Enemy extends Character {
     public int moveDistance;
     public int difficulty;
     public int diffMod; //modifier set when generated, dependent on level it's generated on
-    public int baseHp;
-    public int baseStr;
     public String sprite;
     public Tile tile;
     public Rogue99 game;
@@ -31,8 +26,6 @@ public class Enemy extends Character {
     public boolean FRIGHTENED = false;
     public boolean mobs = false;
     public int mobbingNumber = 0;
-    public int frightened_timer = 0;
-    public boolean WAITING = false;
 
     public Enemy(){}
 
@@ -59,7 +52,6 @@ public class Enemy extends Character {
     public void scaleStats(){
         for (int i = 0; i < diffMod; i++) {
             super.setMaxHP(getMaxHP() + 5);
-            //super.setArmor(getArmor() + 2);
             super.setStr(getStr() + 1);
         }
     }
@@ -73,10 +65,10 @@ public class Enemy extends Character {
         List<Pathing.Node> path = aStar.findPathTo(hero.getPosX(), hero.getPosY());
         if (path != null) {
             for (Pathing.Node n : path) {
-                //System.out.print("[" + n.x + ", " + n.y + "] ");
+
             }
             Pathing.Node n = path.get(0);
-            //System.out.print("\nThe enemy is on tile " + "[" + n.x + ", " + n.y + "] \n");
+
             if (path.size() > 2 && (path.size() <= visRange || FOLLOWING == true)) {
                 if(this.mobs == true && game.aiEnabled){
                     if((enemiesInRange > this.mobbingNumber && path.size() < 8) || path.size() >= 8) {
@@ -93,7 +85,6 @@ public class Enemy extends Character {
             } else if(path.size() > visRange){
                 WANDERING = true;
                 FOLLOWING = false;
-                //System.out.println("Enemy location: " + tile.getPosX() + tile.getPosY());
                 ArrayList<Tile> openList = new ArrayList<>();
                 for(int i = -1; i < 2; i++){
                     for(int k = -1; k < 2; k++){
@@ -105,7 +96,6 @@ public class Enemy extends Character {
                     }
                 }
                 if(openList.size() != 0){
-                    System.out.println("ENEMY WANDERED");
                     Random rand = new Random();
                     game.level.intMap[tile.getPosX()][tile.getPosY()] = 0;
                     tile.getEntities().pop();
@@ -145,7 +135,6 @@ public class Enemy extends Character {
 
     public void attack(Hero hero){
         if(Math.random() < getHitChance()){
-            System.out.println(this.sprite + " HIT SUCCESSFUL");
             if( getStr() - hero.getArmor() > 0 ) {
                 hero.takeDamage(getStr() - hero.getArmor());
             }
@@ -153,7 +142,6 @@ public class Enemy extends Character {
                 hero.takeDamage(1);
             }
         } else{
-            System.out.println(this.sprite + " HIT MISSED");
         }
         if(hero.getCurrHP() > 0){
             game.setAttacking(true);
@@ -179,7 +167,6 @@ public class Enemy extends Character {
         }
 
         Random rand = new Random();
-        System.out.println(this.sprite + " retreating");
         int thisX = this.tile.getPosX();
         int thisY = this.tile.getPosY();
 
@@ -227,7 +214,6 @@ public class Enemy extends Character {
         }
 
         if(openList.size() >= 1){
-            System.out.println("RETREAT SUCCESSFUL");
             open = openList.get(rand.nextInt(openList.size()));
             this.tile.getEntities().pop();
             this.tile = open;

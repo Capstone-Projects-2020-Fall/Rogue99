@@ -26,11 +26,9 @@ public class ClientNetworkListener extends Listener {
     }
 
     public void disconnected(Connection c){
-        System.out.println("CLIENT disconnected");
     }
 
     public void received(Connection c, Object o){
-        //System.out.println("RECEIVED");
         if(o instanceof Packets.Packet000ConnectionAnswer){
             if(((Packets.Packet000ConnectionAnswer) o).answer == false){
                 game.connectionRejected("Game in Progress!");
@@ -49,7 +47,6 @@ public class ClientNetworkListener extends Listener {
                 game.addPlayer(player);
             }
         } else if(o instanceof Packets.Packet002Map){
-            System.out.println("SEED: " + ((Packets.Packet002Map) o).seed);
             //receives seed, sets seed of level at specified depth, generates level
             game.setSeed(((Packets.Packet002Map) o).seed, ((Packets.Packet002Map) o).depth);
         } else if(o instanceof Packets.Packet003Movement){
@@ -101,8 +98,6 @@ public class ClientNetworkListener extends Listener {
                 y = rand.nextInt(5);
                 if ( game.level.getMap()[game.hero.getPosX() + x][game.hero.getPosY() + y].getType() == "floor" &&
                         game.level.getMap()[game.hero.getPosX() +x][game.hero.getPosY() + y].getEntities().isEmpty() ) {
-                    //Enemy enemy = new Enemy( game.hero.depth, "wasp", game.level.getMap()[x][y], game);
-                    //System.out.println("ENEMY GENERATED: " + enemy.getSprite());
                     summoned = true;
                 }
             } while ( !summoned );
@@ -124,7 +119,6 @@ public class ClientNetworkListener extends Listener {
         } else if (o instanceof Packets.Packet010Disconnect){
             game.removePLayer(((Packets.Packet010Disconnect) o).name);
         } else if (o instanceof Packets.Packet011StartGame){
-            System.out.println("game started: " + ((Packets.Packet011StartGame) o).start);
             game.setGameStarted(((Packets.Packet011StartGame) o).start);
         }
     }

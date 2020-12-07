@@ -1,10 +1,5 @@
 package com.mygdx.game.interactable;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.mygdx.game.Rogue99;
-import com.mygdx.game.item.Item;
-
 public class Character extends Interactable  {
 
     private int maxHP;
@@ -12,11 +7,6 @@ public class Character extends Interactable  {
     private int armor;
     private int str;
     private double hitChance;
-    public boolean up;
-    public boolean down;
-    public boolean left;
-    public boolean right;
-    public float speed;
 
     public final int DOWN = 0;
     public final int UP = 1;

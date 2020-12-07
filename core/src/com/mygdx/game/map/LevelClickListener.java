@@ -22,7 +22,6 @@ public class LevelClickListener extends ClickListener{
 
     @Override
     public void clicked(InputEvent event, float x, float y) {
-        System.out.println("A tile has been clicked. [" + actor.getTile().getPosX() + "][" + actor.getTile().getPosY() + "]");
         Pathing aStar = new Pathing(level.getIntMap(), (int) x, (int) y, true);
         List<Pathing.Node> path = aStar.findPathTo(game.getHero().getPosX(), game.getHero().getPosY());
         if (path.size() < 3) {

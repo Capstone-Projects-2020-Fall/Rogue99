@@ -19,7 +19,6 @@ public class Wasp extends Enemy{
     @Override
     public void hit() {
         Random rand = new Random();
-        System.out.println("Wasp hit");
 
         int thisX = this.tile.getPosX();
         int thisY = this.tile.getPosY();
@@ -39,7 +38,6 @@ public class Wasp extends Enemy{
                 }
             }
             if(openList.size() >= 1){
-                System.out.println("WASP MOVE SUCCESSFUL");
                 open = openList.get(rand.nextInt(openList.size()));
                 this.tile.getEntities().pop();
                 this.tile = open;
@@ -56,7 +54,6 @@ public class Wasp extends Enemy{
                 }
             }
             if(openList.size() >= 1){
-                System.out.println("WASP MOVE SUCCESSFUL");
                 open = openList.get(rand.nextInt(openList.size()));
                 this.tile.getEntities().pop();
                 this.tile = open;
@@ -73,7 +70,6 @@ public class Wasp extends Enemy{
                 }
             }
             if(openList.size() >= 1){
-                System.out.println("WASP MOVE SUCCESSFUL");
                 open = openList.get(rand.nextInt(openList.size()));
                 this.tile.getEntities().pop();
                 this.tile = open;
@@ -90,7 +86,6 @@ public class Wasp extends Enemy{
                 }
             }
             if(openList.size() >= 1){
-                System.out.println("WASP MOVE SUCCESSFUL");
                 open = openList.get(rand.nextInt(openList.size()));
                 this.tile.getEntities().pop();
                 this.tile = open;
@@ -99,8 +94,4 @@ public class Wasp extends Enemy{
         }
     }
 
-//    @Override
-//    public void moveEnemy(Tile[][] map, int[][] intMap, Hero hero) {
-//        super.moveEnemy(map, intMap, hero);
-//    }
 }

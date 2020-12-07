@@ -17,13 +17,11 @@ public class Slime extends Enemy {
 
     @Override
     public void hit() {
-        System.out.println("Slime hit");
         Random rand = new Random();
         double splitChance = Math.random();
 
         //if slime splits
         if(splitChance > 0.5){
-            System.out.println("SLIME SPLIT");
             int x = this.tile.getPosX();
             int y = this.tile.getPosY();
 
@@ -40,7 +38,6 @@ public class Slime extends Enemy {
                 }
             }
             //choose random adjacent tile
-            System.out.println("OPEN LIST: " + openList.size());
             if(openList.size() > 0){
                 open = openList.get(rand.nextInt(openList.size()));
 

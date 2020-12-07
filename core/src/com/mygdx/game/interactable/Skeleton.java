@@ -1,8 +1,5 @@
 package com.mygdx.game.interactable;
 
-import com.mygdx.game.Rogue99;
-import com.mygdx.game.map.Tile;
-
 public class Skeleton extends Enemy{
     //states
     boolean grouped;

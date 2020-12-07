@@ -4,28 +4,27 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.client.MPClient;
 import com.mygdx.game.gui.*;
-import com.mygdx.game.item.*;
 import com.mygdx.game.interactable.Control;
 import com.mygdx.game.interactable.Hero;
-import com.mygdx.game.map.*;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.mygdx.game.item.DamagePotion;
+import com.mygdx.game.item.FreezePotion;
+import com.mygdx.game.item.Item;
+import com.mygdx.game.item.SummonScroll;
+import com.mygdx.game.map.Level;
+import com.mygdx.game.map.LevelStage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,14 +32,12 @@ import java.util.Map;
 
 public class Rogue99 extends ApplicationAdapter {
 
-	public final int HEIGHT_PAD = 132;
 	public final String HEALTHBAR = "Health";
 	public final String ARMOURBAR = "Armour";
 	public final String SCOREBAR = "Score";
 
 
 	public Hero hero;
-	//SpriteBatch batch;
 	public OrthographicCamera MapCamera;
 	public MPClient client;
 	FitViewport MapViewport;
@@ -124,7 +121,6 @@ public class Rogue99 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		multiplayer = false;
-		//batch = new SpriteBatch();
 		levels = new ArrayList<>();
 		players = new ArrayList<>();
 		//establish enemy difficulty map
@@ -156,8 +152,6 @@ public class Rogue99 extends ApplicationAdapter {
 		aiEnabled = true;
 
 		//load sprites and add to hash map
-		//textureAtlas = new TextureAtlas("spritesheets/sprites.txt");
-//		textureAtlas = new TextureAtlas("spritesheets/fantasysprites.txt");
 		textureAtlas = new TextureAtlas("spritesheets/fantasysprites3.txt");
 
 		addSprites();
@@ -199,8 +193,6 @@ public class Rogue99 extends ApplicationAdapter {
 		inputMultiplexer.addProcessor(GuiElementStage);
 		control = new Control(hero, this);
 		Gdx.input.setInputProcessor(inputMultiplexer);
-		//init_single_player();
-		//init_multiplayer();
 	}
 	private void mainMenu() {
 		mainMenu = new MainMenu(this,"", skin);
@@ -228,10 +220,7 @@ public class Rogue99 extends ApplicationAdapter {
 		Level tempLevel = new Level(null, 0, null);
 		tempLevel.generateFloorPlan();
 		generateLevel(tempLevel.getSeed(), 0);
-		
-//		control = new Control(hero, this);
-//
-//		inputMultiplexer.addProcessor(control);
+
 	}
 
 	private void init_multiplayer() {
@@ -244,11 +233,8 @@ public class Rogue99 extends ApplicationAdapter {
 		//get seed from server
 		Packets.Packet006RequestSeed seedRequest = new Packets.Packet006RequestSeed();
 		seedRequest.depth = 0;
-		System.out.println("Sending seed request for level 0");
 		client.client.sendTCP(seedRequest);
 		scoreboard.setSize(scoreboard.WINDOW_WIDTH*3, scoreboard.WINDOW_HEIGHT*15);
-//		control = new Control(hero, this);
-//		inputMultiplexer.addProcessor(control);
 	}
 
 	public void resetHero(){
@@ -345,7 +331,6 @@ public class Rogue99 extends ApplicationAdapter {
 			}
 			/* STAGE RENDERING ENDS */
 		}
-//		Gdx.input.setInputProcessor(inputMultiplexer);
 	}
 
 
@@ -354,7 +339,6 @@ public class Rogue99 extends ApplicationAdapter {
 
 	@Override
 	public void dispose () {
-		//batch.dispose();
 		textureAtlas.dispose();
 		sprites.clear();
 	}
@@ -363,7 +347,6 @@ public class Rogue99 extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		MapViewport.update(width, height, true);
 		mainMenuViewport.update(width,height,true);
-		//batch.setProjectionMatrix(MapCamera.combined);
 	}
 
 	//adds sprites to hash map for more efficient use
@@ -381,21 +364,6 @@ public class Rogue99 extends ApplicationAdapter {
 		MapStage.addActor(exitScreen);
 	}
 
-
-
-	//creates HUD GUI & the map of the stats bars.
-	public void createHUDGui(){
-		Map<String,Integer> bars = new HashMap<>();
-		bars.put(HEALTHBAR, 100);
-		bars.put(ARMOURBAR, 0);
-		hudGui = new HUDGui("OwnStats",skin, bars);
-		hudGui.getTitleLabel().setText("PLAYER");
-		System.out.println("Inventory Gui y: " + inventoryGui.getY() + " Inventory y + height " + inventoryGui.getY() + inventoryGui.getHeight() );
-		hudGui.setPosition(-GuiElementStage.getWidth(), inventoryGui.getY() + inventoryGui.getHeight()*3.6f);
-		hudGui.getColor().a = .8f;
-		barList = hudGui.getHudBars();
-		GuiElementStage.addActor(hudGui);
-	}
 
 	public void createEnemyHud(){
 		Map<String, Integer> bars = new HashMap<>();
@@ -473,7 +441,6 @@ public class Rogue99 extends ApplicationAdapter {
 				// else equip the clicked weapon and revert the changes from the previous weapon //
 				else {
 					item.setEquipped(true);
-					System.out.println("Weapon used: " + item.use(hero));
 					if(EquippedWeapon != null){
 						EquippedWeapon.setEquipped(false);
 						// revert changes from previous weapon to damage //
@@ -506,24 +473,14 @@ public class Rogue99 extends ApplicationAdapter {
 		this.showInventory = showInventory;
 	}
 
-	public boolean isShowInventory() {
-		return showInventory;
-	}
-
 	public void setAttacking(boolean attacking) {
-		//System.out.println(attacking);
 		this.attacking = attacking;
-	}
-
-	public boolean isAttacking() {
-		return attacking;
 	}
 
 
 	// generate the level and level stage
 	public void generateLevel(String seed, int depth){
 		//initialize level
-		System.out.println("generateLevel seed: " + seed);
 		level = new Level(this, depth, hero);
 		level.setSeed(seed);
 		level.generate();
@@ -537,8 +494,6 @@ public class Rogue99 extends ApplicationAdapter {
 		} else {
 			MapStage.setStageLevel(level);
 		}
-		System.out.println("Stage width and height:" + MapStage.getWidth() + " " + MapStage.getHeight());
-		System.out.println("Player inventory size: " + hero.getInventory().size());
 		generateGuiElements();
 		mapGenerated = true;
 		if(multiplayer) {
@@ -576,7 +531,6 @@ public class Rogue99 extends ApplicationAdapter {
 	private void generateGuiElements(){
 		//initialize Inventory & HUD gui
 		createInventoryGui();
-		//createHUDGui();
 		createEnemyHud();
 		exitScreen = new ExitScreen(this, "Menu", skin);
 		scoreboard.setPosition(-GuiElementStage.getWidth(), GuiElementStage.getHeight());
@@ -594,7 +548,6 @@ public class Rogue99 extends ApplicationAdapter {
 		if(multiplayer) {
 			Packets.Packet006RequestSeed request = new Packets.Packet006RequestSeed();
 			request.depth = depth;
-			System.out.println("Client: depth requested: " + request.depth);
 			client.client.sendTCP(request);
 		}
 		else {
@@ -620,10 +573,8 @@ public class Rogue99 extends ApplicationAdapter {
 	}
 
 	public void addPlayer(Hero player){
-		System.out.println("Player Added");
 		players.add(player);
 		gameLobbyGui.addPlayer(player);
-		System.out.println("Added " + player.getName());
 		scoreboard.addPlayer(player);
 	}
 
@@ -678,9 +629,7 @@ public class Rogue99 extends ApplicationAdapter {
 	public void setUserName(String userName){
 		nameInputWindow.remove();
 		hero.setName(userName);
-		System.out.println(hero.getName());
 		init_multiplayer();
-		//showMainMenu = false;
 	}
 
 	public void setShowEscape(boolean showEscape) {
@@ -711,7 +660,6 @@ public class Rogue99 extends ApplicationAdapter {
 
 		enemyMap.put(1, new ArrayList<String>());
 		enemyMap.get(1).add("wasp");
-		//enemyMap.get(1).add("skeleton");
 
 		enemyMap.put(2, new ArrayList<String>());
 		enemyMap.get(2).add("slime");
@@ -737,14 +685,6 @@ public class Rogue99 extends ApplicationAdapter {
 
 	public boolean isRangeMode() {
 		return rangeMode;
-	}
-
-	public void setShowMainMenu(boolean showMainMenu) {
-		this.showMainMenu = showMainMenu;
-	}
-
-	public boolean isShowMainMenu() {
-		return showMainMenu;
 	}
 
 	public void disconnectClient(){
